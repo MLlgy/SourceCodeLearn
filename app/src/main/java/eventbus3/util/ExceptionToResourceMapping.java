@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package eventbus.util;
+package eventbus3.util;
 
 import android.util.Log;
 
-import  eventbus.EventBus;
+import  eventbus3.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;

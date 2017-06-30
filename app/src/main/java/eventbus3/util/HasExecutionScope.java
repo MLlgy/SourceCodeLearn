@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package eventbus.util;
+package eventbus3.util;
 
 public interface HasExecutionScope {
     Object getExecutionScope();

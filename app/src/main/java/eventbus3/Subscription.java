@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus;
+package eventbus3;
 
 final class Subscription {
     final Object subscriber;

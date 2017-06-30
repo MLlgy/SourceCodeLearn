@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package eventbus;
+package eventbus3;
 
 
 import java.lang.annotation.Documented;

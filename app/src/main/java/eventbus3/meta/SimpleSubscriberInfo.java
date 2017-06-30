@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus.meta;
+package eventbus3.meta;
 
 
-import eventbus.SubscriberMethod;
+import eventbus3.SubscriberMethod;
 
 /**
- * Uses {@link SubscriberMethodInfo} objects to create {@link  eventbus.SubscriberMethod} objects on demand.
+ * Uses {@link SubscriberMethodInfo} objects to create {@link  eventbus3.SubscriberMethod} objects on demand.
  */
 public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
 

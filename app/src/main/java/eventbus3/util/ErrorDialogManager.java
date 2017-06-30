@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package eventbus.util;
+package eventbus3.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -27,7 +27,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import  eventbus.EventBus;
+import  eventbus3.EventBus;
 
 /**
  * Central class for app that want to use event based error dialogs.<br/>

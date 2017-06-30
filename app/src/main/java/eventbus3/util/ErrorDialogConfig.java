@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package eventbus.util;
+package eventbus3.util;
 
 import android.content.res.Resources;
 import android.util.Log;
 
-import  eventbus.EventBus;
+import  eventbus3.EventBus;
 
 public class ErrorDialogConfig {
     final Resources resources;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package eventbus.util;
+package eventbus3.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -27,7 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-import  eventbus.EventBus;
+import  eventbus3.EventBus;
 
 public class ErrorDialogFragments {
     /** TODO Use config:  Icon res ID to use for all error dialogs. May be configured by each app (optional). */

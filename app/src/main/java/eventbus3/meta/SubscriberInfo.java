@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus.meta;
+package eventbus3.meta;
 
-/**
- * Interface for generated indexes.
- */
-public interface SubscriberInfoIndex {
-    SubscriberInfo getSubscriberInfo(Class<?> subscriberClass);
+
+import eventbus3.SubscriberMethod;
+
+/** Base class for generated index classes created by annotation processing. */
+public interface SubscriberInfo {
+    Class<?> getSubscriberClass();
+
+    SubscriberMethod[] getSubscriberMethods();
+
+    SubscriberInfo getSuperSubscriberInfo();
+
+    boolean shouldCheckSuperclass();
 }

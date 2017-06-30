@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus;
+package eventbus3;
 
 /**
  * Each event handler method has a thread mode, which determines in which thread the method is to be called by EventBus.

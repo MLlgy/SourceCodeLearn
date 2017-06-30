@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus.meta;
+package eventbus3.meta;
 
-import  eventbus.ThreadMode;
+import  eventbus3.ThreadMode;
 
 public class SubscriberMethodInfo {
     final String methodName;

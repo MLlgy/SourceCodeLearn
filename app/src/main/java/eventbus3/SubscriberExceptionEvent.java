@@ -13,23 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus;
+package eventbus3;
 
 /**
- * This Event is posted by EventBus when no subscriber is found for a posted event.
+ * This Event is posted by EventBus when an exception occurs inside a subscriber's event handling method.
  * 
  * @author Markus
  */
-public final class NoSubscriberEvent {
+public final class SubscriberExceptionEvent {
     /** The {@link EventBus} instance to with the original event was posted to. */
     public final EventBus eventBus;
 
-    /** The original event that could not be delivered to any subscriber. */
-    public final Object originalEvent;
+    /** The Throwable thrown by a subscriber. */
+    public final Throwable throwable;
 
-    public NoSubscriberEvent(EventBus eventBus, Object originalEvent) {
+    /** The original event that could not be delivered to any subscriber. */
+    public final Object causingEvent;
+
+    /** The subscriber that threw the Throwable. */
+    public final Object causingSubscriber;
+
+    public SubscriberExceptionEvent(EventBus eventBus, Throwable throwable, Object causingEvent,
+            Object causingSubscriber) {
         this.eventBus = eventBus;
-        this.originalEvent = originalEvent;
+        this.throwable = throwable;
+        this.causingEvent = causingEvent;
+        this.causingSubscriber = causingSubscriber;
     }
 
 }

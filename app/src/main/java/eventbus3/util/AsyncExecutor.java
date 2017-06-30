@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eventbus.util;
+package eventbus3.util;
 
 import android.app.Activity;
 import android.util.Log;
 
-import  eventbus.EventBus;
+import  eventbus3.EventBus;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Executor;
