@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">xUtils Sample</string>
+    <string name="app_name">SourceCode</string>
     <string name="download_label">下载地址</string>
     <string name="download">下载</string>
     <string name="stop">暂停</string>
