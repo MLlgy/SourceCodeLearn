@@ -24,37 +24,38 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class OkHttpMainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button clickbt;
     private TextView textresult;
     File cachefile;
     Cache mcache;
-    private OkHttpClient client ;
+    private OkHttpClient client;
     ConnectivityManager mConnectivityManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mConnectivityManager = (ConnectivityManager) this
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        cachefile=new File(getExternalCacheDir(),"okcache");
-        mcache=new Cache(cachefile,10*1024*1024);
+        cachefile = new File(getExternalCacheDir(), "okcache");
+        mcache = new Cache(cachefile, 10 * 1024 * 1024);
         client = new OkHttpClient.Builder().cache(mcache).build();
-        textresult = (TextView)findViewById(R.id.textresult);
-        clickbt = (Button)findViewById(R.id.click);
+        textresult = (TextView) findViewById(R.id.textresult);
+        clickbt = (Button) findViewById(R.id.click);
         clickbt.setOnClickListener(this);
     }
 
-    Handler handler=new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Response msgresponse= (Response) msg.obj;
-            Log.e("Mk  handleMessage", "THreand :"+ Thread.currentThread());
+            Response msgresponse = (Response) msg.obj;
+            Log.e("Mk  handleMessage", "THreand :" + Thread.currentThread());
             try {
-                textresult.setText(""+msgresponse.isSuccessful());
-            }catch (Exception e){
-                Log.w("wenfeng","Exception="+e.toString());
+                textresult.setText("" + msgresponse.isSuccessful());
+            } catch (Exception e) {
+                Log.w("wenfeng", "Exception=" + e.toString());
             }
         }
     };
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
-    public  boolean isNetworkConnected() {
+    public boolean isNetworkConnected() {
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
             return mNetworkInfo.isAvailable();
@@ -83,12 +84,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void execute() throws Exception {
-        Log.i("wenfeng","execute");
+        Log.i("wenfeng", "execute");
 
-        CacheControl.Builder cachebuild=new CacheControl.Builder();
+        CacheControl.Builder cachebuild = new CacheControl.Builder();
         cachebuild.maxAge(30, TimeUnit.SECONDS);
 
-        CacheControl mCacheControl=cachebuild.build();
+        CacheControl mCacheControl = cachebuild.build();
         /*
         if(!isNetworkConnected()){
             Log.i("wenfeng","force cache");
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .url("http://publicobject.com/helloworld.txt")
                 .cacheControl(mCacheControl)
                 .build();
-        Log.i("wenfeng","request body=null "+(request.body()==null));
+        Log.i("wenfeng", "request body=null " + (request.body() == null));
         /*
         Response response = client.newCall(request).execute();
         Log.i("wenfeng","interceptors size="+client.interceptors().size());
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handler.sendMessage(msg);
         }
         */
-        Call mcall=client.newCall(request);
+        Call mcall = client.newCall(request);
         mcall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -121,14 +122,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    Log.i("wenfeng","yibua body="+response.body().string());
-                    Log.i("wenfeng","yibua network response="+response.networkResponse());
-                    Log.i("wenfeng","yibua cache response="+response.cacheResponse());
-                    Message msg=new Message();
-                    msg.obj=response;
+                if (response.isSuccessful()) {
+                    Log.i("wenfeng", "yibua body=" + response.body().string());
+                    Log.i("wenfeng", "yibua network response=" + response.networkResponse());
+                    Log.i("wenfeng", "yibua cache response=" + response.cacheResponse());
+                    Message msg = new Message();
+                    msg.obj = response;
                     handler.sendMessage(msg);
-                    Log.e("Mk  onResponse", "THreand :"+ Thread.currentThread());
+                    Log.e("Mk  onResponse", "THreand :" + Thread.currentThread());
                 }
             }
         });

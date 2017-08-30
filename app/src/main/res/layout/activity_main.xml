@@ -6,7 +6,7 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
-    tools:context=".MainActivity">
+    tools:context=".OkHttpMainActivity">
     <Button
         android:id="@+id/click"
         android:layout_width="wrap_content"
