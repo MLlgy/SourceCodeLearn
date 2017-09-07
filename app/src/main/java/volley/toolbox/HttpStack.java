@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * An HTTP stack abstraction.
+ * An HTTP stack abstraction. 抽象的 Http 请求堆
  */
 public interface HttpStack {
     /**
@@ -37,7 +37,7 @@ public interface HttpStack {
      * @param request the request to perform
      * @param additionalHeaders additional headers to be sent together with
      *         {@link Request#getHeaders()}
-     * @return the HTTP response
+     * @return the HTTP response   执行http请求，返回请求结果
      */
     public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
         throws IOException, AuthFailureError;
