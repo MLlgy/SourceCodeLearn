@@ -27,7 +27,7 @@ public class ExecutorDelivery implements ResponseDelivery {
     /**
      * Used for posting responses, typically to the main thread.
      */
-    private final Executor mResponsePoster;
+    private final Executor mResponsePoster;//线程池
 
     /**
      * Creates a new response delivery interface.

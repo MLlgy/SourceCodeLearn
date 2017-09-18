@@ -12,12 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< 7e86ea7cc051396253b472a59af92f66359b1911
-        <activity android:name=".OkHttpMainActivity">
-
-        </activity>
+        <activity android:name=".OkHttpMainActivity"/>
         <activity android:name=".volley.VolleyExActivity">
-=======
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -26,12 +28,6 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".volleyexample.VolleyActivity">
->>>>>>> volley example
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

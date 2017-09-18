@@ -61,6 +61,10 @@ public abstract class JsonRequest<T> extends Request<T> {
         mRequestBody = requestBody;
     }
 
+    /**
+     * 返回网络请求并解析后的数据
+     * @param response The parsed response returned by
+     */
     @Override
     protected void deliverResponse(T response) {
         mListener.onResponse(response);

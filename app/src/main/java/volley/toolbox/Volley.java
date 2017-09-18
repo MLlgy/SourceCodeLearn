@@ -43,7 +43,11 @@ public class Volley {
      */
     public static RequestQueue newRequestQueue(Context context, HttpStack stack) {
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
-
+        /**
+         *User-Agent是Http协议中的一部分，属于头域的组成部分，User Agent也简称UA。
+         * 用较为普通的一点来说，是一种向访问网站提供你所使用的浏览器类型、操作系统及版本、CPU 类型、浏览器渲染引擎、浏览器语言、浏览器插件等信息的标识。
+         * UA字符串在每次浏览器 HTTP 请求时发送到服务器！
+         */
         String userAgent = "volley/0";//Agent 代理
         try {
             String packageName = context.getPackageName();

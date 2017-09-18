@@ -32,66 +32,90 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A request dispatch queue with a thread pool of dispatchers.
- *
+ * <p>
  * Calling {@link #add(Request)} will enqueue the given Request for dispatch,
  * resolving from either cache or network on a worker thread, and then delivering
  * a parsed response on the main thread.
  */
 public class RequestQueue {
 
-    /** Callback interface for completed requests. */
+    /**
+     * Callback interface for completed requests.
+     */
     public static interface RequestFinishedListener<T> {
-        /** Called when a request has finished processing. */
+        /**
+         * Called when a request has finished processing.
+         */
         public void onRequestFinished(Request<T> request);
     }
 
-    /** Used for generating monotonically-increasing sequence numbers for requests. */
+    /**
+     * Used for generating monotonically-increasing sequence numbers for requests.
+     */
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
 
     /**
+     * 暂存区域已经有一个重复的请求请求在运行中;
      * Staging area for requests that already have a duplicate request in flight.
-     *
+     * <p>
      * <ul>
-     *     <li>containsKey(cacheKey) indicates that there is a request in flight for the given cache
-     *          key.</li>
-     *     <li>get(cacheKey) returns waiting requests for the given cache key. The in flight request
-     *          is <em>not</em> contained in that list. Is null if no requests are staged.</li>
+     * <li>containsKey(cacheKey) indicates that there is a request in flight for the given cache
+     * key.</li>
+     * <li>get(cacheKey) returns waiting requests for the given cache key. The in flight request
+     * is <em>not</em> contained in that list. Is null if no requests are staged.</li>
      * </ul>
      */
     private final Map<String, Queue<Request<?>>> mWaitingRequests =
             new HashMap<String, Queue<Request<?>>>();
 
     /**
+     * 正在处理的请求队列
      * The set of all requests currently being processed by this RequestQueue. A Request
      * will be in this set if it is waiting in any queue or currently being processed by
      * any dispatcher.
      */
     private final Set<Request<?>> mCurrentRequests = new HashSet<Request<?>>();
 
-    /** The cache triage queue. */
+    /**
+     * The cache ` queue.
+     */
     private final PriorityBlockingQueue<Request<?>> mCacheQueue =
-        new PriorityBlockingQueue<Request<?>>();
+            new PriorityBlockingQueue<Request<?>>();
 
-    /** The queue of requests that are actually going out to the network. */
+    /**
+     * The queue of requests that are actually going out to the network. 优先级队列
+     **/
     private final PriorityBlockingQueue<Request<?>> mNetworkQueue =
-        new PriorityBlockingQueue<Request<?>>();
+            new PriorityBlockingQueue<Request<?>>();
 
-    /** Number of network request dispatcher threads to start. */
+    /**
+     * Number of network request dispatcher threads to start.
+     */
     private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
 
-    /** Cache interface for retrieving and storing responses. */
+    /**
+     * Cache interface for retrieving and storing responses.
+     */
     private final Cache mCache;
 
-    /** Network interface for performing requests. */
+    /**
+     * Network interface for performing requests.
+     */
     private final Network mNetwork;
 
-    /** Response delivery mechanism. */
+    /**
+     * Response delivery mechanism.
+     */
     private final ResponseDelivery mDelivery;
 
-    /** The network dispatchers. */
+    /**
+     * The network dispatchers.
+     */
     private NetworkDispatcher[] mDispatchers;
 
-    /** The cache dispatcher. */
+    /**
+     * The cache dispatcher.
+     */
     private CacheDispatcher mCacheDispatcher;
 
     private List<RequestFinishedListener> mFinishedListeners =
@@ -100,13 +124,13 @@ public class RequestQueue {
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
-     * @param cache A Cache to use for persisting responses to disk
-     * @param network A Network interface for performing HTTP requests
+     * @param cache          A Cache to use for persisting responses to disk
+     * @param network        A Network interface for performing HTTP requests
      * @param threadPoolSize Number of network dispatcher threads to create
-     * @param delivery A ResponseDelivery interface for posting responses and errors
+     * @param delivery       A ResponseDelivery interface for posting responses and errors
      */
     public RequestQueue(Cache cache, Network network, int threadPoolSize,
-            ResponseDelivery delivery) {
+                        ResponseDelivery delivery) {
         mCache = cache;
         mNetwork = network;
         mDispatchers = new NetworkDispatcher[threadPoolSize];
@@ -116,8 +140,8 @@ public class RequestQueue {
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
-     * @param cache A Cache to use for persisting responses to disk
-     * @param network A Network interface for performing HTTP requests
+     * @param cache          A Cache to use for persisting responses to disk
+     * @param network        A Network interface for performing HTTP requests
      * @param threadPoolSize Number of network dispatcher threads to create
      */
     public RequestQueue(Cache cache, Network network, int threadPoolSize) {
@@ -128,7 +152,7 @@ public class RequestQueue {
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
-     * @param cache A Cache to use for persisting responses to disk
+     * @param cache   A Cache to use for persisting responses to disk
      * @param network A Network interface for performing HTTP requests
      */
     public RequestQueue(Cache cache, Network network) {
@@ -137,10 +161,12 @@ public class RequestQueue {
 
     /**
      * Starts the dispatchers in this queue.
+     * 开启 CacheDispatcher 一个线程，用于调度处理走缓存的请求
+     * 和 NetworkDispatcher 一个线程，用于调度处理走网络的请求
      */
     public void start() {
         stop();  // Make sure any currently running dispatchers are stopped.
-        // Create the cache dispatcher and start it.
+        // Create the cache dispatcher and start it. 创建cache调度器并且开始分发
         mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
         mCacheDispatcher.start();
 
@@ -191,6 +217,7 @@ public class RequestQueue {
 
     /**
      * Cancels all requests in this queue for which the given filter applies.
+     *
      * @param filter The filtering function to use
      */
     public void cancelAll(RequestFilter filter) {
@@ -221,6 +248,7 @@ public class RequestQueue {
 
     /**
      * Adds a Request to the dispatch queue.
+     *
      * @param request The request to service
      * @return The passed-in request
      */
@@ -231,19 +259,25 @@ public class RequestQueue {
             mCurrentRequests.add(request);
         }
 
-        // Process requests in the order they are added.
+        // Process requests in the order they are added. 为请求添加唯一序列号
         request.setSequence(getSequenceNumber());
         request.addMarker("add-to-queue");
 
-        // If the request is uncacheable, skip the cache queue and go straight to the network.
-        if (!request.shouldCache()) {
+        // If the request is uncacheable, skip the cache queue and go straight to the network. 请求是否允许被缓存
+        if (!request.shouldCache()) {//缓存不被允许，直接添加到 mNetWorkaQueue中
             mNetworkQueue.add(request);
             return request;
         }
 
         // Insert request into stage if there's already a request with the same cache key in flight.
+
         synchronized (mWaitingRequests) {
             String cacheKey = request.getCacheKey();
+            /**
+             * 判断是否有相同的请求正在被处理
+             * 是： 添加到相同请求的等待队列中
+             * 否：创建新的等待当前请求的空队列，添加当前请求到缓存请求队列mCacheQueue中
+             */
             if (mWaitingRequests.containsKey(cacheKey)) {
                 // There is already a request in flight. Queue up.
                 Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);
@@ -268,9 +302,9 @@ public class RequestQueue {
     /**
      * Called from {@link Request#finish(String)}, indicating that processing of the given request
      * has finished.
-     *
+     * <p>
      * <p>Releases waiting requests for <code>request.getCacheKey()</code> if
-     *      <code>request.shouldCache()</code>.</p>
+     * <code>request.shouldCache()</code>.</p>
      */
     <T> void finish(Request<T> request) {
         // Remove from the set of requests currently being processed.
@@ -278,9 +312,9 @@ public class RequestQueue {
             mCurrentRequests.remove(request);
         }
         synchronized (mFinishedListeners) {
-          for (RequestFinishedListener<T> listener : mFinishedListeners) {
-            listener.onRequestFinished(request);
-          }
+            for (RequestFinishedListener<T> listener : mFinishedListeners) {
+                listener.onRequestFinished(request);
+            }
         }
 
         if (request.shouldCache()) {
@@ -300,18 +334,18 @@ public class RequestQueue {
         }
     }
 
-    public  <T> void addRequestFinishedListener(RequestFinishedListener<T> listener) {
-      synchronized (mFinishedListeners) {
-        mFinishedListeners.add(listener);
-      }
+    public <T> void addRequestFinishedListener(RequestFinishedListener<T> listener) {
+        synchronized (mFinishedListeners) {
+            mFinishedListeners.add(listener);
+        }
     }
 
     /**
      * Remove a RequestFinishedListener. Has no effect if listener was not previously added.
      */
-    public  <T> void removeRequestFinishedListener(RequestFinishedListener<T> listener) {
-      synchronized (mFinishedListeners) {
-        mFinishedListeners.remove(listener);
-      }
+    public <T> void removeRequestFinishedListener(RequestFinishedListener<T> listener) {
+        synchronized (mFinishedListeners) {
+            mFinishedListeners.remove(listener);
+        }
     }
 }

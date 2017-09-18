@@ -103,7 +103,7 @@ public class VolleyLog {
     }
 
     /**
-     * A simple event log with records containing a name, thread ID, and timestamp.
+     * A simple event log with records containing a name, thread ID, and timestamp. name 线程id 时间戳
      */
     static class MarkerLog {
         public static final boolean ENABLED = VolleyLog.DEBUG;

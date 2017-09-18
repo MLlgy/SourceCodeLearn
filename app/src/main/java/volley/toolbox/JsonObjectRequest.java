@@ -60,6 +60,11 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
                 listener, errorListener);
     }
 
+    /**
+     * 解析网络返回数据
+     * @param response
+     * @return
+     */
     @Override
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {

@@ -30,7 +30,8 @@ public class VolleyExActivity extends AppCompatActivity {
 
     public void get(View view) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://gank.io/api/data/Android/10/1";
+//        String url = "http://gank.io/api/data/Android/10/1";
+        String url = "http://gank.io/api/history/content/2/1";
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

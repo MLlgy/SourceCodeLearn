@@ -459,7 +459,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * Set whether or not responses to this request should be cached.
+     * Set whether or not responses to this request should be cached. 请求是否缓存
      *
      * @return This Request object to allow for chaining.
      */
