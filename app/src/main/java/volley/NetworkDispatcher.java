@@ -125,6 +125,9 @@ public class NetworkDispatcher extends Thread {
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.
+                /**
+                 * 如果服务器返回304，并且我们已经传输一个响应，那么我们的工作就结束了，不需要重复发送相同的请求。
+                 */
                 if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
                     continue;
@@ -141,7 +144,7 @@ public class NetworkDispatcher extends Thread {
                     request.addMarker("network-cache-written");
                 }
 
-                // Post the response back.
+                // Post the response back.将响应传递回去
                 request.markDelivered();
                 mDelivery.postResponse(request, response);
             } catch (VolleyError volleyError) {

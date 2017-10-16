@@ -40,6 +40,7 @@ import java.util.Map;
 /**
  * Cache implementation that caches files directly onto the hard disk in the specified
  * directory. The default disk usage size is 5MB, but is configurable.
+ * Cache 的实现类，可以缓存数据到指定的目录下。默认的目录空间为5M,但是可以自定义。
  */
 public class DiskBasedCache implements Cache {
 
@@ -117,6 +118,7 @@ public class DiskBasedCache implements Cache {
     }
 
     /**
+     * 从缓存中获取数据
      * Returns the cache entry with the specified key if it exists, null otherwise.
      */
     @Override
@@ -156,6 +158,7 @@ public class DiskBasedCache implements Cache {
     /**
      * Initializes the DiskBasedCache by scanning for all files currently in the
      * specified root directory. Creates the root directory if necessary.
+     * 扫描指定的目录，初始化 DiskBasedCache。
      */
     @Override
     public synchronized void initialize() {
@@ -166,7 +169,7 @@ public class DiskBasedCache implements Cache {
             return;
         }
 
-        File[] files = mRootDirectory.listFiles();
+        File[] files = mRootDirectory.listFiles();//listFiles()  返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。
         if (files == null) {
             return;
         }
@@ -273,7 +276,7 @@ public class DiskBasedCache implements Cache {
     }
 
     /**
-     * Prunes the cache to fit the amount of bytes specified.
+     * Prunes the cache to fit the amount of bytes specified.缓存满时，清理缓存空间
      *
      * @param neededSpace The amount of bytes we are trying to fit into the cache.
      */
@@ -308,7 +311,7 @@ public class DiskBasedCache implements Cache {
             }
         }
 
-        if (VolleyLog.DEBUG) {
+        if (VolleyLog.DEBUG) {//删除几个文件，多少字节数据，用时
             VolleyLog.v("pruned %d files, %d bytes, %d ms",
                     prunedFiles, (mTotalSize - before), SystemClock.elapsedRealtime() - startTime);
         }
@@ -359,6 +362,7 @@ public class DiskBasedCache implements Cache {
 
     /**
      * Handles holding onto the cache headers for an entry.
+     * 缓存文件摘要信息，存储在缓存文件的头部，与上面的Cache.Entry相似
      */
     // Visible for testing.
     static class CacheHeader {

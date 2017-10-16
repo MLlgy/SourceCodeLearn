@@ -96,7 +96,7 @@ public class CacheDispatcher extends Thread {
 
         // Make a blocking call to initialize the cache.
         mCache.initialize();
-
+        //不断从缓存序列中获取request
         while (true) {
             try {
                 // Get a request from the cache triage queue, blocking until
@@ -119,7 +119,7 @@ public class CacheDispatcher extends Thread {
                     continue;
                 }
 
-                // If it is completely expired, just send it to the network.
+                // If it is completely expired, just send it to the network. 过期的话，进行网络请求
                 if (entry.isExpired()) {
                     request.addMarker("cache-hit-expired");
                     request.setCacheEntry(entry);
