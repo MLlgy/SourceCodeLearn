@@ -55,7 +55,9 @@ public class Volley {
             userAgent = packageName + "/" + info.versionCode;
         } catch (NameNotFoundException e) {
         }
-
+        /**
+         * 在创建 Volley 的实例时，根据 SDK 版本实例化对应的网络请求的对象
+         */
         if (stack == null) {
             if (Build.VERSION.SDK_INT >= 9) {
                 stack = new HurlStack();

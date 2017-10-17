@@ -32,7 +32,7 @@ public class NetworkResponse {
      * @param data          Response body
      * @param headers       Headers returned with this response, or null for none
      * @param notModified   True if the server returned a 304 and the data was already in cache
-     * @param networkTimeMs Round-trip network time to receive network response
+     * @param networkTimeMs Round-trip network time to receive network response 网络请求的往返时间
      */
     public NetworkResponse(int statusCode, byte[] data, Map<String, String> headers,
                            boolean notModified, long networkTimeMs) {

@@ -26,11 +26,14 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * Provides a thread for performing network dispatch from a queue of requests.
+ * 一个从 request 队列中取出一个线程执行网络请求的线程
  * <p>
- * Requests added to the specified queue are processed from the network via a
- * specified {@link Network} interface. Responses are committed to cache, if
- * eligible, using a specified {@link Cache} interface. Valid responses and
- * errors are posted back to the caller via a {@link ResponseDelivery}.
+ * Requests added to the specified queue are processed from the network via a specified {@link Network} interface.
+ * 队列中的请求通过 NetWork 接口来处理具体的网络请求。
+ * Responses are committed to cache, if eligible, using a specified {@link Cache} interface.
+ * 符合条件的话，请求结果会被添加到缓存中。
+ * Valid responses and errors are posted back to the caller via a {@link ResponseDelivery}.
+ * 通过 ResponseDelivery 将请求结果返回给调用者
  */
 public class NetworkDispatcher extends Thread {
     /**
@@ -42,7 +45,7 @@ public class NetworkDispatcher extends Thread {
      */
     private final Network mNetwork;
     /**
-     * The cache to write to.
+     * The cache to write to.  根据需要将请求结果写入缓存中
      */
     private final Cache mCache;
     /**

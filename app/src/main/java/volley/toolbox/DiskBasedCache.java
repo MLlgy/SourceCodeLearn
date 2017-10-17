@@ -103,6 +103,7 @@ public class DiskBasedCache implements Cache {
 
     /**
      * Clears the cache. Deletes all cached files from disk.
+     * 清除缓存
      */
     @Override
     public synchronized void clear() {

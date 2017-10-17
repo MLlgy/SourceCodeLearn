@@ -110,7 +110,7 @@ public class CacheDispatcher extends Thread {
                     continue;
                 }
 
-                // Attempt to retrieve this item from cache.
+                // Attempt to retrieve this item from cache. 从缓存中获取数据
                 Cache.Entry entry = mCache.get(request.getCacheKey());
                 if (entry == null) {
                     request.addMarker("cache-miss");
@@ -133,6 +133,10 @@ public class CacheDispatcher extends Thread {
                         new NetworkResponse(entry.data, entry.responseHeaders));
                 request.addMarker("cache-hit-parsed");
 
+                /**
+                 * 缓存中存在相应的新鲜的数据，则直接取出，
+                 * 如果需要刷新数据，则将request 添加到网络请求队列
+                 */
                 if (!entry.refreshNeeded()) {
                     // Completely unexpired cache hit. Just deliver the response.
                     mDelivery.postResponse(request, response);

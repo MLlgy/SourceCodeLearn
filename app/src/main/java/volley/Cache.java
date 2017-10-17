@@ -73,7 +73,7 @@ public interface Cache {
      */
     public static class Entry {
         /**
-         * The data returned from cache.
+         * The data returned from cache. 数据
          */
         public byte[] data;
 
@@ -83,17 +83,17 @@ public interface Cache {
         public String etag;
 
         /**
-         * Date of this response as reported by the server.
+         * Date of this response as reported by the server.获取的日期
          */
         public long serverDate;
 
         /**
-         * The last modified date for the requested object.
+         * The last modified date for the requested object. 数据最后修改的时间
          */
         public long lastModified;
 
         /**
-         * TTL for this record.
+         * TTL for this record. time to live 生存时间  具体指IP包被路由器丢弃之前允许通过的最大网段数量
          */
         public long ttl;
 
@@ -104,18 +104,19 @@ public interface Cache {
 
         /**
          * Immutable response headers as received from server; must be non-null.
+         * 收到服务器响应不可变的标头;
          */
         public Map<String, String> responseHeaders = Collections.emptyMap();
 
         /**
-         * True if the entry is expired.
+         * True if the entry is expired. 过期的话返回 true
          */
         public boolean isExpired() {
             return this.ttl < System.currentTimeMillis();
         }
 
         /**
-         * True if a refresh is needed from the original data source.
+         * True if a refresh is needed from the original data source. 是否需要刷新原数据
          */
         public boolean refreshNeeded() {
             return this.softTtl < System.currentTimeMillis();
