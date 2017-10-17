@@ -47,6 +47,7 @@ import java.util.Map;
 /**
  * An HttpStack that performs request over an {@link HttpClient}.
  * 通过httpclient 来执行请求的Http栈;
+ * 实现 HttpStack 接口，利用 Apache 的 HttpClient 进行各种请求方式的请求。
  */
 public class HttpClientStack implements HttpStack {
     protected final HttpClient mClient;

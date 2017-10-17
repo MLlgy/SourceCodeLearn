@@ -110,7 +110,7 @@ public class CacheDispatcher extends Thread {
                     continue;
                 }
 
-                // Attempt to retrieve this item from cache. 从缓存中获取数据
+                // Attempt to retrieve this item from cache. 从缓存中获取数据，数据为空时，将请求添加的网络请求中
                 Cache.Entry entry = mCache.get(request.getCacheKey());
                 if (entry == null) {
                     request.addMarker("cache-miss");

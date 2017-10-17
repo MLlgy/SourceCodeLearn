@@ -46,6 +46,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 /**
  * An {@link HttpStack} based on {@link HttpURLConnection}.
+ * 实现 HttpStack 接口，利用 Java 的 HttpURLConnection 进行各种请求方式的请求
  */
 public class HurlStack implements HttpStack {
 

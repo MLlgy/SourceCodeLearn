@@ -100,6 +100,7 @@ public class RequestQueue {
 
     /**
      * Network interface for performing requests.
+     * 执行网络请求的网络接口
      */
     private final Network mNetwork;
 
@@ -280,7 +281,7 @@ public class RequestQueue {
              */
             if (mWaitingRequests.containsKey(cacheKey)) {
                 // There is already a request in flight. Queue up.
-                Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);
+                Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);//获得该key的request队列
                 if (stagedRequests == null) {
                     stagedRequests = new LinkedList<Request<?>>();
                 }
