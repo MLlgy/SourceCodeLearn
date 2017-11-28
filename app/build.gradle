@@ -33,4 +33,5 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:2.0.1'
     compile 'com.squareup.okio:okio:1.13.0'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    compile "io.reactivex.rxjava2:rxjava:2.1.2"
 }
