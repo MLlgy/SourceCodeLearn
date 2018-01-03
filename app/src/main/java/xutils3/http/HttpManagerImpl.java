@@ -40,7 +40,7 @@ public final class HttpManagerImpl implements HttpManager {
     }
 
     @Override
-    public <T> Callback.Cancelable request(HttpMethod method, RequestParams entity, Callback.CommonCallback<T> callback) {
+    public <T> Callback.Cancelable  request(HttpMethod method, RequestParams entity, Callback.CommonCallback<T> callback) {
         entity.setMethod(method);
         Callback.Cancelable cancelable = null;
         if (callback instanceof Callback.Cancelable) {
