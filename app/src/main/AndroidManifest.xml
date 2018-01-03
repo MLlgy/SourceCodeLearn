@@ -10,6 +10,7 @@
         android:maxSdkVersion="22" />
 
     <application
+        android:name=".SclApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,13 +19,20 @@
         android:theme="@style/AppTheme">
         <activity android:name=".OkHttpMainActivity" />
         <activity android:name=".volley.VolleyExActivity">
+
+        </activity>
+
+        <activity android:name=".volleyexample.VolleyActivity" />
+        <activity
+            android:name=".xutils3sample.XutilsMainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".volleyexample.VolleyActivity"></activity>
+        <activity android:name=".xutils3sample.DownloadActivity" />
     </application>
 
 </manifest>

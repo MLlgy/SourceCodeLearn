@@ -1,13 +1,10 @@
-package com.meiji.toutiao;
+package com.example.mkio.importsource.retrofit2;
 
 import android.support.annotation.NonNull;
 
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
-import com.meiji.toutiao.api.INewsApi;
-import com.meiji.toutiao.util.NetWorkUtil;
+
+import com.example.mkio.importsource.InitApp;
+import com.example.mkio.importsource.NetWorkUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +16,6 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -69,45 +65,29 @@ public class RetrofitFactory {
     private volatile static Retrofit retrofit;
 
 
-
     @NonNull
     public static Retrofit getRetrofit() {
         synchronized (Object) {
             if (retrofit == null) {
-                HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
                 // 指定缓存路径,缓存大小 50Mb
                 Cache cache = new Cache(new File(InitApp.AppContext.getCacheDir(), "HttpCache"),
                         1024 * 1024 * 50);
-
-                // Cookie 持久化
-                ClearableCookieJar cookieJar =
-                        new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(InitApp.AppContext));
-
                 OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                        .cookieJar(cookieJar)
                         .cache(cache)
                         .addInterceptor(cacheControlInterceptor)
-                        .addInterceptor(interceptor)
                         .connectTimeout(10, TimeUnit.SECONDS)
                         .readTimeout(15, TimeUnit.SECONDS)
                         .writeTimeout(15, TimeUnit.SECONDS)
                         .retryOnConnectionFailure(true);
 
-                // Log 拦截器
-                if (BuildConfig.DEBUG) {
-                    builder = SdkManager.initInterceptor(builder);
-                }
-
-                retrofit =  new Retrofit.Builder()
-                        .baseUrl(INewsApi.HOST)
+                retrofit = new Retrofit.Builder()
+                        .baseUrl("")
                         .client(builder.build())
                         .addConverterFactory(GsonConverterFactory.create())
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                         .build();
             }
-            return retrofit;
         }
+        return retrofit;
     }
 }

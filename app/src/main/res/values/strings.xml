@@ -8,4 +8,6 @@
     <string name="retry">Retry</string>
     <string name="remove">Stop</string>
     <string name="test">Test</string>
+    <string name="action_settings">setting</string>
+    <string name="start">start</string>
 </resources>

@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        defaultConfig {
+            resConfigs "zh","en"
+        }
     }
     buildTypes {
         release {
@@ -18,6 +21,10 @@ android {
         }
     }
     useLibrary 'org.apache.http.legacy'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -33,5 +40,7 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:2.0.1'
     compile 'com.squareup.okio:okio:1.13.0'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    compile "io.reactivex.rxjava2:rxjava:2.1.2"
+    compile 'io.reactivex.rxjava2:rxjava:2.1.2'
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation 'com.android.support:design:25.3.1'
 }
