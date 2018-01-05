@@ -18,7 +18,7 @@ public class BaiduParams extends RequestParams {
     public String wd;
 
     // 数组参数 aa=1&aa=2&aa=4
-    public int[] aa = new int[]{1, 2, 4};
+    public int[] aa = new int[]{1, 2, 4, 5};
     public List<String> bb = new ArrayList<String>();
 
     public BaiduParams() {

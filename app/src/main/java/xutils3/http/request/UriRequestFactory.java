@@ -13,6 +13,7 @@ import java.util.HashMap;
 /**
  * Created by wyouflf on 15/11/4.
  * Uri请求创建工厂
+ * 工厂模式 创建请求方式的相关类
  */
 public final class UriRequestFactory {
 

@@ -32,14 +32,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by wyouflf on 15/7/23.
  * http 请求任务
+ * 此处真正的进行网络请求
  */
 public class HttpTask<ResultType> extends AbsTask<ResultType> implements ProgressHandler {
 
     // 请求相关
-    private RequestParams params;
-    private UriRequest request;
+    private RequestParams params;//请求参数
+    private UriRequest request;//请求对象
     private RequestWorker requestWorker;
-    private final Executor executor;
+    private final Executor executor;//线程池
     private volatile boolean hasException = false;
     private final Callback.CommonCallback<ResultType> callback;
 
@@ -310,6 +311,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                         throw requestWorker.ex;
                     }
                     rawResult = requestWorker.result;
+                    LogUtil.e("rawData: " + rawResult.toString());
                 } catch (Throwable ex) {
                     clearRawResult();
                     if (this.isCancelled()) {

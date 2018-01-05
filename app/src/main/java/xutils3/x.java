@@ -97,7 +97,7 @@ public final class x {
             Ext.debug = debug;
         }
 
-        public static void setTaskController(TaskController taskController) {
+        public static void setTaskController(TaskController taskController) {//传入 taskcontroller 的实现类 TaskControllerImpl
             if (Ext.taskController == null) {
                 Ext.taskController = taskController;
             }

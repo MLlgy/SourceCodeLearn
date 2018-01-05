@@ -12,6 +12,8 @@ import java.util.concurrent.Executor;
 
 /**
  * 异步任务的代理类(仅在task包内可用)
+ * {@link xutils3.http.HttpTask}
+ * 将 HttpTask 包装成 TaskProxy，然后执行TaskProxy.doBackground()。包装成TaskProxy对象的过程无非就是设置代理任务。
  *
  * @param <ResultType>
  */
@@ -20,7 +22,7 @@ import java.util.concurrent.Executor;
     /*package*/ static final InternalHandler sHandler = new InternalHandler();
     /*package*/ static final PriorityExecutor sDefaultExecutor = new PriorityExecutor(true);
 
-    private final AbsTask<ResultType> task;
+    private final AbsTask<ResultType> task;//ci
     private final Executor executor;
     private volatile boolean callOnCanceled = false;
     private volatile boolean callOnFinished = false;
@@ -30,6 +32,9 @@ import java.util.concurrent.Executor;
         this.task = task;
         this.task.setTaskProxy(this);
         this.setTaskProxy(null);
+        /**
+         * 获得在 {@link xutils3.http.HttpTask}中实例化线程池
+         */
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             taskExecutor = sDefaultExecutor;
@@ -78,7 +83,7 @@ import java.util.concurrent.Executor;
                         }
                     }
                 });
-        this.executor.execute(runnable);
+        this.executor.execute(runnable);//线程池执行线程操作
         return null;
     }
 

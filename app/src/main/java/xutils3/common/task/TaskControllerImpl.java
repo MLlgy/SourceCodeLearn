@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by wyouflf on 15/6/5.
  * 异步任务的 管理类
+ *
  * @link
  */
 public final class TaskControllerImpl implements TaskController {
@@ -35,12 +36,12 @@ public final class TaskControllerImpl implements TaskController {
     /**
      * run task
      *
-     * @param task
+     * @param task HttpTask
      * @param <T>
      * @return
      */
     @Override
-    public <T> AbsTask<T> start(AbsTask<T> task) {
+    public <T> AbsTask<T> start(AbsTask<T> task) {//此处的task为HttpTask
         TaskProxy<T> proxy = null;
         if (task instanceof TaskProxy) {
             proxy = (TaskProxy<T>) task;

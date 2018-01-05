@@ -40,14 +40,15 @@ public final class HttpManagerImpl implements HttpManager {
     }
 
     @Override
-    public <T> Callback.Cancelable  request(HttpMethod method, RequestParams entity, Callback.CommonCallback<T> callback) {
+    public <T> Callback.Cancelable request(HttpMethod method, RequestParams entity, Callback.CommonCallback<T> callback) {
         entity.setMethod(method);
         Callback.Cancelable cancelable = null;
         if (callback instanceof Callback.Cancelable) {
             cancelable = (Callback.Cancelable) callback;
         }
+        //将 请求方法、参数 、回调 封装成 http网络任务（HttpTask）
         HttpTask<T> task = new HttpTask<T>(entity, cancelable, callback);
-        return x.task().start(task);
+        return x.task().start(task);//通过异步任务管理类-TaskController，来进行管理网络请求任务，执行网络请求
     }
 
     @Override
