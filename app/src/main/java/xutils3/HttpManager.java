@@ -6,7 +6,8 @@ import xutils3.http.RequestParams;
 
 /**
  * Created by wyouflf on 15/6/17.
- * http请求接口
+ * http 请求接口
+ * {@link xutils3.http.HttpManagerImpl}
  */
 public interface HttpManager {
 

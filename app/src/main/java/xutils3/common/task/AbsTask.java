@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
  * Created by wyouflf on 15/6/5.
  * 异步任务基类
  *
- * @param <ResultType>
+ * @param <ResultType> 实现类 {@link xutils3.common.task.TaskProxy}
  */
 public abstract class AbsTask<ResultType> implements Callback.Cancelable {
 

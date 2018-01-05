@@ -74,6 +74,10 @@ public class PriorityExecutor implements Executor {
      * @param fifo     优先级相同时, 等待队列的是否优先执行先加入的任务.
      */
     public PriorityExecutor(int poolSize, boolean fifo) {
+        /**
+         * 线程池
+         * 阻塞队列 FIFO (first in first out)
+         */
         BlockingQueue<Runnable> mPoolWorkQueue =
                 new PriorityBlockingQueue<Runnable>(MAXIMUM_POOL_SIZE, fifo ? FIFO_CMP : FILO_CMP);
         mThreadPoolExecutor = new ThreadPoolExecutor(

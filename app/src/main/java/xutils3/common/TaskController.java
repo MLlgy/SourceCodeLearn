@@ -5,6 +5,7 @@ import xutils3.common.task.AbsTask;
 /**
  * Created by wyouflf on 15/6/11.
  * 任务管理接口
+ * TaskController的实现类 -> {@link xutils3.common.task.TaskControllerImpl}
  */
 public interface TaskController {
 

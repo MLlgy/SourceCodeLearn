@@ -80,6 +80,9 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
         // set params & callback
         this.params = params;
         this.callback = callback;
+        /**
+         * 转换成 具体的 callback 的
+         */
         if (callback instanceof Callback.CacheCallback) {
             this.cacheCallback = (Callback.CacheCallback<ResultType>) callback;
         }

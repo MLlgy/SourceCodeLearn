@@ -11,7 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by wyouflf on 15/6/5.
- * 异步任务的管理类
+ * 异步任务的 管理类
+ * @link
  */
 public final class TaskControllerImpl implements TaskController {
 

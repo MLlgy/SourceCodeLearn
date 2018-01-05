@@ -47,7 +47,7 @@ public final class x {
     }
 
     public static TaskController task() {
-        return Ext.taskController;
+        return Ext.taskController;//返回 异步任务的管理类 TaskController 的 实现类
     }
 
     public static HttpManager http() {
