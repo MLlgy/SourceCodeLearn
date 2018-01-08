@@ -74,6 +74,8 @@ public abstract class UriRequest implements Closeable {
 
     /**
      * 由loader发起请求, 拿到结果.
+     * 此处请求是网络请求
+     * 例子：StringLoder ，执行{@link xutils3.http.loader.StringLoader#load(UriRequest) 去执行网络请求}
      *
      * @return
      * @throws Throwable

@@ -15,6 +15,7 @@ import xutils3.http.app.HttpRetryHandler;
 import xutils3.http.app.RedirectHandler;
 import xutils3.http.app.RequestInterceptListener;
 import xutils3.http.app.RequestTracker;
+import xutils3.http.request.HttpRequest;
 import xutils3.http.request.UriRequest;
 import xutils3.http.request.UriRequestFactory;
 import xutils3.x;
@@ -223,7 +224,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
             try {
                 clearRawResult();
                 LogUtil.d("load cache: " + this.request.getRequestUri());
-                rawResult = this.request.loadResultFromCache();
+                rawResult = this.request.loadResultFromCache();//从缓存中获取数据
             } catch (Throwable ex) {
                 LogUtil.w("load disk cache error", ex);
             }
@@ -310,8 +311,8 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                     if (requestWorker.ex != null) {
                         throw requestWorker.ex;
                     }
-                    rawResult = requestWorker.result;
-                    LogUtil.e("rawData: " + rawResult.toString());
+                    LogUtil.e("rawData111: " + (ResultType) requestWorker.result);
+                    rawResult = requestWorker.result;//由RequestWorker 获得的真正的数据
                 } catch (Throwable ex) {
                     clearRawResult();
                     if (this.isCancelled()) {
@@ -602,6 +603,10 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
 
                 try {
                     request.setRequestInterceptListener(requestInterceptListener);
+                    /**
+                     * 开始网络请求，得到真正的数据
+                     * {@link HttpRequest#loadResult()}
+                     */
                     this.result = request.loadResult();
                 } catch (Throwable ex) {
                     this.ex = ex;

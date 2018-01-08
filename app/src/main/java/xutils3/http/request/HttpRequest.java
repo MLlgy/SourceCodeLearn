@@ -216,6 +216,10 @@ public class HttpRequest extends UriRequest {
                     }
                     connection.setRequestProperty("Content-Length", String.valueOf(contentLength));
                     connection.setDoOutput(true);
+                    /**
+                     * 调用 connect() 连接远程资源
+                     * getOutputStream 和 getInputStream 内部都会隐式的调用 connect()
+                     */
                     body.writeTo(connection.getOutputStream());
                 }
             }
@@ -271,6 +275,12 @@ public class HttpRequest extends UriRequest {
         return cacheKey;
     }
 
+    /**
+     * 获取网络请求数据,调用 UriRequest 中的 loadRequest，去请求网络
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object loadResult() throws Throwable {
         isLoading = true;
@@ -313,6 +323,12 @@ public class HttpRequest extends UriRequest {
         params.setHeader("If-None-Match", null);
     }
 
+    /**
+     * 获取网络请求数据 -- connection.getInputStream()
+     *  进行连接，但是实际上request要在connection.getInputStream()函数中才会真正发到服务器
+     * @return
+     * @throws IOException
+     */
     @Override
     public InputStream getInputStream() throws IOException {
         if (connection != null && inputStream == null) {

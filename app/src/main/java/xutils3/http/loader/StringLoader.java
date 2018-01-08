@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import xutils3.cache.DiskCacheEntity;
 import xutils3.common.util.IOUtil;
 import xutils3.http.RequestParams;
+import xutils3.http.request.HttpRequest;
 import xutils3.http.request.UriRequest;
 
 import java.io.InputStream;
@@ -41,6 +42,9 @@ import java.io.InputStream;
 
     @Override
     public String load(final UriRequest request) throws Throwable {
+        /**
+         * 执行 {@link HttpRequest#sendRequest() 去发起请求}
+         */
         request.sendRequest();
         return this.load(request.getInputStream());
     }

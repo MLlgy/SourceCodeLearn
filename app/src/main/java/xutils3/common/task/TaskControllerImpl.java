@@ -41,7 +41,7 @@ public final class TaskControllerImpl implements TaskController {
      * @return
      */
     @Override
-    public <T> AbsTask<T> start(AbsTask<T> task) {//此处的task为HttpTask
+    public <T> AbsTask<T> start(AbsTask<T> task) {//此处的task为 HttpTask
         TaskProxy<T> proxy = null;
         if (task instanceof TaskProxy) {
             proxy = (TaskProxy<T>) task;

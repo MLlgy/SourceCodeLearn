@@ -42,6 +42,13 @@ import java.util.concurrent.Executor;
         this.executor = taskExecutor;
     }
 
+    /**
+     * 根据网络请求的结果进行回调 onSuccess onCancle onError onFinish
+     *
+     * @return
+     * @throws Throwable
+     */
+
     @Override
     protected final ResultType doBackground() throws Throwable {
         this.onWaiting();
