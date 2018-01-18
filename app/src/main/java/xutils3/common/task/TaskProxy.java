@@ -79,6 +79,9 @@ import java.util.concurrent.Executor;
                                 throw new Callback.CancelledException("");
                             }
 
+                            /**
+                             * 在此处执行的 网络请求时 失败、成功、取消 的接口回调
+                             */
                             // 执行成功
                             TaskProxy.this.onSuccess(task.getResult());
                         } catch (Callback.CancelledException cex) {

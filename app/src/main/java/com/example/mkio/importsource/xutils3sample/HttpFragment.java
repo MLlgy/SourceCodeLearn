@@ -134,32 +134,32 @@ public class HttpFragment extends BaseFragment {
 
         // cancelable.cancel(); // 取消请求
 
-        Callback.CacheCallback cacheCallback = (Callback.CacheCallback) x.http().get(params, new Callback.CacheCallback<String>() {
-            @Override
-            public boolean onCache(String result) {
-                return false;
-            }
-
-            @Override
-            public void onSuccess(String result) {
-
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
+//        Callback.CacheCallback cacheCallback = (Callback.CacheCallback) x.http().get(params, new Callback.CacheCallback<String>() {
+//            @Override
+//            public boolean onCache(String result) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSuccess(String result) {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable ex, boolean isOnCallback) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(CancelledException cex) {
+//
+//            }
+//
+//            @Override
+//            public void onFinished() {
+//
+//            }
+//        });
     }
 
     // 上传多文件示例

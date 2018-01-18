@@ -46,6 +46,11 @@ import java.io.InputStream;
          * 执行 {@link HttpRequest#sendRequest() 去发起请求}
          */
         request.sendRequest();
+        /**
+         * HttpURLConneciton获取响应
+         * 调用HttpURLConnection连接对象的getInputStream()函数,
+         * 在调用 getInputStream 时候发送 http 请求，同时获取响应
+         */
         return this.load(request.getInputStream());
     }
 

@@ -78,6 +78,13 @@ public class IOUtil {
         return readStr(in, "UTF-8");
     }
 
+    /**
+     * 输入流 转换为 字符串
+     * @param in
+     * @param charset
+     * @return
+     * @throws IOException
+     */
     public static String readStr(InputStream in, String charset) throws IOException {
         if (TextUtils.isEmpty(charset)) charset = "UTF-8";
 

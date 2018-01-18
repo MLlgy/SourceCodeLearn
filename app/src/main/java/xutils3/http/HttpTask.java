@@ -207,6 +207,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
         boolean retry = true;
         int retryCount = 0;
         Throwable exception = null;
+        //设置重试次数
         HttpRetryHandler retryHandler = this.params.getHttpRetryHandler();
         if (retryHandler == null) {
             retryHandler = new HttpRetryHandler();
@@ -217,7 +218,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
             throw new Callback.CancelledException("cancelled before request");
         }
 
-        // 检查缓存
+        // 检查缓存 允许缓存
         Object cacheResult = null;
         if (cacheCallback != null && HttpMethod.permitsCache(params.getMethod())) {
             // 尝试从缓存获取结果, 并为请求头加入缓存控制参数.
@@ -312,7 +313,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                         throw requestWorker.ex;
                     }
                     LogUtil.e("rawData111: " + (ResultType) requestWorker.result);
-                    rawResult = requestWorker.result;//由RequestWorker 获得的真正的数据
+                    rawResult = requestWorker.result;//由 RequestWorker 获得的真正的数据
                 } catch (Throwable ex) {
                     clearRawResult();
                     if (this.isCancelled()) {
