@@ -12,7 +12,7 @@ import xutils3.x;
  * @date 2018/1/3.
  */
 
-public class SclApplication extends Application {
+public class SourceApplication extends Application {
 
     @Override
     public void onCreate() {

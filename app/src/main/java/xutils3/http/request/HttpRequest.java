@@ -325,7 +325,8 @@ public class HttpRequest extends UriRequest {
 
     /**
      * 获取网络请求数据 -- connection.getInputStream()
-     *  进行连接，但是实际上request要在connection.getInputStream()函数中才会真正发到服务器
+     * 进行连接，但是实际上request要在connection.getInputStream()函数中才会真正发到服务器
+     *
      * @return
      * @throws IOException
      */
@@ -396,6 +397,7 @@ public class HttpRequest extends UriRequest {
         }
     }
 
+    //获取 缓存过期时间
     @Override
     public long getExpiration() {
         if (connection == null) return -1L;
