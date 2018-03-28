@@ -300,6 +300,7 @@ import java.util.concurrent.atomic.AtomicLong;
         }
 
         // set loadingDrawable
+        //todo 设置占位符
         Drawable loadingDrawable = null;
         if (options.isForceLoadingDrawable()) {
             loadingDrawable = options.getLoadingDrawable(view);

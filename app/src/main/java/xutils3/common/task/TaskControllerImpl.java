@@ -177,6 +177,7 @@ public final class TaskControllerImpl implements TaskController {
         };
     }
 
+    //图片
     @Override
     public void autoPost(Runnable runnable) {
         if (runnable == null) return;
