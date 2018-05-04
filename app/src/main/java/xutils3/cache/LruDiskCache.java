@@ -90,6 +90,7 @@ public final class LruDiskCache {
 
         if (result != null) {
 
+            //如果超过缓存时间，则数据返回空
             if (result.getExpires() < System.currentTimeMillis()) {
                 return null;
             }

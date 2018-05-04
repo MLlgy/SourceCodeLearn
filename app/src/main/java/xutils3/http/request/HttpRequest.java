@@ -298,7 +298,7 @@ public class HttpRequest extends UriRequest {
         isLoading = true;
         DiskCacheEntity cacheEntity = LruDiskCache.getDiskCache(params.getCacheDirName())
                 .setMaxSize(params.getCacheSize())
-                .get(this.getCacheKey());
+                .get(this.getCacheKey());//从缓存中获取数据，如果已经过去，则 cacheEntity 为 null
 
         if (cacheEntity != null) {
             if (HttpMethod.permitsCache(params.getMethod())) {

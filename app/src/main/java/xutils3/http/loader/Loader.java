@@ -15,6 +15,8 @@ import java.util.Date;
 /**
  * Author: wyouflf
  * Time: 2014/05/26
+ *
+ * 加载数据，
  */
 public abstract class Loader<T> {
 
@@ -29,13 +31,14 @@ public abstract class Loader<T> {
         this.progressHandler = callbackHandler;
     }
 
+    //设置 缓存的缓存时间等信息
     protected void saveStringCache(UriRequest request, String resultStr) {
         if (!TextUtils.isEmpty(resultStr)) {
             DiskCacheEntity entity = new DiskCacheEntity();
             entity.setKey(request.getCacheKey());
             entity.setLastAccess(System.currentTimeMillis());
             entity.setEtag(request.getETag());
-            entity.setExpires(request.getExpiration());
+            entity.setExpires(request.getExpiration());//设置了过期时间
             entity.setLastModify(new Date(request.getLastModified()));
             entity.setTextContent(resultStr);
             LruDiskCache.getDiskCache(request.getParams().getCacheDirName()).put(entity);

@@ -42,6 +42,9 @@ import java.io.InputStream;
 
     @Override
     public JSONArray load(final UriRequest request) throws Throwable {
+        /**
+         * 发起请求并获取请求字节流
+         */
         request.sendRequest();
         return this.load(request.getInputStream());
     }

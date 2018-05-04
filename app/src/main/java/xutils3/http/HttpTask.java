@@ -1,6 +1,9 @@
 package xutils3.http;
 
 import android.text.TextUtils;
+import android.view.View;
+
+import com.example.mkio.importsource.xutils3sample.HttpFragment;
 
 import xutils3.common.Callback;
 import xutils3.common.task.AbsTask;
@@ -202,7 +205,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
         ResultType result = null;
         resolveLoadType();
         request = createNewRequest();
-        checkDownloadTask();
+        checkDownloadTask();//检查现在是否有下载任务
         // retry 初始化
         boolean retry = true;
         int retryCount = 0;
@@ -220,11 +223,15 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
 
         // 检查缓存 允许缓存
         Object cacheResult = null;
+        //如果允许缓存，
         if (cacheCallback != null && HttpMethod.permitsCache(params.getMethod())) {
             // 尝试从缓存获取结果, 并为请求头加入缓存控制参数.
             try {
                 clearRawResult();
                 LogUtil.d("load cache: " + this.request.getRequestUri());
+                /**
+                 * {@link xutils3.http.request.HttpRequest#loadResultFromCache()}
+                 */
                 rawResult = this.request.loadResultFromCache();//从缓存中获取数据
             } catch (Throwable ex) {
                 LogUtil.w("load disk cache error", ex);
@@ -254,7 +261,11 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                 }
 
                 if (cacheResult != null) {
-                    // 同步等待是否信任缓存
+                    //
+                    /**
+                     * 同步等待是否信任缓存
+                     *最终来到这个位置 {@link HttpTask#onUpdate(int, Object...)}
+                     */
                     this.update(FLAG_CACHE, cacheResult);
                     synchronized (cacheLock) {
                         while (trustCache == null) {
@@ -267,7 +278,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                         }
                     }
 
-                    // 处理完成
+                    // 处理完成，如果信任该缓存，则返回 null，只是不会继续执行下面的代码（网络请求）
                     if (trustCache) {
                         return null;
                     }
@@ -396,7 +407,10 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                         if (tracker != null) {
                             tracker.onCache(request, result);
                         }
-                        trustCache = this.cacheCallback.onCache(result);
+                        /**
+                         * {@link HttpFragment#onTest1Click(View)#cancelable2#onCache}
+                         */
+                        trustCache = this.cacheCallback.onCache(result);//检验是否信任缓存数据
                     } catch (Throwable ex) {
                         trustCache = false;
                         callback.onError(ex, true);
