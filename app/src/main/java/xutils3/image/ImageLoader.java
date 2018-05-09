@@ -231,6 +231,7 @@ import java.util.concurrent.atomic.AtomicLong;
                 }
             }
         }
+        //从内存中获取图片
         if (memDrawable != null) { // has mem cache
             boolean trustMemCache = false;
             try {
@@ -266,6 +267,9 @@ import java.util.concurrent.atomic.AtomicLong;
                 }
             }
         } else {
+            /**
+             * 从 网络 或 硬盘中 获取图片
+             */
             // load from Network or DiskCache
             return new ImageLoader().doLoad(view, url, localOptions, callback);
         }
@@ -318,6 +322,9 @@ import java.util.concurrent.atomic.AtomicLong;
                 FAKE_IMG_MAP.put(url, (FakeImageView) view);
             }
         }
+        /**
+         * 网络请求图片
+         */
         return cancelable = x.http().get(params, this);
     }
 

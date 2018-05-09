@@ -144,6 +144,9 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
     private UriRequest createNewRequest() throws Throwable {
         // init request
         params.init();
+        /**
+         * 此处会根据 loadType 的类型实例化出 Loader 的类型是StringLoader ？ FileLoader....
+         * */
         UriRequest result = UriRequestFactory.getUriRequest(params, loadType);
         result.setCallingClassLoader(callback.getClass().getClassLoader());
         result.setProgressHandler(this);
@@ -410,7 +413,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                         /**
                          * {@link HttpFragment#onTest1Click(View)#cancelable2#onCache}
                          */
-                        trustCache = this.cacheCallback.onCache(result);//检验是否信任缓存数据
+                        trustCache = this.cacheCallback.onCache(result);//检验是否信任缓存数据，通过回调将数据展示出来
                     } catch (Throwable ex) {
                         trustCache = false;
                         callback.onError(ex, true);

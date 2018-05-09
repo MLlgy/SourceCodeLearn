@@ -7,6 +7,7 @@ import xutils3.cache.DiskCacheEntity;
 import xutils3.cache.LruDiskCache;
 import xutils3.http.ProgressHandler;
 import xutils3.http.RequestParams;
+import xutils3.http.request.HttpRequest;
 import xutils3.http.request.UriRequest;
 
 import java.io.InputStream;
@@ -35,7 +36,10 @@ public abstract class Loader<T> {
     protected void saveStringCache(UriRequest request, String resultStr) {
         if (!TextUtils.isEmpty(resultStr)) {
             DiskCacheEntity entity = new DiskCacheEntity();
-            entity.setKey(request.getCacheKey());
+            /**
+             * {@link HttpRequest#getCacheKey()}
+             */
+            entity.setKey(request.getCacheKey());//设置 缓存对象对应的key值
             entity.setLastAccess(System.currentTimeMillis());
             entity.setEtag(request.getETag());
             entity.setExpires(request.getExpiration());//设置了过期时间

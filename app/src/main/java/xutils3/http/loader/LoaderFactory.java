@@ -39,7 +39,7 @@ public final class LoaderFactory {
 
     @SuppressWarnings("unchecked")
     public static Loader<?> getLoader(Type type, RequestParams params) {
-        Loader<?> result = converterHashMap.get(type);
+        Loader<?> result = converterHashMap.get(type);//在图片时获得 FileLoader
         if (result == null) {
             result = new ObjectLoader(type);
         } else {
