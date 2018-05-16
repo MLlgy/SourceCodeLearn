@@ -168,6 +168,35 @@ public class ImageFragment extends BaseFragment {
         private ProgressBar imgPb;
     }
 
+    public class CustomCallBack implements Callback.CacheCallback<Drawable>{
+
+        @Override
+        public void onSuccess(Drawable result) {
+
+        }
+
+        @Override
+        public void onError(Throwable ex, boolean isOnCallback) {
+
+        }
+
+        @Override
+        public void onCancelled(CancelledException cex) {
+
+        }
+
+        @Override
+        public void onFinished() {
+
+        }
+
+        @Override
+        public boolean onCache(Drawable result) {
+            return false;
+        }
+    }
+
+
     public class CustomBitmapLoadCallBack implements Callback.ProgressCallback<Drawable> {
         private final ImageItemHolder holder;
 

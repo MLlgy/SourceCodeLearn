@@ -344,7 +344,7 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
                     }
 
                     try {
-                        result = (ResultType) prepareCallback.prepare(rawResult);
+                        result = (ResultType) prepareCallback.prepare(rawResult);//在图片请求的模块中 rawResult 的具体类型为 File
                     } finally {
                         clearRawResult();
                     }

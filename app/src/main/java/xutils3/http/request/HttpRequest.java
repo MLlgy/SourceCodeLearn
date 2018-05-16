@@ -144,6 +144,10 @@ public class HttpRequest extends UriRequest {
             }
         }
 
+        /**
+         * xutils cookie
+         * add cookie
+         */
         if (params.isUseCookie()) {// add cookies
             try {
                 Map<String, List<String>> singleMap =

@@ -83,12 +83,28 @@ public class FileLoader extends Loader<File> {
                 }
             }
 
+            /**
+             * Author: wyouflf
+             * Time: 2014/05/30
+             * 下载参数策略:
+             * 1. RequestParams#saveFilePath不为空时, 目标文件保存在saveFilePath;
+             * 否则由Cache策略分配文件下载路径.
+             * 2. 下载时临时目标文件路径为tempSaveFilePath, 下载完后进行a: CacheFile#commit; b:重命名等操作.
+             * 断点下载策略:
+             * 1. 要下载的目标文件不存在或小于 CHECK_SIZE 时删除目标文件, 重新下载.
+             * 2. 若文件存在且大于 CHECK_SIZE, range = fileLen - CHECK_SIZE , 校验check_buffer, 相同: 继续下载;
+             * 不相同: 删掉目标文件, 并抛出RuntimeException(HttpRetryHandler会使下载重新开始).
+             */
+
             // 处理[断点逻辑2](见文件头doc)
             long targetFileLen = targetFile.length();
             if (isAutoResume && targetFileLen > 0) {
                 FileInputStream fis = null;
                 try {
                     long filePos = targetFileLen - CHECK_SIZE;
+                    /**
+                     * 完成断点续传的校验 6666 学到了
+                     */
                     if (filePos > 0) {
                         fis = new FileInputStream(targetFile);
                         byte[] fileCheckBuffer = IOUtil.readBytes(fis, filePos, CHECK_SIZE);
@@ -147,7 +163,20 @@ public class FileLoader extends Loader<File> {
                 }
             }
             bos.flush();
-            // 处理[下载逻辑2.a](见文件头doc)
+
+            /**
+             * Author: wyouflf
+             * Time: 2014/05/30
+             * 下载参数策略:
+             * 1. RequestParams#saveFilePath不为空时, 目标文件保存在saveFilePath;
+             * 否则由Cache策略分配文件下载路径.
+             * 2. 下载时临时目标文件路径为tempSaveFilePath, 下载完后进行a: CacheFile#commit; b:重命名等操作.
+             * 断点下载策略:
+             * 1. 要下载的目标文件不存在或小于 CHECK_SIZE 时删除目标文件, 重新下载.
+             * 2. 若文件存在且大于 CHECK_SIZE, range = fileLen - CHECK_SIZE , 校验check_buffer, 相同: 继续下载;
+             * 不相同: 删掉目标文件, 并抛出RuntimeException(HttpRetryHandler会使下载重新开始).
+             */
+            // 处理[下载逻辑2.a](见文件头doc)  (添加文件到磁盘中)
             if (diskCacheFile != null) {
                 targetFile = diskCacheFile.commit();
             }
@@ -172,6 +201,9 @@ public class FileLoader extends Loader<File> {
             // 处理[下载逻辑1](见文件头doc)
             saveFilePath = params.getSaveFilePath();
             diskCacheFile = null;
+            /**
+             * 保存文件路径为空时
+             */
             if (TextUtils.isEmpty(saveFilePath)) {
 
                 if (progressHandler != null && !progressHandler.updateProgress(0, 0, false)) {
@@ -206,6 +238,10 @@ public class FileLoader extends Loader<File> {
              * 1. 要下载的目标文件不存在或小于 CHECK_SIZE 时删除目标文件, 重新下载.
              * 2. 若文件存在且大于 CHECK_SIZE, range = fileLen - CHECK_SIZE , 校验check_buffer, 相同: 继续下载;
              * 不相同: 删掉目标文件, 并抛出RuntimeException(HttpRetryHandler会使下载重新开始).
+             *
+             * 即：
+             * 断点下载时，当已经下载的文件大小小于 512 字节时，则删除重新下载。
+             * 当大于 512个字节时，校验一部分字节，相同继续下载，不同删除文件重新下载。
              */
             params = request.getParams();
             {// 处理[断点逻辑1](见文件头doc)

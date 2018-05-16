@@ -221,6 +221,9 @@ import java.util.concurrent.atomic.AtomicLong;
         }
 
         // load from Memory Cache
+        /**
+         * 从 缓存中获取图片
+         */
         Drawable memDrawable = null;
         if (localOptions.isUseMemCache()) {
             memDrawable = MEM_CACHE.get(key);
@@ -247,6 +250,9 @@ import java.util.concurrent.atomic.AtomicLong;
                     if (!trustMemCache) {
                         // not trust the cache
                         // load from Network or DiskCache
+                        /**
+                         * 不信任缓存，直接从 磁盘或网络 获取数据
+                         */
                         return new ImageLoader().doLoad(view, url, localOptions, callback);
                     }
                 } else if (callback != null) {
@@ -325,7 +331,7 @@ import java.util.concurrent.atomic.AtomicLong;
         /**
          * 网络请求图片
          */
-        return cancelable = x.http().get(params, this);
+        return cancelable = x.http().get(params, this);//所以此次网络请求的 callback 其实是 ImageLoader，在 HttpTask 中 callback 的类型最终为 PrepareCallBack
     }
 
     @Override
