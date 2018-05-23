@@ -257,7 +257,7 @@ public final class LruDiskCache {
                         lastTrimTime = current;
                     }
 
-                    // trim expires
+                    // trim expires 清理过期文件
                     deleteExpiry();
 
                     // trim db

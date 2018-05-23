@@ -487,9 +487,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
     private static RequestParams createRequestParams(String url, ImageOptions options) {
         RequestParams params = new RequestParams(url);
+        //设置缓存地址
         params.setCacheDirName(DISK_CACHE_DIR_NAME);
         params.setConnectTimeout(1000 * 8);
+        //设置优先级
         params.setPriority(Priority.BG_LOW);
+        //指定线程池
         params.setExecutor(EXECUTOR);
         params.setCancelFast(true);
         params.setUseCookie(false);
