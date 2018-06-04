@@ -50,6 +50,8 @@ public class ImageFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
         imageOptions = new ImageOptions.Builder()
                 .setSize(DensityUtil.dip2px(120), DensityUtil.dip2px(120))
                 .setRadius(DensityUtil.dip2px(5))

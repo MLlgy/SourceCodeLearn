@@ -199,7 +199,7 @@ public class FileLoader extends Loader<File> {
         try {
 
             // 处理[下载逻辑1](见文件头doc)
-            saveFilePath = params.getSaveFilePath();
+            saveFilePath = params.getSaveFilePath();// 断点续传:设置了断点续传功能
             diskCacheFile = null;
             /**
              * 保存文件路径为空时
@@ -375,6 +375,11 @@ public class FileLoader extends Loader<File> {
         return null;
     }
 
+    /**
+     * 服务器是否支持断点续传
+     * @param request
+     * @return
+     */
     private static boolean isSupportRange(UriRequest request) {
         if (request == null) return false;
         String ranges = request.getResponseHeader("Accept-Ranges");
