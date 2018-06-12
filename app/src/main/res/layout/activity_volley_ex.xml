@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mkio.importsource.volley.VolleyExActivity">
+    tools:context="com.example.mkio.importsource.volleyexample.VolleyExActivity">
 
     <Button
         android:layout_width="wrap_content"

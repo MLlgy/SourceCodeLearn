@@ -24,6 +24,11 @@ public final class HttpMethod {
         || method.equals("MOVE");     // WebDAV
   }
 
+  /**
+   * 这些方法必须需要 body
+   * @param method
+   * @return
+   */
   public static boolean requiresRequestBody(String method) {
     return method.equals("POST")
         || method.equals("PUT")
