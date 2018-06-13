@@ -50,6 +50,8 @@ import static okhttp3.internal.http.StatusLine.HTTP_CONTINUE;
  * A socket connection that can be used to send HTTP/1.1 messages. This class strictly enforces the
  * following lifecycle:
  *
+ * 可以用来发送HTTP/1.1消息的套接字连接。本类严格执行下列生命周期:
+ *
  * <ol>
  *     <li>{@linkplain #writeRequest Send request headers}.
  *     <li>Open a sink to write the request body. Either {@linkplain #newFixedLengthSink

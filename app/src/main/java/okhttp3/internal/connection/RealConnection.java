@@ -334,6 +334,9 @@ public final class RealConnection extends Http2Connection.Listener implements Co
     /**
      * To make an HTTPS connection over an HTTP proxy, send an unencrypted CONNECT request to create
      * the proxy connection. This may need to be retried if the proxy requires authorization.
+     * 要通过HTTP代理建立HTTPS连接，请发送一个未加密的连接请求来创建代理连接。如果代理需要授权，可能需要重新尝试。
+     *
+     * 创建连接通道
      */
     private Request createTunnel(int readTimeout, int writeTimeout, Request tunnelRequest,
                                  HttpUrl url) throws IOException {

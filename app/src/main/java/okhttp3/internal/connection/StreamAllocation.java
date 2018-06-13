@@ -34,18 +34,25 @@ import static okhttp3.internal.Util.closeQuietly;
 
 /**
  * This class coordinates the relationship between three entities:
+ * （这个类协调三个实体之间的关系）
  *
  * <ul>
  *     <li><strong>Connections:</strong> physical socket connections to remote servers. These are
  *         potentially slow to establish so it is necessary to be able to cancel a connection
  *         currently being connected.
+ *         （与远程服务器的物理套接字连接。这些连接建立起来可能很慢，因此必须能够取消当前正在连接的连接。）
  *     <li><strong>Streams:</strong> logical HTTP request/response pairs that are layered on
  *         connections. Each connection has its own allocation limit, which defines how many
  *         concurrent streams that connection can carry. HTTP/1.x connections can carry 1 stream
  *         at a time, HTTP/2 typically carry multiple.
+ *         （在*连接上分层的逻辑HTTP请求/响应对。
+ *         每个连接都有自己的分配限制，它定义了连接可以承载多少并发流。
+ *         HTTP/1.x 连接一次可以携带1个流*，HTTP/2通常携带多个流*。）
  *     <li><strong>Calls:</strong> a logical sequence of streams, typically an initial request and
  *         its follow up requests. We prefer to keep all streams of a single call on the same
  *         connection for better behavior and locality.
+ *         （流的逻辑序列，通常是初始请求和它的后续请求。我们更喜欢将单个调用的所有流保存在同一个连接上，
+ *         以获得更好的行为和位置）
  * </ul>
  *
  * <p>Instances of this class act on behalf of the call, using one or more streams over one or more

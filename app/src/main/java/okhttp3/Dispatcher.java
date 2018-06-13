@@ -47,7 +47,7 @@ public final class Dispatcher {
   private @Nullable Runnable idleCallback;
 
   /** Executes calls. Created lazily. */
-  /** 消费者线程池 */
+  /** 消费者线程池 ,任务队列*/
   private @Nullable ExecutorService executorService;
 
   /** Ready async calls in the order they'll be run. */
@@ -134,6 +134,9 @@ public final class Dispatcher {
   }
 
   synchronized void enqueue(AsyncCall call) {
+    /**
+     * 正在运行的异步请求队列的大小 < 最大并发请求数  并且每个主机最大请求数
+     */
     if (runningAsyncCalls.size() < maxRequests && runningCallsForHost(call) < maxRequestsPerHost) {
       runningAsyncCalls.add(call);
       executorService().execute(call);
@@ -164,6 +167,9 @@ public final class Dispatcher {
     if (runningAsyncCalls.size() >= maxRequests) return; // Already running max capacity.
     if (readyAsyncCalls.isEmpty()) return; // No ready calls to promote.
 
+    /**
+     * 从将要执行的队列中删除这个call，并把它加入到正在执行的队列中
+     */
     for (Iterator<AsyncCall> i = readyAsyncCalls.iterator(); i.hasNext(); ) {
       AsyncCall call = i.next();
 

@@ -27,6 +27,7 @@ import okhttp3.internal.connection.StreamAllocation;
 /**
  * A concrete interceptor chain that carries the entire interceptor chain: all application
  * interceptors, the OkHttp core, all network interceptors, and finally the network caller.
+ * 包含整个拦截链的具体拦截链:所有应用程序*拦截器、OkHttp核心、所有网络拦截器，最后是网络调用者
  */
 public final class RealInterceptorChain implements Interceptor.Chain {
   private final List<Interceptor> interceptors;

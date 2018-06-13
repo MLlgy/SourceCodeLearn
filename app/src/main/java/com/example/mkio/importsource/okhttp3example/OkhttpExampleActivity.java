@@ -111,7 +111,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
                 } else {
                     response.body().string();
                     String str = response.networkResponse().toString();
-                    Log.i("wangshu", "network---" + str);
+                    Log.i("wangshu", "network---" + str + "    " + response.body().string());
                 }
                 runOnUiThread(new Runnable() {
                     @Override
