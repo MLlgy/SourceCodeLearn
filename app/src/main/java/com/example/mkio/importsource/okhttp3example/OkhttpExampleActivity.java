@@ -25,6 +25,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OkhttpExampleActivity extends AppCompatActivity implements View.OnClickListener {
     private OkHttpClient mOkHttpClient;
@@ -80,6 +81,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
     private void initOkHttpClient() {
         File sdcache = getExternalCacheDir();
         int cacheSize = 10 * 1024 * 1024;
+        //OkHttpClient.Builder 可以用来自定义生产 OkHttpClient 实例
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)

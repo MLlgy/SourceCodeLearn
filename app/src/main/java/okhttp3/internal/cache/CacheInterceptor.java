@@ -55,7 +55,7 @@ public final class CacheInterceptor implements Interceptor {
         : null;
 
     long now = System.currentTimeMillis();
-
+    // 缓存策略
     CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
     Request networkRequest = strategy.networkRequest;
     Response cacheResponse = strategy.cacheResponse;

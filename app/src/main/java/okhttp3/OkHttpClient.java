@@ -52,14 +52,16 @@ import okhttp3.internal.ws.RealWebSocket;
 /**
  * Factory for {@linkplain Call calls}, which can be used to send HTTP requests and read their
  * responses.
+ * 用来生产发送http 请求和读取响应--Call的工厂类
  *
  * <h3>OkHttpClients should be shared</h3>
+ * HttpCLinet 的最佳实践为单例的原因：
  *
  * <p>OkHttp performs best when you create a single {@code OkHttpClient} instance and reuse it for
  * all of your HTTP calls. This is because each client holds its own connection pool and thread
  * pools. Reusing connections and threads reduces latency and saves memory. Conversely, creating a
  * client for each request wastes resources on idle pools.
- *
+ *可以生产 默认的 HttpClinet 示例
  * <p>Use {@code new OkHttpClient()} to create a shared instance with the default settings:
  * <pre>   {@code
  *
@@ -67,6 +69,7 @@ import okhttp3.internal.ws.RealWebSocket;
  *   public final OkHttpClient client = new OkHttpClient();
  * }</pre>
  *
+ * 用来生产自定义 HttpClinet 的实例
  * <p>Or use {@code new OkHttpClient.Builder()} to create a shared instance with custom settings:
  * <pre>   {@code
  *
@@ -93,6 +96,7 @@ import okhttp3.internal.ws.RealWebSocket;
  *
  * <h3>Shutdown isn't necessary</h3>
  *
+ * 如果线程和连接闲置的时候会被自动释放
  * <p>The threads and connections that are held will be released automatically if they remain idle.
  * But if you are writing a application that needs to aggressively release unused resources you may
  * do so.
