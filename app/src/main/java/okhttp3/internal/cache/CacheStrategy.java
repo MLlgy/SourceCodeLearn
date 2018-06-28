@@ -40,6 +40,11 @@ import static java.net.HttpURLConnection.HTTP_REQ_TOO_LONG;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
+ *
+ * 缓存策略类
+ *
+ * 它根据之前缓存的结果与当前将要发送Request的header进行策略，并得出是否进行请求的结果
+ *
  * Given a request and cached response, this figures out whether to use the network, the cache, or
  * both.
  *

@@ -57,7 +57,9 @@ public final class CacheInterceptor implements Interceptor {
     long now = System.currentTimeMillis();
     // 缓存策略
     CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
+    //策略中的请求
     Request networkRequest = strategy.networkRequest;
+    ////策略中的响应
     Response cacheResponse = strategy.cacheResponse;
 
     if (cache != null) {
@@ -68,6 +70,7 @@ public final class CacheInterceptor implements Interceptor {
       closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
     }
 
+    //缓存和网络皆为空
     // If we're forbidden from using the network and the cache is insufficient, fail.
     if (networkRequest == null && cacheResponse == null) {
       return new Response.Builder()
