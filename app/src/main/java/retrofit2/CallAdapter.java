@@ -36,6 +36,11 @@ public interface CallAdapter<R, T> {
    * Note: This is typically not the same type as the {@code returnType} provided to this call
    * adapter's factory.
    */
+
+  // 直正数据的类型 如Call<T> 中的 T
+  // 这个 T 会作为Converter.Factory.responseBodyConverter 的第一个参数
+  // 可以参照上面的自定义Converter
+
   Type responseType();
 
   /**
@@ -62,12 +67,18 @@ public interface CallAdapter<R, T> {
    * Retrofit#create(Class) the service interface} methods.
    *
    * 根据{@linkplain * Retrofit#create(类)方法的返回类型创建{@link CallAdapter}实例。
+   *
+   * // 用于向Retrofit提供CallAdapter的工厂类
    */
   abstract class Factory {
     /**
      * Returns a call adapter for interface methods that return {@code returnType}, or null if it
      * cannot be handled by this factory.
      */
+
+    // 在这个方法中判断是否是我们支持的类型，returnType 即Call<Requestbody>和`Observable<Requestbody>`
+    // RxJavaCallAdapterFactory 就是判断returnType是不是Observable<?> 类型
+    // 不支持时返回null
     public abstract @Nullable CallAdapter<?, ?> get(Type returnType, Annotation[] annotations,
         Retrofit retrofit);
 
@@ -75,6 +86,7 @@ public interface CallAdapter<R, T> {
      * Extract the upper bound of the generic parameter at {@code index} from {@code type}. For
      * example, index 1 of {@code Map<String, ? extends Runnable>} returns {@code Runnable}.
      */
+    // 用于获取泛型的参数 如 Call<Requestbody> 中 Requestbody
     protected static Type getParameterUpperBound(int index, ParameterizedType type) {
       return Utils.getParameterUpperBound(index, type);
     }
@@ -83,6 +95,9 @@ public interface CallAdapter<R, T> {
      * Extract the raw class type from {@code type}. For example, the type representing
      * {@code List<? extends Runnable>} returns {@code List.class}.
      */
+    // 用于获取泛型的原始类型 如 Call<Requestbody> 中的 Call
+    // 上面的get方法需要使用该方法。
+
     protected static Class<?> getRawType(Type type) {
       return Utils.getRawType(type);
     }

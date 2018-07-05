@@ -58,6 +58,7 @@ public final class GsonConverterFactory extends Converter.Factory {
     this.gson = gson;
   }
 
+  // responseBody 转换类型
   @Override
   public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations,
       Retrofit retrofit) {
@@ -65,6 +66,7 @@ public final class GsonConverterFactory extends Converter.Factory {
     return new GsonResponseBodyConverter<>(gson, adapter);
   }
 
+  // requestBody 转换类型
   @Override
   public Converter<?, RequestBody> requestBodyConverter(Type type,
       Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {

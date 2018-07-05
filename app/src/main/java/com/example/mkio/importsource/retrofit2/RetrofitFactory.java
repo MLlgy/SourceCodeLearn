@@ -6,6 +6,8 @@ import android.text.TextUtils;
 
 import com.example.mkio.importsource.InitApp;
 import com.example.mkio.importsource.NetWorkUtil;
+import com.example.mkio.importsource.retrofit2.coverters.CustomCallAdapterFactory;
+import com.example.mkio.importsource.retrofit2.coverters.StringConverterFactory;
 
 import org.json.JSONObject;
 
@@ -74,7 +76,9 @@ public class RetrofitFactory {
                 retrofit = new Retrofit.Builder()
                         .baseUrl("http://test1-ordersite.sherpa.com.cn/")
                         .client(builder.build())
+//                        .addConverterFactory(StringConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
+//                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                         .build();
             }
