@@ -37,6 +37,9 @@ import retrofit2.http.QueryMap;
  * Convert objects to and from their representation in HTTP. Instances are created by {@linkplain
  * Factory a factory} which is {@linkplain Retrofit.Builder#addConverterFactory(Factory) installed}
  * into the {@link Retrofit} instance.
+ *
+ *
+ * 这个接口主要的作用就是将HTTP返回的数据解析成Java对象，主要由Xml、Gson、protobuf等等
  */
 public interface Converter<F, T> {
   T convert(F value) throws IOException;
@@ -48,6 +51,8 @@ public interface Converter<F, T> {
      * {@code type} cannot be handled by this factory. This is used to create converters for
      * response types such as {@code SimpleResponse} from a {@code Call<SimpleResponse>}
      * declaration.
+     *
+     * 返回转换 http response 为指定类型的 Converter 或者在不能正确处理时返回 null。
      */
     public @Nullable Converter<ResponseBody, ?> responseBodyConverter(Type type,
         Annotation[] annotations, Retrofit retrofit) {

@@ -1,32 +1,87 @@
 package com.example.mkio.importsource.retrofit2;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 
 import com.example.mkio.importsource.InitApp;
 import com.example.mkio.importsource.NetWorkUtil;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import xutils3.common.util.LogUtil;
 
 /**
  * Created by Meiji on 2017/4/22.
  */
 
 public class RetrofitFactory {
+    public Server mServer;
+    private volatile static Retrofit retrofit;
+
+    public static RetrofitFactory getInstance() {
+        return RetrofitFactoryHolder.Instance;
+    }
+
+    private static class RetrofitFactoryHolder {
+        private static RetrofitFactory Instance = new RetrofitFactory();
+    }
+
+    public RetrofitFactory() {
+        if (retrofit == null) {
+            getRetrofit();
+        }
+        if (mServer == null) {
+            mServer = retrofit.create(Server.class);
+        }
+    }
 
     private static final Object Object = new Object();
+
+    @NonNull
+    public static Retrofit getRetrofit() {
+        synchronized (Object) {
+            if (retrofit == null) {
+                // 指定缓存路径,缓存大小 50Mb
+//                Cache cache = new Cache(new File(InitApp.AppContext.getCacheDir(), "HttpCache"),
+//                        1024 * 1024 * 50);
+                OkHttpClient.Builder builder = new OkHttpClient.Builder()
+//                        .cache(cache)
+//                        .addInterceptor(cacheControlInterceptor)
+                        .addInterceptor(new OkInterceptor())
+                        .addInterceptor(new AddHeadersInterceptor())
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(15, TimeUnit.SECONDS)
+                        .writeTimeout(15, TimeUnit.SECONDS)
+                        .retryOnConnectionFailure(true);
+                retrofit = new Retrofit.Builder()
+                        .baseUrl("http://test1-ordersite.sherpa.com.cn/")
+                        .client(builder.build())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                        .build();
+            }
+        }
+        return retrofit;
+    }
+
     /**
      * 缓存机制
      * 在响应请求之后在 data/data/<包名>/cache 下建立一个response 文件夹，保持缓存数据。
@@ -62,32 +117,68 @@ public class RetrofitFactory {
             }
         }
     };
-    private volatile static Retrofit retrofit;
 
 
-    @NonNull
-    public static Retrofit getRetrofit() {
-        synchronized (Object) {
-            if (retrofit == null) {
-                // 指定缓存路径,缓存大小 50Mb
-                Cache cache = new Cache(new File(InitApp.AppContext.getCacheDir(), "HttpCache"),
-                        1024 * 1024 * 50);
-                OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                        .cache(cache)
-                        .addInterceptor(cacheControlInterceptor)
-                        .connectTimeout(10, TimeUnit.SECONDS)
-                        .readTimeout(15, TimeUnit.SECONDS)
-                        .writeTimeout(15, TimeUnit.SECONDS)
-                        .retryOnConnectionFailure(true);
+    /**
+     * 统一添加header
+     */
+    public static class AddHeadersInterceptor implements Interceptor {
 
-                retrofit = new Retrofit.Builder()
-                        .baseUrl("")
-                        .client(builder.build())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .build();
-            }
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request()
+                    .newBuilder()
+                    .addHeader("language", "10")
+                    .addHeader("token", "59c20a1f-3df4-4586-91d2-6bcb0d320eb4")
+                    .addHeader("devNo", "HUAWEIPE-TL00M6.03d7ad27e94db1e451080_1812S7TDU15204006422")
+                    .addHeader("channelType", "0")
+                    .addHeader("devType", "10")
+                    .addHeader("registrationId", "18071adc0306d68e178")
+                    .build();
+
+            return chain.proceed(request);
         }
-        return retrofit;
     }
+
+    /**
+     * 拦截器
+     */
+    private static class OkInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            if (request.method().equalsIgnoreCase("get")) {
+                String url = request.url().toString();
+                HttpUrl httpUrl;
+                HttpUrl.Builder builder = request.url().newBuilder();
+                builder.addQueryParameter("language", "zh_CN")
+                        .addQueryParameter("platform", "3")
+                        .addQueryParameter("appType", "2")
+                        .addQueryParameter("cityId", "")
+                        .addQueryParameter("version", "2.2.0")
+                        .addQueryParameter("gdId", "")
+                        .addQueryParameter("token", "59c20a1f-3df4-4586-91d2-6bcb0d320eb4");
+
+                if (TextUtils.isEmpty(url) || !url.contains("gdId")) {
+                    builder.addQueryParameter("gdId", "");
+                }
+                httpUrl = builder.build();
+                request = request.newBuilder().url(httpUrl).build();
+            }
+            try {
+                return chain.proceed(request);
+            } catch (Exception e) {
+                LogUtil.e(e.getMessage());
+            }
+            return chain.proceed(chain.request());
+        }
+    }
+
+
+    public Call<CouponResp> checkCoupon(String customerId, String code, int totalValue) {
+        return mServer.checkCoupon(customerId, code, totalValue);
+    }
+
+
 }

@@ -21,6 +21,7 @@ import java.lang.reflect.Type;
 import javax.annotation.Nullable;
 
 /**
+ * 转换数据类型
  * Adapts a {@link Call} with response type {@code R} into the type of {@code T}. Instances are
  * created by {@linkplain Factory a factory} which is
  * {@linkplain Retrofit.Builder#addCallAdapterFactory(Factory) installed} into the {@link Retrofit}
@@ -59,6 +60,8 @@ public interface CallAdapter<R, T> {
   /**
    * Creates {@link CallAdapter} instances based on the return type of {@linkplain
    * Retrofit#create(Class) the service interface} methods.
+   *
+   * 根据{@linkplain * Retrofit#create(类)方法的返回类型创建{@link CallAdapter}实例。
    */
   abstract class Factory {
     /**

@@ -78,14 +78,16 @@ public final class ViewInjectorImpl implements ViewInjector {
             if (contentView != null) {
                 int viewId = contentView.value();
                 if (viewId > 0) {
+                    //获得 setContentView() 方法对象实例
                     Method setContentViewMethod = handlerType.getMethod("setContentView", int.class);
+                    //通过反射进行调用指定类的setContentView() 方法，并将 R.layout.xx 设置进去
                     setContentViewMethod.invoke(activity, viewId);
                 }
             }
         } catch (Throwable ex) {
             LogUtil.e(ex.getMessage(), ex);
         }
-
+        // 遍历被注解的属性和方法
         injectObject(activity, handlerType, new ViewFinder(activity));
     }
 
@@ -100,8 +102,10 @@ public final class ViewInjectorImpl implements ViewInjector {
         View view = null;
         Class<?> handlerType = fragment.getClass();
         try {
+            // 获取ContentView标签，主要是为了获取ContentView.value()，即R.layout.xxx
             ContentView contentView = findContentView(handlerType);
             if (contentView != null) {
+                //拿到布局文件的id
                 int viewId = contentView.value();
                 if (viewId > 0) {
                     view = inflater.inflate(viewId, container, false);
@@ -142,10 +146,11 @@ public final class ViewInjectorImpl implements ViewInjector {
         injectObject(handler, handlerType.getSuperclass(), finder);
 
         // inject view
+        //获取class 的所有属性
         Field[] fields = handlerType.getDeclaredFields();
         if (fields != null && fields.length > 0) {
             for (Field field : fields) {
-
+                //获取属性的类型
                 Class<?> fieldType = field.getType();
                 if (
                 /* 不注入静态字段 */     Modifier.isStatic(field.getModifiers()) ||
@@ -154,10 +159,11 @@ public final class ViewInjectorImpl implements ViewInjector {
                 /* 不注入数组类型字段 */  fieldType.isArray()) {
                     continue;
                 }
-
+                //判断字段是否被 @InjectView 标注
                 ViewInject viewInject = field.getAnnotation(ViewInject.class);
                 if (viewInject != null) {
                     try {
+                        //通过 finder 找到 view
                         View view = finder.findViewById(viewInject.value(), viewInject.parentId());
                         if (view != null) {
                             field.setAccessible(true);
@@ -199,6 +205,13 @@ public final class ViewInjectorImpl implements ViewInjector {
                                 info.value = value;
                                 info.parentId = parentIdsLen > i ? parentIds[i] : 0;
                                 method.setAccessible(true);
+                                /**
+                                 * finder :
+                                 * info :
+                                 * event :
+                                 * hander ：
+                                 *method ：
+                                 */
                                 EventListenerManager.addEventMethod(finder, info, event, handler, method);
                             }
                         }

@@ -4,8 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.USE_CREDENTIALS"
         android:maxSdkVersion="22" />
@@ -19,16 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".OkHttpMainActivity" />
-        <activity android:name=".volleyexample.VolleyExActivity"></activity>
+        <activity android:name=".volleyexample.VolleyExActivity" />
         <activity android:name=".volleyexample.VolleyActivity" />
         <activity
             android:name=".xutils3sample.XutilsMainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".xutils3sample.DownloadActivity" />
         <activity android:name=".okhttp3example.OkhttpExampleActivity">
+
+        </activity>
+        <activity android:name=".retrofit2.RetrofitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

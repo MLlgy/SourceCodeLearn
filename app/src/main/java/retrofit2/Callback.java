@@ -18,9 +18,13 @@ package retrofit2;
 /**
  * Communicates responses from a server or offline requests. One and only one method will be
  * invoked in response to a given request.
+ *
+ * 通信来自服务器或脱机请求的响应。一个且只有一个方法将被调用以响应给定的请求。
  * <p>
  * Callback methods are executed using the {@link Retrofit} callback executor. When none is
  * specified, the following defaults are used:
+ *
+ * 回调方法是使用{@link Retrofit}回调执行器执行的。当没有指定时，使用以下默认值:*
  * <ul>
  * <li>Android: Callbacks are executed on the application's main (UI) thread.</li>
  * <li>JVM: Callbacks are executed on the background thread which performed the request.</li>
