@@ -153,9 +153,9 @@ final class ServiceMethod<R, T> {
     Builder(Retrofit retrofit, Method method) {
       this.retrofit = retrofit;
       this.method = method;
-      this.methodAnnotations = method.getAnnotations();
-      this.parameterTypes = method.getGenericParameterTypes();
-      this.parameterAnnotationsArray = method.getParameterAnnotations();
+      this.methodAnnotations = method.getAnnotations();//获取接口方法的注解  请求方式
+      this.parameterTypes = method.getGenericParameterTypes();//获取参数类型数组
+      this.parameterAnnotationsArray = method.getParameterAnnotations();//获取参数注解数组
     }
 
     public ServiceMethod build() {
@@ -168,6 +168,7 @@ final class ServiceMethod<R, T> {
       }
       responseConverter = createResponseConverter();
 
+      //遍历方法接口注解
       for (Annotation annotation : methodAnnotations) {
         parseMethodAnnotation(annotation);
       }
@@ -190,12 +191,12 @@ final class ServiceMethod<R, T> {
       int parameterCount = parameterAnnotationsArray.length;
       parameterHandlers = new ParameterHandler<?>[parameterCount];
       for (int p = 0; p < parameterCount; p++) {
-        Type parameterType = parameterTypes[p];
+        Type parameterType = parameterTypes[p];//参数类型
         if (Utils.hasUnresolvableType(parameterType)) {
           throw parameterError(p, "Parameter type must not include a type variable or wildcard: %s",
               parameterType);
         }
-
+        //参数类型注解
         Annotation[] parameterAnnotations = parameterAnnotationsArray[p];
         if (parameterAnnotations == null) {
           throw parameterError(p, "No Retrofit annotation found.");
@@ -238,6 +239,7 @@ final class ServiceMethod<R, T> {
       }
     }
 
+    //    根据不同的方法注解作不同的解析，得到网络请求的方式httpMethod
     private void parseMethodAnnotation(Annotation annotation) {
       if (annotation instanceof DELETE) {
         parseHttpMethodAndPath("DELETE", ((DELETE) annotation).value(), false);
@@ -292,6 +294,7 @@ final class ServiceMethod<R, T> {
 
       // Get the relative URL path and existing query string, if present.
       int question = value.indexOf('?');
+//      就是校验这个value的值 是否合法，规则就是不能有“？”如果有则需要使用@Query注解
       if (question != -1 && question < value.length() - 1) {
         // Ensure the query string does not have any named parameters.
         String queryParams = value.substring(question + 1);
@@ -765,6 +768,7 @@ final class ServiceMethod<R, T> {
   /**
    * Gets the set of unique path parameters used in the given URI. If a parameter is used twice
    * in the URI, it will only show up once in the set.
+   * 获取给定URI中使用的唯一路径参数集。如果一个参数在URI中使用了两次*，那么它将只在集合中显示一次。
    */
   static Set<String> parsePathParameters(String path) {
     Matcher m = PARAM_URL_REGEX.matcher(path);

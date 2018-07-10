@@ -58,7 +58,7 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
 
     @Override public void enqueue(final Callback<T> callback) {
       checkNotNull(callback, "callback == null");
-
+    //delegate 实际为 OkHttpCall
       delegate.enqueue(new Callback<T>() {
         @Override public void onResponse(Call<T> call, final Response<T> response) {
           callbackExecutor.execute(new Runnable() {

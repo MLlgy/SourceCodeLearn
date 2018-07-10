@@ -96,7 +96,7 @@ class Platform {
       if (callbackExecutor == null) throw new AssertionError();
       return new ExecutorCallAdapterFactory(callbackExecutor);
     }
-
+    // 自定义线程池，通过 hander 来执行相应的 runnable
     static class MainThreadExecutor implements Executor {
       private final Handler handler = new Handler(Looper.getMainLooper());
 

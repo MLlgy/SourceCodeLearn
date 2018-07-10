@@ -18,7 +18,8 @@ public class RetrofitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_retrofit);
         findViewById(R.id.tv_check_net).setOnClickListener(view -> {
-            RetrofitFactory.getInstance().checkCoupon("2018040202512043", "133", 315).enqueue(new Callback<CouponResp>() {
+            RetrofitFactory.getInstance().checkCoupon("2018040202512043", "133", 315)
+                    .enqueue(new Callback<CouponResp>() {
                 @Override
                 public void onResponse(Call<CouponResp> call, Response<CouponResp> response) {
                     CouponResp mCouponResp = response.body();

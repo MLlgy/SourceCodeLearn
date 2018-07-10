@@ -137,6 +137,7 @@ public final class Retrofit {
           @Override public Object invoke(Object proxy, Method method, @Nullable Object[] args)
               throws Throwable {
             // If the method is a method from Object then defer to normal invocation.
+            // （如果方法是来自对象的方法，则遵从正常调用）
             if (method.getDeclaringClass() == Object.class) {
               return method.invoke(this, args);
             }
@@ -505,6 +506,7 @@ public final class Retrofit {
      * Endpoint: //github.com/square/retrofit/<br>
      * Result: http://github.com/square/retrofit/ (note the scheme stays 'http')
      */
+    //retrofitNote1：有关baseUrl 的格式问题
     public Builder baseUrl(HttpUrl baseUrl) {
       checkNotNull(baseUrl, "baseUrl == null");
       List<String> pathSegments = baseUrl.pathSegments();
@@ -571,7 +573,7 @@ public final class Retrofit {
       if (baseUrl == null) {
         throw new IllegalStateException("Base URL required.");
       }
-
+      // retrofitNote2: callFactory 为 okhttp 的工厂实例，用于网络请求
       okhttp3.Call.Factory callFactory = this.callFactory;
       if (callFactory == null) {
         callFactory = new OkHttpClient();

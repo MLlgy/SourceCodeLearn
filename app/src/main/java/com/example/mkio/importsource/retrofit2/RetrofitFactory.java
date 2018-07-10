@@ -78,9 +78,11 @@ public class RetrofitFactory {
                         .client(builder.build())
 //                        .addConverterFactory(StringConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
-//                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
+                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+
                         .build();
+
             }
         }
         return retrofit;
