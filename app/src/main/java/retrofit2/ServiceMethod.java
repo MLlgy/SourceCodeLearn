@@ -57,7 +57,9 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.QueryName;
 import retrofit2.http.Url;
 
-/** Adapts an invocation of an interface method into an HTTP call. */
+/** Adapts an invocation of an interface method into an HTTP call.(将接口方法的调用转换为HTTP调用) */
+
+//ServiceMethod应该是最复杂的一个类了，包含了将一个method转化为Call的所有的信息。
 final class ServiceMethod<R, T> {
   // Upper and lower characters, digits, underscores, and hyphens, starting with a character.
   static final String PARAM = "[a-zA-Z][a-zA-Z0-9_-]*";
@@ -159,8 +161,8 @@ final class ServiceMethod<R, T> {
     }
 
     public ServiceMethod build() {
-      callAdapter = createCallAdapter();
-      responseType = callAdapter.responseType();
+      callAdapter = createCallAdapter();//获取对应的 calladdpter
+      responseType = callAdapter.responseType();//返回的是我们方法的实际类型，例如:Call<User>,则返回User类型
       if (responseType == Response.class || responseType == okhttp3.Response.class) {
         throw methodError("'"
             + Utils.getRawType(responseType).getName()

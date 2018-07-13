@@ -144,9 +144,14 @@ public final class Retrofit {
             if (platform.isDefaultMethod(method)) {
               return platform.invokeDefaultMethod(method, service, proxy, args);
             }
+            //根据我们的method将其包装成ServiceMethod
             ServiceMethod<Object, Object> serviceMethod =
                 (ServiceMethod<Object, Object>) loadServiceMethod(method);
+
+//            通过ServiceMethod和方法的参数构造retrofit2.OkHttpCall对象
             OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
+
+//              通过serviceMethod.callAdapter.adapt()方法，将OkHttpCall进行代理包装，最后返回的对象是 {@link ExecutorCallAdapterFactory#ExecutorCallbackCall}
             return serviceMethod.callAdapter.adapt(okHttpCall);
           }
         });
@@ -569,6 +574,15 @@ public final class Retrofit {
      * Note: If neither {@link #client} nor {@link #callFactory} is called a default {@link
      * OkHttpClient} will be created and used.
      */
+
+
+      /**
+       * okhttpclinet
+       * executor
+       * calladapter
+       * convert
+       * @return
+       */
     public Retrofit build() {
       if (baseUrl == null) {
         throw new IllegalStateException("Base URL required.");
@@ -586,6 +600,7 @@ public final class Retrofit {
 
       // Make a defensive copy of the adapters and add the default Call adapter.
       List<CallAdapter.Factory> adapterFactories = new ArrayList<>(this.adapterFactories);
+      // 除了手动添加的 Calladapter ,还要添加默认的 CallAdapter
       adapterFactories.add(platform.defaultCallAdapterFactory(callbackExecutor));
 
       // Make a defensive copy of the converters.
