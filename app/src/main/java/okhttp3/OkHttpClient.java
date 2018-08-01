@@ -502,7 +502,7 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
 
         public Builder() {
             dispatcher = new Dispatcher();//调度器
-            protocols = DEFAULT_PROTOCOLS;
+            protocols = DEFAULT_PROTOCOLS;//支持的协议
             connectionSpecs = DEFAULT_CONNECTION_SPECS;
             eventListenerFactory = EventListener.factory(EventListener.NONE);
             proxySelector = ProxySelector.getDefault();

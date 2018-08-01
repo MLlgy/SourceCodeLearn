@@ -37,6 +37,9 @@ import okhttp3.internal.Util;
  * <p>Each dispatcher uses an {@link ExecutorService} to run calls internally. If you supply your
  * own executor, it should be able to run {@linkplain #getMaxRequests the configured maximum} number
  * of calls concurrently.
+ * Dispatcher 任务调度器，它定义了三个双向任务队列，
+ * 两个异步队列：准备执行的请求队列 readyAsyncCalls 、正在运行的请求队列 runningAsyncCalls ；
+ * 一个正在运行的同步请求队列 runningSyncCalls ；
  */
 public final class Dispatcher {
 
@@ -151,7 +154,7 @@ public final class Dispatcher {
 
     synchronized void enqueue(AsyncCall call) {
         /**
-         * 正在运行的异步请求队列的大小 < 最大并发请求数  并且每个主机最大请求数
+         * 正在运行的异步请求队列的大小 < 最大并发请求数  同一个host发起的请求数 < 并且每个主机最大请求数
          */
         if (runningAsyncCalls.size() < maxRequests && runningCallsForHost(call) < maxRequestsPerHost) {
             runningAsyncCalls.add(call);
