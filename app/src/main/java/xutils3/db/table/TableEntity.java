@@ -17,13 +17,13 @@ package xutils3.db.table;
 
 import android.database.Cursor;
 
+import java.lang.reflect.Constructor;
+import java.util.LinkedHashMap;
+
 import xutils3.DbManager;
 import xutils3.common.util.IOUtil;
 import xutils3.db.annotation.Table;
 import xutils3.ex.DbException;
-
-import java.lang.reflect.Constructor;
-import java.util.LinkedHashMap;
 
 
 public final class TableEntity<T> {
@@ -31,15 +31,14 @@ public final class TableEntity<T> {
     private final DbManager db;
     private final String name;
     private final String onCreated;
-    private ColumnEntity id;
-    private Class<T> entityType;
-    private Constructor<T> constructor;
-    private volatile boolean checkedDatabase;
-
     /**
      * key: columnName
      */
     private final LinkedHashMap<String, ColumnEntity> columnMap;
+    private ColumnEntity id;
+    private Class<T> entityType;
+    private Constructor<T> constructor;
+    private volatile boolean checkedDatabase;
 
     /*package*/ TableEntity(DbManager db, Class<T> entityType) throws Throwable {
         this.db = db;

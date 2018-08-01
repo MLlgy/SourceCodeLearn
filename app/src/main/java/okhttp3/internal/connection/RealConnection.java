@@ -72,51 +72,44 @@ import static okhttp3.internal.Util.closeQuietly;
 
 public final class RealConnection extends Http2Connection.Listener implements Connection {
     private static final String NPE_THROW_WITH_NULL = "throw with null exception";
+    /**
+     * Current streams carried by this connection.
+     */
+    public final List<Reference<StreamAllocation>> allocations = new ArrayList<>();
     private final ConnectionPool connectionPool;
-    private final Route route;
 
     // The fields below are initialized by connect() and never reassigned.
-
-    /**
-     * The low-level TCP socket.
-     */
-    private Socket rawSocket;
-
-    /**
-     * The application layer socket. Either an {@link SSLSocket} layered over {@link #rawSocket}, or
-     * {@link #rawSocket} itself if this connection does not use SSL.
-     */
-    private Socket socket;
-    private Handshake handshake;
-    private Protocol protocol;
-    private Http2Connection http2Connection;
-    private BufferedSource source;
-    private BufferedSink sink;
-
-    // The fields below track connection state and are guarded by connectionPool.
-
+    private final Route route;
     /**
      * If true, no new streams can be created on this connection. Once true this is always true.
      */
     public boolean noNewStreams;
-
     public int successCount;
-
     /**
      * The maximum number of concurrent streams that can be carried by this connection. If {@code
      * allocations.size() < allocationLimit} then new streams can be created on this connection.
      */
     public int allocationLimit = 1;
-
-    /**
-     * Current streams carried by this connection.
-     */
-    public final List<Reference<StreamAllocation>> allocations = new ArrayList<>();
-
     /**
      * Nanotime timestamp when {@code allocations.size()} reached zero.
      */
     public long idleAtNanos = Long.MAX_VALUE;
+    /**
+     * The low-level TCP socket.
+     */
+    private Socket rawSocket;
+    /**
+     * The application layer socket. Either an {@link SSLSocket} layered over {@link #rawSocket}, or
+     * {@link #rawSocket} itself if this connection does not use SSL.
+     */
+    private Socket socket;
+
+    // The fields below track connection state and are guarded by connectionPool.
+    private Handshake handshake;
+    private Protocol protocol;
+    private Http2Connection http2Connection;
+    private BufferedSource source;
+    private BufferedSink sink;
 
     public RealConnection(ConnectionPool connectionPool, Route route) {
         this.connectionPool = connectionPool;
@@ -335,7 +328,7 @@ public final class RealConnection extends Http2Connection.Listener implements Co
      * To make an HTTPS connection over an HTTP proxy, send an unencrypted CONNECT request to create
      * the proxy connection. This may need to be retried if the proxy requires authorization.
      * 要通过HTTP代理建立HTTPS连接，请发送一个未加密的连接请求来创建代理连接。如果代理需要授权，可能需要重新尝试。
-     *
+     * <p>
      * 创建连接通道
      */
     private Request createTunnel(int readTimeout, int writeTimeout, Request tunnelRequest,

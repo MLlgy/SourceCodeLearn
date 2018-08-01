@@ -3,10 +3,10 @@ package com.example.mkio.importsource.xutils3sample.download;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
+
 import xutils3.common.Callback;
 import xutils3.x;
-
-import java.io.File;
 
 /**
  * Created by wyouflf on 15/11/11.

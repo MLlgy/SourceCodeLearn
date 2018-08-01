@@ -20,69 +20,69 @@ import java.util.List;
 
 // TODO(jwilson): make this public after the 3.8 release.
 abstract class EventListener {
-  public static final EventListener NONE = new EventListener() {
-  };
-
-  static Factory factory(final EventListener listener) {
-    return new Factory() {
-      public EventListener create(Call call) {
-        return listener;
-      }
+    public static final EventListener NONE = new EventListener() {
     };
-  }
 
-  public void fetchStart(Call call) {
-  }
+    static Factory factory(final EventListener listener) {
+        return new Factory() {
+            public EventListener create(Call call) {
+                return listener;
+            }
+        };
+    }
 
-  public void dnsStart(Call call, String domainName) {
-  }
+    public void fetchStart(Call call) {
+    }
 
-  public void dnsEnd(Call call, String domainName, List<InetAddress> inetAddressList,
-      Throwable throwable) {
-  }
+    public void dnsStart(Call call, String domainName) {
+    }
 
-  public void connectStart(Call call, InetAddress address, int port) {
-  }
+    public void dnsEnd(Call call, String domainName, List<InetAddress> inetAddressList,
+                       Throwable throwable) {
+    }
 
-  public void secureConnectStart(Call call) {
-  }
+    public void connectStart(Call call, InetAddress address, int port) {
+    }
 
-  public void secureConnectEnd(Call call, Handshake handshake,
-      Throwable throwable) {
-  }
+    public void secureConnectStart(Call call) {
+    }
 
-  public void connectEnd(Call call,  InetAddress address, int port, String protocol,
-      Throwable throwable) {
-  }
+    public void secureConnectEnd(Call call, Handshake handshake,
+                                 Throwable throwable) {
+    }
 
-  public void requestHeadersStart(Call call) {
-  }
+    public void connectEnd(Call call, InetAddress address, int port, String protocol,
+                           Throwable throwable) {
+    }
 
-  public void requestHeadersEnd(Call call, Throwable throwable) {
-  }
+    public void requestHeadersStart(Call call) {
+    }
 
-  public void requestBodyStart(Call call) {
-  }
+    public void requestHeadersEnd(Call call, Throwable throwable) {
+    }
 
-  public void requestBodyEnd(Call call, Throwable throwable) {
-  }
+    public void requestBodyStart(Call call) {
+    }
 
-  public void responseHeadersStart(Call call) {
-  }
+    public void requestBodyEnd(Call call, Throwable throwable) {
+    }
 
-  public void responseHeadersEnd(Call call, Throwable throwable) {
-  }
+    public void responseHeadersStart(Call call) {
+    }
 
-  public void responseBodyStart(Call call) {
-  }
+    public void responseHeadersEnd(Call call, Throwable throwable) {
+    }
 
-  public void responseBodyEnd(Call call, Throwable throwable) {
-  }
+    public void responseBodyStart(Call call) {
+    }
 
-  public void fetchEnd(Call call, Throwable throwable) {
-  }
+    public void responseBodyEnd(Call call, Throwable throwable) {
+    }
 
-  public interface Factory {
-    EventListener create(Call call);
-  }
+    public void fetchEnd(Call call, Throwable throwable) {
+    }
+
+    public interface Factory {
+        EventListener create(Call call);
+    }
 }

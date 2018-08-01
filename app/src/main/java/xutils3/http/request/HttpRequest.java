@@ -5,18 +5,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
-import xutils3.cache.DiskCacheEntity;
-import xutils3.cache.LruDiskCache;
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.KeyValue;
-import xutils3.common.util.LogUtil;
-import xutils3.ex.HttpException;
-import xutils3.http.HttpMethod;
-import xutils3.http.RequestParams;
-import xutils3.http.body.ProgressBody;
-import xutils3.http.body.RequestBody;
-import xutils3.http.cookie.DbCookieStore;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -41,24 +29,45 @@ import java.util.TimeZone;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
+import xutils3.cache.DiskCacheEntity;
+import xutils3.cache.LruDiskCache;
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.KeyValue;
+import xutils3.common.util.LogUtil;
+import xutils3.ex.HttpException;
+import xutils3.http.HttpMethod;
+import xutils3.http.RequestParams;
+import xutils3.http.body.ProgressBody;
+import xutils3.http.body.RequestBody;
+import xutils3.http.cookie.DbCookieStore;
+
 /**
  * Created by wyouflf on 15/7/23.
  * Uri请求发送和数据接收
  */
 public class HttpRequest extends UriRequest {
 
+    // cookie manager
+    private static final CookieManager COOKIE_MANAGER =
+            new CookieManager(DbCookieStore.INSTANCE, CookiePolicy.ACCEPT_ALL);
     private String cacheKey = null;
     private boolean isLoading = false;
     private InputStream inputStream = null;
     private HttpURLConnection connection = null;
     private int responseCode = 0;
 
-    // cookie manager
-    private static final CookieManager COOKIE_MANAGER =
-            new CookieManager(DbCookieStore.INSTANCE, CookiePolicy.ACCEPT_ALL);
-
     /*package*/ HttpRequest(RequestParams params, Type loadType) throws Throwable {
         super(params, loadType);
+    }
+
+    private static String toGMTString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "EEE, dd MMM y HH:mm:ss 'GMT'", Locale.US);
+        TimeZone gmtZone = TimeZone.getTimeZone("GMT");
+        sdf.setTimeZone(gmtZone);
+        GregorianCalendar gc = new GregorianCalendar(gmtZone);
+        gc.setTimeInMillis(date.getTime());
+        return sdf.format(date);
     }
 
     // build query
@@ -474,15 +483,5 @@ public class HttpRequest extends UriRequest {
     public long getHeaderFieldDate(String name, long defaultValue) {
         if (connection == null) return defaultValue;
         return connection.getHeaderFieldDate(name, defaultValue);
-    }
-
-    private static String toGMTString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(
-                "EEE, dd MMM y HH:mm:ss 'GMT'", Locale.US);
-        TimeZone gmtZone = TimeZone.getTimeZone("GMT");
-        sdf.setTimeZone(gmtZone);
-        GregorianCalendar gc = new GregorianCalendar(gmtZone);
-        gc.setTimeInMillis(date.getTime());
-        return sdf.format(date);
     }
 }

@@ -2,6 +2,12 @@ package xutils3.http;
 
 import android.text.TextUtils;
 
+import java.net.Proxy;
+import java.util.concurrent.Executor;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+
 import xutils3.common.task.Priority;
 import xutils3.common.util.LogUtil;
 import xutils3.http.annotation.HttpRequest;
@@ -11,23 +17,17 @@ import xutils3.http.app.ParamsBuilder;
 import xutils3.http.app.RedirectHandler;
 import xutils3.http.app.RequestTracker;
 
-import java.net.Proxy;
-import java.util.concurrent.Executor;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-
 /**
  * Created by wyouflf on 15/7/17.
  * 网络请求参数实体
  */
 public class RequestParams extends BaseParams {
 
+    private final String[] signs;
+    private final String[] cacheKeys;
     // 注解及其扩展参数
     private HttpRequest httpRequest;
     private String uri;
-    private final String[] signs;
-    private final String[] cacheKeys;
     private ParamsBuilder builder;
     private String buildUri;
     private String buildCacheKey;
@@ -53,6 +53,7 @@ public class RequestParams extends BaseParams {
     private HttpRetryHandler httpRetryHandler; // 自定义HttpRetryHandler
     private RedirectHandler redirectHandler; // 自定义重定向接口, 默认系统自动重定向.
     private RequestTracker requestTracker; // 自定义日志记录接口.
+    private boolean invokedGetHttpRequest = false;
 
     /**
      * 使用空构造创建时必须, 必须是带有@HttpRequest注解的子类.
@@ -139,12 +140,12 @@ public class RequestParams extends BaseParams {
         return buildCacheKey;
     }
 
-    public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
-        this.sslSocketFactory = sslSocketFactory;
-    }
-
     public SSLSocketFactory getSslSocketFactory() {
         return sslSocketFactory;
+    }
+
+    public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     public HostnameVerifier getHostnameVerifier() {
@@ -385,8 +386,6 @@ public class RequestParams extends BaseParams {
             }
         });
     }
-
-    private boolean invokedGetHttpRequest = false;
 
     private HttpRequest getHttpRequest() {
         if (httpRequest == null && !invokedGetHttpRequest) {

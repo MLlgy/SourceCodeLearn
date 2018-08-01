@@ -19,7 +19,7 @@ package eventbus3.util;
 import android.content.res.Resources;
 import android.util.Log;
 
-import  eventbus3.EventBus;
+import eventbus3.EventBus;
 
 public class ErrorDialogConfig {
     final Resources resources;
@@ -71,12 +71,14 @@ public class ErrorDialogConfig {
         this.tagForLoggingExceptions = tagForLoggingExceptions;
     }
 
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
+    /**
+     * eventBus!=null ? eventBus: EventBus.getDefault()
+     */
+    EventBus getEventBus() {
+        return eventBus != null ? eventBus : EventBus.getDefault();
     }
 
-    /** eventBus!=null ? eventBus: EventBus.getDefault() */
-    EventBus getEventBus() {
-        return eventBus!=null ? eventBus: EventBus.getDefault();
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 }

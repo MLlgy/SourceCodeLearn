@@ -13,15 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
 
-import xutils3.cache.DiskCacheEntity;
-import xutils3.cache.DiskCacheFile;
-import xutils3.cache.LruDiskCache;
-import xutils3.common.Callback;
-import xutils3.common.task.PriorityExecutor;
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.LogUtil;
-import xutils3.x;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +23,15 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import xutils3.cache.DiskCacheEntity;
+import xutils3.cache.DiskCacheFile;
+import xutils3.cache.LruDiskCache;
+import xutils3.common.Callback;
+import xutils3.common.task.PriorityExecutor;
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.LogUtil;
+import xutils3.x;
 
 /**
  * Created by wyouflf on 15/10/9.

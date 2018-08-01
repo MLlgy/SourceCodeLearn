@@ -16,16 +16,16 @@
 
 package volley.toolbox;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+
 import volley.NetworkResponse;
 import volley.ParseError;
 import volley.Response;
 import volley.Response.ErrorListener;
 import volley.Response.Listener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * A request for retrieving a {@link JSONArray} response body at a given URL.
@@ -34,8 +34,9 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
 
     /**
      * Creates a new request.
-     * @param url URL to fetch the JSON from
-     * @param listener Listener to receive the JSON response
+     *
+     * @param url           URL to fetch the JSON from
+     * @param listener      Listener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonArrayRequest(String url, Listener<JSONArray> listener, ErrorListener errorListener) {
@@ -44,11 +45,12 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
 
     /**
      * Creates a new request.
-     * @param method the HTTP method to use
-     * @param url URL to fetch the JSON from
-     * @param jsonRequest A {@link JSONArray} to post with the request. Null is allowed and
-     *   indicates no parameters will be posted along with request.
-     * @param listener Listener to receive the JSON response
+     *
+     * @param method        the HTTP method to use
+     * @param url           URL to fetch the JSON from
+     * @param jsonRequest   A {@link JSONArray} to post with the request. Null is allowed and
+     *                      indicates no parameters will be posted along with request.
+     * @param listener      Listener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonArrayRequest(int method, String url, JSONArray jsonRequest,

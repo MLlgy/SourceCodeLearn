@@ -18,13 +18,13 @@ package xutils3.db.sqlite;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xutils3.common.util.KeyValue;
 import xutils3.db.converter.ColumnConverter;
 import xutils3.db.converter.ColumnConverterFactory;
 import xutils3.db.table.ColumnUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SqlInfo {
 

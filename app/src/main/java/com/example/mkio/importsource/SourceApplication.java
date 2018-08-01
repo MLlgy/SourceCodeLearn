@@ -2,7 +2,6 @@ package com.example.mkio.importsource;
 
 import android.app.Application;
 
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 

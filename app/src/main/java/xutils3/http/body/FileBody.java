@@ -25,9 +25,15 @@ public class FileBody extends InputStreamBody {
         this.contentType = contentType;
     }
 
-    @Override
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public static String getFileContentType(File file) {
+        String filename = file.getName();
+        String contentType = HttpURLConnection.guessContentTypeFromName(filename);
+        if (TextUtils.isEmpty(contentType)) {
+            contentType = "application/octet-stream";
+        } else {
+            contentType = contentType.replaceFirst("\\/jpg$", "/jpeg");
+        }
+        return contentType;
     }
 
     @Override
@@ -38,14 +44,8 @@ public class FileBody extends InputStreamBody {
         return contentType;
     }
 
-    public static String getFileContentType(File file) {
-        String filename = file.getName();
-        String contentType = HttpURLConnection.guessContentTypeFromName(filename);
-        if (TextUtils.isEmpty(contentType)) {
-            contentType = "application/octet-stream";
-        } else {
-            contentType = contentType.replaceFirst("\\/jpg$", "/jpeg");
-        }
-        return contentType;
+    @Override
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

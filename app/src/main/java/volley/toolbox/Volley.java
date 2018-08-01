@@ -22,10 +22,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
 
+import java.io.File;
+
 import volley.Network;
 import volley.RequestQueue;
-
-import java.io.File;
 
 public class Volley {
 

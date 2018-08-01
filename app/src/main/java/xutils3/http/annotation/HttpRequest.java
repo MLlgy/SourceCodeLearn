@@ -15,13 +15,13 @@
 
 package xutils3.http.annotation;
 
-import xutils3.http.app.DefaultParamsBuilder;
-import xutils3.http.app.ParamsBuilder;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import xutils3.http.app.DefaultParamsBuilder;
+import xutils3.http.app.ParamsBuilder;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -33,8 +33,8 @@ public class VolleyError extends Exception {
     }
 
     public VolleyError(String exceptionMessage) {
-       super(exceptionMessage);
-       networkResponse = null;
+        super(exceptionMessage);
+        networkResponse = null;
     }
 
     public VolleyError(String exceptionMessage, Throwable reason) {
@@ -47,11 +47,11 @@ public class VolleyError extends Exception {
         networkResponse = null;
     }
 
-    /* package */ void setNetworkTimeMs(long networkTimeMs) {
-       this.networkTimeMs = networkTimeMs;
+    public long getNetworkTimeMs() {
+        return networkTimeMs;
     }
 
-    public long getNetworkTimeMs() {
-       return networkTimeMs;
+    /* package */ void setNetworkTimeMs(long networkTimeMs) {
+        this.networkTimeMs = networkTimeMs;
     }
 }

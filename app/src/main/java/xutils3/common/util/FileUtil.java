@@ -3,11 +3,11 @@ package xutils3.common.util;
 import android.os.Environment;
 import android.os.StatFs;
 
-import xutils3.x;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
+import xutils3.x;
 
 public class FileUtil {
 

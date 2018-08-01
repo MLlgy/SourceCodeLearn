@@ -23,11 +23,6 @@ public enum HttpMethod {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
-        return this.value;
-    }
-
     public static boolean permitsRetry(HttpMethod method) {
         return method == GET;
     }
@@ -41,5 +36,10 @@ public enum HttpMethod {
                 || method == PUT
                 || method == PATCH
                 || method == DELETE;
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

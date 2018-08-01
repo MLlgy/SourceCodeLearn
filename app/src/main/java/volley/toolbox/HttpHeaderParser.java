@@ -16,14 +16,14 @@
 
 package volley.toolbox;
 
-import volley.Cache;
-import volley.NetworkResponse;
-
 import org.apache.http.impl.cookie.DateParseException;
 import org.apache.http.impl.cookie.DateUtils;
 import org.apache.http.protocol.HTTP;
 
 import java.util.Map;
+
+import volley.Cache;
+import volley.NetworkResponse;
 
 /**
  * Utility methods for parsing HTTP headers.
@@ -136,7 +136,7 @@ public class HttpHeaderParser {
     /**
      * Retrieve a charset from headers
      *
-     * @param headers An {@link Map} of headers
+     * @param headers        An {@link Map} of headers
      * @param defaultCharset Charset to return if none can be found
      * @return Returns the charset specified in the Content-Type of this header,
      * or the defaultCharset if none can be found.

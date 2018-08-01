@@ -21,24 +21,27 @@ import okhttp3.ResponseBody;
 import okio.BufferedSource;
 
 public final class RealResponseBody extends ResponseBody {
-  private final Headers headers;
-  private final BufferedSource source;
+    private final Headers headers;
+    private final BufferedSource source;
 
-  public RealResponseBody(Headers headers, BufferedSource source) {
-    this.headers = headers;
-    this.source = source;
-  }
+    public RealResponseBody(Headers headers, BufferedSource source) {
+        this.headers = headers;
+        this.source = source;
+    }
 
-  @Override public MediaType contentType() {
-    String contentType = headers.get("Content-Type");
-    return contentType != null ? MediaType.parse(contentType) : null;
-  }
+    @Override
+    public MediaType contentType() {
+        String contentType = headers.get("Content-Type");
+        return contentType != null ? MediaType.parse(contentType) : null;
+    }
 
-  @Override public long contentLength() {
-    return HttpHeaders.contentLength(headers);
-  }
+    @Override
+    public long contentLength() {
+        return HttpHeaders.contentLength(headers);
+    }
 
-  @Override public BufferedSource source() {
-    return source;
-  }
+    @Override
+    public BufferedSource source() {
+        return source;
+    }
 }

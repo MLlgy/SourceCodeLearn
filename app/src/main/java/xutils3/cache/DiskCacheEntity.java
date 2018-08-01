@@ -1,9 +1,9 @@
 package xutils3.cache;
 
+import java.util.Date;
+
 import xutils3.db.annotation.Column;
 import xutils3.db.annotation.Table;
-
-import java.util.Date;
 
 /**
  * Created by wyouflf on 15/8/2.

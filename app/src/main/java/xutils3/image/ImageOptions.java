@@ -6,11 +6,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import java.lang.reflect.Field;
+
 import xutils3.common.util.DensityUtil;
 import xutils3.common.util.LogUtil;
 import xutils3.http.RequestParams;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by wyouflf on 15/8/21.
@@ -57,6 +57,20 @@ public class ImageOptions {
     private ParamsBuilder paramsBuilder;
 
     protected ImageOptions() {
+    }
+
+    private static int getImageViewFieldValue(ImageView view, String fieldName) {
+        int value = 0;
+        try {
+            Field field = ImageView.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            int fieldValue = (Integer) field.get(view);
+            if (fieldValue > 0 && fieldValue < Integer.MAX_VALUE) {
+                value = fieldValue;
+            }
+        } catch (Throwable ignored) {
+        }
+        return value;
     }
 
     /*package*/
@@ -272,20 +286,6 @@ public class ImageOptions {
         sb.append(crop ? 1 : 0).append(square ? 1 : 0).append(circular ? 1 : 0);
         sb.append(autoRotate ? 1 : 0).append(compress ? 1 : 0);
         return sb.toString();
-    }
-
-    private static int getImageViewFieldValue(ImageView view, String fieldName) {
-        int value = 0;
-        try {
-            Field field = ImageView.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            int fieldValue = (Integer) field.get(view);
-            if (fieldValue > 0 && fieldValue < Integer.MAX_VALUE) {
-                value = fieldValue;
-            }
-        } catch (Throwable ignored) {
-        }
-        return value;
     }
 
     public interface ParamsBuilder {

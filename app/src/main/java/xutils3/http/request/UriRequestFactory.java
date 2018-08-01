@@ -2,13 +2,13 @@ package xutils3.http.request;
 
 import android.text.TextUtils;
 
-import xutils3.common.util.LogUtil;
-import xutils3.http.RequestParams;
-import xutils3.http.app.RequestTracker;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+
+import xutils3.common.util.LogUtil;
+import xutils3.http.RequestParams;
+import xutils3.http.app.RequestTracker;
 
 /**
  * Created by wyouflf on 15/11/4.
@@ -17,10 +17,9 @@ import java.util.HashMap;
  */
 public final class UriRequestFactory {
 
-    private static Class<? extends RequestTracker> defaultTrackerCls;
-
     private static final HashMap<String, Class<? extends UriRequest>>
             SCHEME_CLS_MAP = new HashMap<String, Class<? extends UriRequest>>();
+    private static Class<? extends RequestTracker> defaultTrackerCls;
 
     private UriRequestFactory() {
     }

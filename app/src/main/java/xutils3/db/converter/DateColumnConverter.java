@@ -2,9 +2,9 @@ package xutils3.db.converter;
 
 import android.database.Cursor;
 
-import xutils3.db.sqlite.ColumnDbType;
-
 import java.util.Date;
+
+import xutils3.db.sqlite.ColumnDbType;
 
 /**
  * Author: wyouflf

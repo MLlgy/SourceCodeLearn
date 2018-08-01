@@ -1,7 +1,7 @@
 package com.example.mkio.importsource.okhttp3example;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,19 +25,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OkhttpExampleActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final MediaType MEDIA_TYPE_MARKDOWN
+            = MediaType.parse("text/x-markdown; charset=utf-8");
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     private OkHttpClient mOkHttpClient;
     private Button bt_send;
     private Button bt_postsend;
     private Button bt_sendfile;
     private Button bt_downfile;
-
-    public static final MediaType MEDIA_TYPE_MARKDOWN
-            = MediaType.parse("text/x-markdown; charset=utf-8");
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

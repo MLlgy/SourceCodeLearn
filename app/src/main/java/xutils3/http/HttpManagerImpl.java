@@ -1,10 +1,10 @@
 package xutils3.http;
 
+import java.lang.reflect.Type;
+
 import xutils3.HttpManager;
 import xutils3.common.Callback;
 import xutils3.x;
-
-import java.lang.reflect.Type;
 
 /**
  * Created by wyouflf on 15/7/23.

@@ -15,17 +15,17 @@
 
 package xutils3.db.sqlite;
 
-import xutils3.common.util.KeyValue;
-import xutils3.db.table.ColumnEntity;
-import xutils3.db.table.TableEntity;
-import xutils3.ex.DbException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import xutils3.common.util.KeyValue;
+import xutils3.db.table.ColumnEntity;
+import xutils3.db.table.TableEntity;
+import xutils3.ex.DbException;
 
 /**
  * Build "insert", "replace",，"update", "delete" and "create" sql.

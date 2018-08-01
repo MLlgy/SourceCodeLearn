@@ -1,10 +1,10 @@
 package xutils3.http.loader;
 
+import java.io.InputStream;
+
 import xutils3.cache.DiskCacheEntity;
 import xutils3.common.util.IOUtil;
 import xutils3.http.request.UriRequest;
-
-import java.io.InputStream;
 
 /**
  * Author: wyouflf

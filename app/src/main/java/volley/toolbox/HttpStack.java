@@ -16,13 +16,13 @@
 
 package volley.toolbox;
 
-import volley.AuthFailureError;
-import volley.Request;
-
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 import java.util.Map;
+
+import volley.AuthFailureError;
+import volley.Request;
 
 /**
  * An HTTP stack abstraction. 抽象的 Http 请求堆
@@ -30,16 +30,16 @@ import java.util.Map;
 public interface HttpStack {
     /**
      * Performs an HTTP request with the given parameters.
-     *
+     * <p>
      * <p>A GET request is sent if request.getPostBody() == null. A POST request is sent otherwise,
      * and the Content-Type header is set to request.getPostBodyContentType().</p>
      *
-     * @param request the request to perform
+     * @param request           the request to perform
      * @param additionalHeaders additional headers to be sent together with
-     *         {@link Request#getHeaders()}
+     *                          {@link Request#getHeaders()}
      * @return the HTTP response   执行http请求，返回请求结果
      */
     public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
-        throws IOException, AuthFailureError;
+            throws IOException, AuthFailureError;
 
 }

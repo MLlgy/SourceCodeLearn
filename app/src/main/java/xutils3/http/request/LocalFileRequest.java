@@ -1,9 +1,5 @@
 package xutils3.http.request;
 
-import xutils3.common.util.IOUtil;
-import xutils3.http.RequestParams;
-import xutils3.http.loader.FileLoader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +7,10 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+
+import xutils3.common.util.IOUtil;
+import xutils3.http.RequestParams;
+import xutils3.http.loader.FileLoader;
 
 /**
  * Created by wyouflf on 15/11/4.

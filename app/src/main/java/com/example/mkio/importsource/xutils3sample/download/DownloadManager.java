@@ -1,5 +1,11 @@
 package com.example.mkio.importsource.xutils3sample.download;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+
 import xutils3.DbManager;
 import xutils3.common.Callback;
 import xutils3.common.task.PriorityExecutor;
@@ -9,12 +15,6 @@ import xutils3.ex.DbException;
 import xutils3.http.RequestParams;
 import xutils3.x;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-
 /**
  * Author: wyouflf
  * Date: 13-11-10
@@ -22,14 +22,13 @@ import java.util.concurrent.Executor;
  */
 public final class DownloadManager {
 
+    private final static int MAX_DOWNLOAD_THREAD = 2; // 有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
+    private static volatile DownloadManager instance;
+
     static {
         // 注册DownloadState在数据库中的值类型映射
         ColumnConverterFactory.registerColumnConverter(DownloadState.class, new DownloadStateConverter());
     }
-
-    private static volatile DownloadManager instance;
-
-    private final static int MAX_DOWNLOAD_THREAD = 2; // 有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
 
     private final DbManager db;
     private final Executor executor = new PriorityExecutor(MAX_DOWNLOAD_THREAD, true);

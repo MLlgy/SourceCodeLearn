@@ -34,19 +34,15 @@ public class HttpException extends BaseException {
         this.code = code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public void setMessage(String message) {
-        this.customMessage = message;
-    }
-
     /**
      * @return The http response status code, 0 if the http request error and has no response.
      */
     public int getCode() {
         return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getErrorCode() {
@@ -64,6 +60,10 @@ public class HttpException extends BaseException {
         } else {
             return super.getMessage();
         }
+    }
+
+    public void setMessage(String message) {
+        this.customMessage = message;
     }
 
     public String getResult() {

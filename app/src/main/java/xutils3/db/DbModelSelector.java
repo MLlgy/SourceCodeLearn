@@ -18,14 +18,14 @@ package xutils3.db;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xutils3.common.util.IOUtil;
 import xutils3.db.sqlite.WhereBuilder;
 import xutils3.db.table.DbModel;
 import xutils3.db.table.TableEntity;
 import xutils3.ex.DbException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Author: wyouflf

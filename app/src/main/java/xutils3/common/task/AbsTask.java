@@ -1,8 +1,8 @@
 package xutils3.common.task;
 
-import xutils3.common.Callback;
-
 import java.util.concurrent.Executor;
+
+import xutils3.common.Callback;
 
 
 /**
@@ -13,9 +13,8 @@ import java.util.concurrent.Executor;
  */
 public abstract class AbsTask<ResultType> implements Callback.Cancelable {
 
-    private TaskProxy taskProxy = null;
     private final Callback.Cancelable cancelHandler;
-
+    private TaskProxy taskProxy = null;
     private volatile boolean isCancelled = false;
     private volatile State state = State.IDLE;
     private ResultType result;
@@ -112,23 +111,23 @@ public abstract class AbsTask<ResultType> implements Callback.Cancelable {
         return state;
     }
 
-    public final ResultType getResult() {
-        return result;
-    }
-
     /*package*/
     void setState(State state) {
         this.state = state;
     }
 
-    /*package*/
-    final void setTaskProxy(TaskProxy taskProxy) {
-        this.taskProxy = taskProxy;
+    public final ResultType getResult() {
+        return result;
     }
 
     /*package*/
     final void setResult(ResultType result) {
         this.result = result;
+    }
+
+    /*package*/
+    final void setTaskProxy(TaskProxy taskProxy) {
+        this.taskProxy = taskProxy;
     }
 
     public enum State {

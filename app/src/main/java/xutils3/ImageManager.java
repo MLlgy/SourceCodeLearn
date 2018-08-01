@@ -3,10 +3,10 @@ package xutils3;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import xutils3.common.Callback;
 import xutils3.image.ImageOptions;
-
-import java.io.File;
 
 /**
  * Created by wyouflf on 15/6/17.

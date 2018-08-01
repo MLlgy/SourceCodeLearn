@@ -3,20 +3,18 @@ package xutils3.http.loader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import xutils3.http.RequestParams;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+
+import xutils3.http.RequestParams;
 
 /**
  * Author: wyouflf
  * Time: 2014/05/26
  */
 public final class LoaderFactory {
-
-    private LoaderFactory() {
-    }
 
     /**
      * key: loadType
@@ -35,6 +33,9 @@ public final class LoaderFactory {
         IntegerLoader integerLoader = new IntegerLoader();
         converterHashMap.put(int.class, integerLoader);
         converterHashMap.put(Integer.class, integerLoader);
+    }
+
+    private LoaderFactory() {
     }
 
     @SuppressWarnings("unchecked")

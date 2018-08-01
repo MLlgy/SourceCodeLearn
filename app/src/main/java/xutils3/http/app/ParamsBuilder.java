@@ -1,9 +1,9 @@
 package xutils3.http.app;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import xutils3.http.RequestParams;
 import xutils3.http.annotation.HttpRequest;
-
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Created by wyouflf on 15/8/20.

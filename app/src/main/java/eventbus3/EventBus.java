@@ -40,14 +40,13 @@ import java.util.concurrent.ExecutorService;
  */
 public class EventBus {
 
-    /** Log tag, apps may override it. */
-    public static String TAG = "EventBus";
-
-    static volatile EventBus defaultInstance;
-
     private static final EventBusBuilder DEFAULT_BUILDER = new EventBusBuilder();
     private static final Map<Class<?>, List<Class<?>>> eventTypesCache = new HashMap<>();
-
+    /**
+     * Log tag, apps may override it.
+     */
+    public static String TAG = "EventBus";
+    static volatile EventBus defaultInstance;
     private final Map<Class<?>, CopyOnWriteArrayList<Subscription>> subscriptionsByEventType;
     private final Map<Object, List<Class<?>>> typesBySubscriber;
     private final Map<Class<?>, Object> stickyEvents;
@@ -74,28 +73,6 @@ public class EventBus {
 
     private final int indexCount;
 
-    /** Convenience singleton for apps using a process-wide EventBus instance. */
-    public static EventBus getDefault() {
-        if (defaultInstance == null) {
-            synchronized (EventBus.class) {
-                if (defaultInstance == null) {
-                    defaultInstance = new EventBus();
-                }
-            }
-        }
-        return defaultInstance;
-    }
-
-    public static EventBusBuilder builder() {
-        return new EventBusBuilder();
-    }
-
-    /** For unit test primarily. */
-    public static void clearCaches() {
-        SubscriberMethodFinder.clearCaches();
-        eventTypesCache.clear();
-    }
-
     /**
      * Creates a new EventBus instance; each instance is a separate scope in which events are delivered. To use a
      * central bus, consider {@link #getDefault()}.
@@ -121,6 +98,64 @@ public class EventBus {
         throwSubscriberException = builder.throwSubscriberException;
         eventInheritance = builder.eventInheritance;
         executorService = builder.executorService;
+    }
+
+    /**
+     * Convenience singleton for apps using a process-wide EventBus instance.
+     */
+    public static EventBus getDefault() {
+        if (defaultInstance == null) {
+            synchronized (EventBus.class) {
+                if (defaultInstance == null) {
+                    defaultInstance = new EventBus();
+                }
+            }
+        }
+        return defaultInstance;
+    }
+
+    public static EventBusBuilder builder() {
+        return new EventBusBuilder();
+    }
+
+    /**
+     * For unit test primarily.
+     */
+    public static void clearCaches() {
+        SubscriberMethodFinder.clearCaches();
+        eventTypesCache.clear();
+    }
+
+    /**
+     * Looks up all Class objects including super classes and interfaces. Should also work for interfaces.
+     */
+    private static List<Class<?>> lookupAllEventTypes(Class<?> eventClass) {
+        synchronized (eventTypesCache) {
+            List<Class<?>> eventTypes = eventTypesCache.get(eventClass);
+            if (eventTypes == null) {
+                eventTypes = new ArrayList<>();
+                Class<?> clazz = eventClass;
+                while (clazz != null) {
+                    eventTypes.add(clazz);
+                    addInterfaces(eventTypes, clazz.getInterfaces());
+                    clazz = clazz.getSuperclass();
+                }
+                eventTypesCache.put(eventClass, eventTypes);
+            }
+            return eventTypes;
+        }
+    }
+
+    /**
+     * Recurses through super interfaces.
+     */
+    static void addInterfaces(List<Class<?>> eventTypes, Class<?>[] interfaces) {
+        for (Class<?> interfaceClass : interfaces) {
+            if (!eventTypes.contains(interfaceClass)) {
+                eventTypes.add(interfaceClass);
+                addInterfaces(eventTypes, interfaceClass.getInterfaces());
+            }
+        }
     }
 
     /**
@@ -204,7 +239,9 @@ public class EventBus {
         return typesBySubscriber.containsKey(subscriber);
     }
 
-    /** Only updates subscriptionsByEventType, not typesBySubscriber! Caller must update typesBySubscriber. */
+    /**
+     * Only updates subscriptionsByEventType, not typesBySubscriber! Caller must update typesBySubscriber.
+     */
     private void unsubscribeByEventType(Object subscriber, Class<?> eventType) {
         List<Subscription> subscriptions = subscriptionsByEventType.get(eventType);
         if (subscriptions != null) {
@@ -221,7 +258,9 @@ public class EventBus {
         }
     }
 
-    /** Unregisters the given subscriber from all event classes. */
+    /**
+     * Unregisters the given subscriber from all event classes.
+     */
     public synchronized void unregister(Object subscriber) {
         List<Class<?>> subscribedTypes = typesBySubscriber.get(subscriber);
         if (subscribedTypes != null) {
@@ -234,7 +273,9 @@ public class EventBus {
         }
     }
 
-    /** Posts the given event to the event bus. */
+    /**
+     * Posts the given event to the event bus.
+     */
     public void post(Object event) {
         PostingThreadState postingState = currentPostingThreadState.get();
         List<Object> eventQueue = postingState.eventQueue;
@@ -437,34 +478,6 @@ public class EventBus {
         }
     }
 
-    /** Looks up all Class objects including super classes and interfaces. Should also work for interfaces. */
-    private static List<Class<?>> lookupAllEventTypes(Class<?> eventClass) {
-        synchronized (eventTypesCache) {
-            List<Class<?>> eventTypes = eventTypesCache.get(eventClass);
-            if (eventTypes == null) {
-                eventTypes = new ArrayList<>();
-                Class<?> clazz = eventClass;
-                while (clazz != null) {
-                    eventTypes.add(clazz);
-                    addInterfaces(eventTypes, clazz.getInterfaces());
-                    clazz = clazz.getSuperclass();
-                }
-                eventTypesCache.put(eventClass, eventTypes);
-            }
-            return eventTypes;
-        }
-    }
-
-    /** Recurses through super interfaces. */
-    static void addInterfaces(List<Class<?>> eventTypes, Class<?>[] interfaces) {
-        for (Class<?> interfaceClass : interfaces) {
-            if (!eventTypes.contains(interfaceClass)) {
-                eventTypes.add(interfaceClass);
-                addInterfaces(eventTypes, interfaceClass.getInterfaces());
-            }
-        }
-    }
-
     /**
      * Invokes the subscriber if the subscriptions is still active. Skipping subscriptions prevents race conditions
      * between {@link #unregister(Object)} and event delivery. Otherwise the event might be delivered after the
@@ -516,18 +529,13 @@ public class EventBus {
         }
     }
 
-    /** For ThreadLocal, much faster to set (and get multiple values). */
-    final static class PostingThreadState {
-        final List<Object> eventQueue = new ArrayList<Object>();
-        boolean isPosting;
-        boolean isMainThread;
-        Subscription subscription;
-        Object event;
-        boolean canceled;
-    }
-
     ExecutorService getExecutorService() {
         return executorService;
+    }
+
+    @Override
+    public String toString() {
+        return "EventBus[indexCount=" + indexCount + ", eventInheritance=" + eventInheritance + "]";
     }
 
     // Just an idea: we could provide a callback to post() to be notified, an alternative would be events, of course...
@@ -535,8 +543,15 @@ public class EventBus {
         void onPostCompleted(List<SubscriberExceptionEvent> exceptionEvents);
     }
 
-    @Override
-    public String toString() {
-        return "EventBus[indexCount=" + indexCount + ", eventInheritance=" + eventInheritance + "]";
+    /**
+     * For ThreadLocal, much faster to set (and get multiple values).
+     */
+    final static class PostingThreadState {
+        final List<Object> eventQueue = new ArrayList<Object>();
+        boolean isPosting;
+        boolean isMainThread;
+        Subscription subscription;
+        Object event;
+        boolean canceled;
     }
 }

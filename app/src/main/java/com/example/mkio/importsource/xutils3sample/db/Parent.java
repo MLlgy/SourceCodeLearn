@@ -1,12 +1,12 @@
 package com.example.mkio.importsource.xutils3sample.db;
 
+import java.util.Date;
+import java.util.List;
+
 import xutils3.DbManager;
 import xutils3.db.annotation.Column;
 import xutils3.db.annotation.Table;
 import xutils3.ex.DbException;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Author: wyouflf
@@ -16,12 +16,10 @@ import java.util.List;
 @Table(name = "parent", onCreated = "CREATE UNIQUE INDEX index_name ON parent(name,email)")
 public class Parent {
 
-    @Column(name = "id", isId = true)
-    private int id;
-
     @Column(name = "name")
     public String name;
-
+    @Column(name = "id", isId = true)
+    private int id;
     @Column(name = "email")
     private String email;
 

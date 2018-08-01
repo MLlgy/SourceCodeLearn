@@ -14,6 +14,11 @@ import android.widget.ProgressBar;
 
 import com.example.mkio.importsource.R;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import xutils3.common.Callback;
 import xutils3.common.util.DensityUtil;
 import xutils3.http.RequestParams;
@@ -23,17 +28,13 @@ import xutils3.view.annotation.Event;
 import xutils3.view.annotation.ViewInject;
 import xutils3.x;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by wyouflf on 15/11/4.
  */
 @ContentView(R.layout.fragment_image)
 public class ImageFragment extends BaseFragment {
 
+    ImageOptions imageOptions;
     private String[] imgSites = {
             "http://image.baidu.com/",
             "http://www.22mm.cc/",
@@ -41,11 +42,28 @@ public class ImageFragment extends BaseFragment {
             "http://eladies.sina.com.cn/photo/",
             "http://www.youzi4.com/"
     };
-
-    ImageOptions imageOptions;
-
     @ViewInject(R.id.lv_img)
     private ListView imageListView;
+    private ImageListAdapter imageListAdapter;
+
+    /**
+     * 得到网页中图片的地址
+     */
+    public static List<String> getImgSrcList(String htmlStr) {
+        List<String> pics = new ArrayList<String>();
+
+        String regEx_img = "<img.*?src=\"http://(.*?).jpg\""; // 图片链接地址
+        Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+        Matcher m_image = p_image.matcher(htmlStr);
+        while (m_image.find()) {
+            String src = m_image.group(1);
+            if (src.length() < 100) {
+                pics.add("http://" + src + ".jpg");
+                //pics.add("http://f.hiphotos.baidu.com/zhidao/pic/item/2fdda3cc7cd98d104cc21595203fb80e7bec907b.jpg");
+            }
+        }
+        return pics;
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -105,8 +123,6 @@ public class ImageFragment extends BaseFragment {
             }
         });
     }
-
-    private ImageListAdapter imageListAdapter;
 
     private class ImageListAdapter extends BaseAdapter {
 
@@ -170,7 +186,7 @@ public class ImageFragment extends BaseFragment {
         private ProgressBar imgPb;
     }
 
-    public class CustomCallBack implements Callback.CacheCallback<Drawable>{
+    public class CustomCallBack implements Callback.CacheCallback<Drawable> {
 
         @Override
         public void onSuccess(Drawable result) {
@@ -197,7 +213,6 @@ public class ImageFragment extends BaseFragment {
             return false;
         }
     }
-
 
     public class CustomBitmapLoadCallBack implements Callback.ProgressCallback<Drawable> {
         private final ImageItemHolder holder;
@@ -239,25 +254,6 @@ public class ImageFragment extends BaseFragment {
         public void onFinished() {
 
         }
-    }
-
-    /**
-     * 得到网页中图片的地址
-     */
-    public static List<String> getImgSrcList(String htmlStr) {
-        List<String> pics = new ArrayList<String>();
-
-        String regEx_img = "<img.*?src=\"http://(.*?).jpg\""; // 图片链接地址
-        Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
-        Matcher m_image = p_image.matcher(htmlStr);
-        while (m_image.find()) {
-            String src = m_image.group(1);
-            if (src.length() < 100) {
-                pics.add("http://" + src + ".jpg");
-                //pics.add("http://f.hiphotos.baidu.com/zhidao/pic/item/2fdda3cc7cd98d104cc21595203fb80e7bec907b.jpg");
-            }
-        }
-        return pics;
     }
 
 }

@@ -3,11 +3,11 @@ package xutils3.http.body;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import xutils3.common.util.KeyValue;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
+import xutils3.common.util.KeyValue;
 
 /**
  * Author: wyouflf
@@ -47,12 +47,12 @@ public class UrlEncodedParamsBody implements RequestBody {
     }
 
     @Override
-    public void setContentType(String contentType) {
+    public String getContentType() {
+        return "application/x-www-form-urlencoded;charset=" + charset;
     }
 
     @Override
-    public String getContentType() {
-        return "application/x-www-form-urlencoded;charset=" + charset;
+    public void setContentType(String contentType) {
     }
 
     @Override

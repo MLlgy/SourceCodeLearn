@@ -1,11 +1,11 @@
 package com.example.mkio.importsource.xutils3sample.http;
 
-import xutils3.http.app.ResponseParser;
-import xutils3.http.request.UriRequest;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import xutils3.http.app.ResponseParser;
+import xutils3.http.request.UriRequest;
 
 /**
  * Created by wyouflf on 15/11/5.

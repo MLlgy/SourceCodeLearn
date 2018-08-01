@@ -10,6 +10,11 @@ import com.example.mkio.importsource.xutils3sample.download.DownloadManager;
 import com.example.mkio.importsource.xutils3sample.http.BaiduParams;
 import com.example.mkio.importsource.xutils3sample.http.BaiduResponse;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.List;
+
 import xutils3.common.Callback;
 import xutils3.common.util.LogUtil;
 import xutils3.ex.DbException;
@@ -20,11 +25,6 @@ import xutils3.view.annotation.Event;
 import xutils3.view.annotation.ViewInject;
 import xutils3.x;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.List;
-
 /**
  * Created by wyouflf on 15/11/4.
  * 学习贴：http://ocnyang.com/2016/07/31/xUtils3/
@@ -32,6 +32,9 @@ import java.util.List;
 @ContentView(R.layout.fragment_http)
 public class HttpFragment extends BaseFragment {
 
+
+    @ViewInject(R.id.et_url)
+    private EditText et_url;
 
     /**
      * 1. 方法必须私有限定,
@@ -270,9 +273,6 @@ public class HttpFragment extends BaseFragment {
             }
         });
     }
-
-    @ViewInject(R.id.et_url)
-    private EditText et_url;
 
     // 添加到下载列表
     @Event(value = R.id.btn_test3)

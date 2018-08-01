@@ -5,12 +5,13 @@ import android.os.Parcelable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import xutils3.common.util.LogUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+
+import xutils3.common.util.LogUtil;
 
 /**
  * Created by wyouflf on 16/1/23.
@@ -20,10 +21,6 @@ import java.util.Map;
     private static final ClassLoader BOOT_CL = String.class.getClassLoader();
 
     private RequestParamsHelper() {
-    }
-
-    /*package*/ interface ParseKVListener {
-        void onParseKV(String name, Object value);
     }
 
     /*package*/
@@ -110,6 +107,10 @@ import java.util.Map;
         }
 
         return result;
+    }
+
+    /*package*/ interface ParseKVListener {
+        void onParseKV(String name, Object value);
     }
 
 }

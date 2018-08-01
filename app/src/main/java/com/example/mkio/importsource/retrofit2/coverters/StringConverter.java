@@ -10,9 +10,10 @@ import xutils3.common.util.LogUtil;
  * Creater: liguoying
  * Time: 2018/7/5 0005 17:47
  */
-public  class StringConverter implements Converter<ResponseBody,String> {
+public class StringConverter implements Converter<ResponseBody, String> {
 
     public static final StringConverter STRINGCONVERTER = new StringConverter();
+
     @Override
     public String convert(ResponseBody value) throws IOException {
         LogUtil.d(value.string());

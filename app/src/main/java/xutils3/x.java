@@ -3,17 +3,17 @@ package xutils3;
 import android.app.Application;
 import android.content.Context;
 
+import java.lang.reflect.Method;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+
 import xutils3.common.TaskController;
 import xutils3.common.task.TaskControllerImpl;
 import xutils3.db.DbManagerImpl;
 import xutils3.http.HttpManagerImpl;
 import xutils3.image.ImageManagerImpl;
 import xutils3.view.ViewInjectorImpl;
-
-import java.lang.reflect.Method;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 
 
 /**

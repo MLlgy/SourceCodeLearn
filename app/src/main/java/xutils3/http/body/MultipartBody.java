@@ -3,11 +3,6 @@ package xutils3.http.body;
 
 import android.text.TextUtils;
 
-import xutils3.common.Callback;
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.KeyValue;
-import xutils3.http.ProgressHandler;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +11,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+
+import xutils3.common.Callback;
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.KeyValue;
+import xutils3.http.ProgressHandler;
 
 /**
  * Author: wyouflf
@@ -33,6 +33,7 @@ public class MultipartBody implements ProgressBody {
     private List<KeyValue> multipartParams;
     private long total = 0;
     private long current = 0;
+    private ProgressHandler callBackHandler;
 
     public MultipartBody(List<KeyValue> multipartParams, String charset) {
         if (!TextUtils.isEmpty(charset)) {
@@ -51,7 +52,29 @@ public class MultipartBody implements ProgressBody {
         }
     }
 
-    private ProgressHandler callBackHandler;
+    private static byte[] buildContentDisposition(String name, String fileName, String charset) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder("Content-Disposition: form-data");
+        result.append("; name=\"").append(name.replace("\"", "\\\"")).append("\"");
+        if (!TextUtils.isEmpty(fileName)) {
+            result.append("; filename=\"").append(fileName.replace("\"", "\\\"")).append("\"");
+        }
+        return result.toString().getBytes(charset);
+    }
+
+    private static byte[] buildContentType(Object value, String contentType, String charset) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder("Content-Type: ");
+        if (TextUtils.isEmpty(contentType)) {
+            if (value instanceof String) {
+                contentType = "text/plain; charset=" + charset;
+            } else {
+                contentType = "application/octet-stream";
+            }
+        } else {
+            contentType = contentType.replaceFirst("\\/jpg$", "/jpeg");
+        }
+        result.append(contentType);
+        return result.toString().getBytes(charset);
+    }
 
     @Override
     public void setProgressHandler(ProgressHandler progressHandler) {
@@ -69,6 +92,11 @@ public class MultipartBody implements ProgressBody {
         return total;
     }
 
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
     /**
      * only change subType:
      * "multipart/subType; boundary=xxx..."
@@ -79,11 +107,6 @@ public class MultipartBody implements ProgressBody {
     public void setContentType(String subType) {
         int index = contentType.indexOf(";");
         this.contentType = "multipart/" + subType + contentType.substring(index);
-    }
-
-    @Override
-    public String getContentType() {
-        return contentType;
     }
 
     @Override
@@ -199,30 +222,6 @@ public class MultipartBody implements ProgressBody {
                 IOUtil.closeQuietly(in);
             }
         }
-    }
-
-    private static byte[] buildContentDisposition(String name, String fileName, String charset) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder("Content-Disposition: form-data");
-        result.append("; name=\"").append(name.replace("\"", "\\\"")).append("\"");
-        if (!TextUtils.isEmpty(fileName)) {
-            result.append("; filename=\"").append(fileName.replace("\"", "\\\"")).append("\"");
-        }
-        return result.toString().getBytes(charset);
-    }
-
-    private static byte[] buildContentType(Object value, String contentType, String charset) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder("Content-Type: ");
-        if (TextUtils.isEmpty(contentType)) {
-            if (value instanceof String) {
-                contentType = "text/plain; charset=" + charset;
-            } else {
-                contentType = "application/octet-stream";
-            }
-        } else {
-            contentType = contentType.replaceFirst("\\/jpg$", "/jpeg");
-        }
-        result.append(contentType);
-        return result.toString().getBytes(charset);
     }
 
     private class CounterOutputStream extends OutputStream {

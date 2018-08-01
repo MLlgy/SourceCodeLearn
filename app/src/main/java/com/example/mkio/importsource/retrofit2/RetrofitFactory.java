@@ -3,26 +3,18 @@ package com.example.mkio.importsource.retrofit2;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-
 import com.example.mkio.importsource.InitApp;
 import com.example.mkio.importsource.NetWorkUtil;
 import com.example.mkio.importsource.retrofit2.coverters.CustomCallAdapterFactory;
-import com.example.mkio.importsource.retrofit2.coverters.StringConverterFactory;
 
-import org.json.JSONObject;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -35,59 +27,7 @@ import xutils3.common.util.LogUtil;
  */
 
 public class RetrofitFactory {
-    public Server mServer;
-    private volatile static Retrofit retrofit;
-
-    public static RetrofitFactory getInstance() {
-        return RetrofitFactoryHolder.Instance;
-    }
-
-    private static class RetrofitFactoryHolder {
-        private static RetrofitFactory Instance = new RetrofitFactory();
-    }
-
-    public RetrofitFactory() {
-        if (retrofit == null) {
-            getRetrofit();
-        }
-        if (mServer == null) {
-            mServer = retrofit.create(Server.class);
-        }
-    }
-
     private static final Object Object = new Object();
-
-    @NonNull
-    public static Retrofit getRetrofit() {
-        synchronized (Object) {
-            if (retrofit == null) {
-                // 指定缓存路径,缓存大小 50Mb
-//                Cache cache = new Cache(new File(InitApp.AppContext.getCacheDir(), "HttpCache"),
-//                        1024 * 1024 * 50);
-                OkHttpClient.Builder builder = new OkHttpClient.Builder()
-//                        .cache(cache)
-//                        .addInterceptor(cacheControlInterceptor)
-                        .addInterceptor(new OkInterceptor())
-                        .addInterceptor(new AddHeadersInterceptor())
-                        .connectTimeout(10, TimeUnit.SECONDS)
-                        .readTimeout(15, TimeUnit.SECONDS)
-                        .writeTimeout(15, TimeUnit.SECONDS)
-                        .retryOnConnectionFailure(true);
-                retrofit = new Retrofit.Builder()
-                        .baseUrl("http://test1-ordersite.sherpa.com.cn/")
-                        .client(builder.build())
-//                        .addConverterFactory(StringConverterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-
-                        .build();
-
-            }
-        }
-        return retrofit;
-    }
-
     /**
      * 缓存机制
      * 在响应请求之后在 data/data/<包名>/cache 下建立一个response 文件夹，保持缓存数据。
@@ -123,7 +63,60 @@ public class RetrofitFactory {
             }
         }
     };
+    private volatile static Retrofit retrofit;
+    public Server mServer;
 
+    public RetrofitFactory() {
+        if (retrofit == null) {
+            getRetrofit();
+        }
+        if (mServer == null) {
+            mServer = retrofit.create(Server.class);
+        }
+    }
+
+    public static RetrofitFactory getInstance() {
+        return RetrofitFactoryHolder.Instance;
+    }
+
+    @NonNull
+    public static Retrofit getRetrofit() {
+        synchronized (Object) {
+            if (retrofit == null) {
+                // 指定缓存路径,缓存大小 50Mb
+//                Cache cache = new Cache(new File(InitApp.AppContext.getCacheDir(), "HttpCache"),
+//                        1024 * 1024 * 50);
+                OkHttpClient.Builder builder = new OkHttpClient.Builder()
+//                        .cache(cache)
+//                        .addInterceptor(cacheControlInterceptor)
+                        .addInterceptor(new OkInterceptor())
+                        .addInterceptor(new AddHeadersInterceptor())
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(15, TimeUnit.SECONDS)
+                        .writeTimeout(15, TimeUnit.SECONDS)
+                        .retryOnConnectionFailure(true);
+                retrofit = new Retrofit.Builder()
+                        .baseUrl("http://test1-ordersite.sherpa.com.cn/")
+                        .client(builder.build())
+//                        .addConverterFactory(StringConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+
+                        .build();
+
+            }
+        }
+        return retrofit;
+    }
+
+    public Call<CouponResp> checkCoupon(String customerId, String code, int totalValue) {
+        return mServer.checkCoupon(customerId, code, totalValue);
+    }
+
+    private static class RetrofitFactoryHolder {
+        private static RetrofitFactory Instance = new RetrofitFactory();
+    }
 
     /**
      * 统一添加header
@@ -179,11 +172,6 @@ public class RetrofitFactory {
             }
             return chain.proceed(chain.request());
         }
-    }
-
-
-    public Call<CouponResp> checkCoupon(String customerId, String code, int totalValue) {
-        return mServer.checkCoupon(customerId, code, totalValue);
     }
 
 

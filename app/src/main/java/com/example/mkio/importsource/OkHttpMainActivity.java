@@ -1,28 +1,7 @@
 package com.example.mkio.importsource;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.CacheControl;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class OkHttpMainActivity extends AppCompatActivity implements View.OnClickListener {
     @Override

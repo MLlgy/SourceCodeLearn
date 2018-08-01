@@ -24,40 +24,40 @@ import java.lang.reflect.Method;
  * have been made with alternative protocols, none of which were successful.
  */
 public final class RouteException extends RuntimeException {
-  private static final Method addSuppressedExceptionMethod;
+    private static final Method addSuppressedExceptionMethod;
 
-  static {
-    Method m;
-    try {
-      m = Throwable.class.getDeclaredMethod("addSuppressed", Throwable.class);
-    } catch (Exception e) {
-      m = null;
+    static {
+        Method m;
+        try {
+            m = Throwable.class.getDeclaredMethod("addSuppressed", Throwable.class);
+        } catch (Exception e) {
+            m = null;
+        }
+        addSuppressedExceptionMethod = m;
     }
-    addSuppressedExceptionMethod = m;
-  }
 
-  private IOException lastException;
+    private IOException lastException;
 
-  public RouteException(IOException cause) {
-    super(cause);
-    lastException = cause;
-  }
-
-  public IOException getLastConnectException() {
-    return lastException;
-  }
-
-  public void addConnectException(IOException e) {
-    addSuppressedIfPossible(e, lastException);
-    lastException = e;
-  }
-
-  private void addSuppressedIfPossible(IOException e, IOException suppressed) {
-    if (addSuppressedExceptionMethod != null) {
-      try {
-        addSuppressedExceptionMethod.invoke(e, suppressed);
-      } catch (InvocationTargetException | IllegalAccessException ignored) {
-      }
+    public RouteException(IOException cause) {
+        super(cause);
+        lastException = cause;
     }
-  }
+
+    public IOException getLastConnectException() {
+        return lastException;
+    }
+
+    public void addConnectException(IOException e) {
+        addSuppressedIfPossible(e, lastException);
+        lastException = e;
+    }
+
+    private void addSuppressedIfPossible(IOException e, IOException suppressed) {
+        if (addSuppressedExceptionMethod != null) {
+            try {
+                addSuppressedExceptionMethod.invoke(e, suppressed);
+            } catch (InvocationTargetException | IllegalAccessException ignored) {
+            }
+        }
+    }
 }

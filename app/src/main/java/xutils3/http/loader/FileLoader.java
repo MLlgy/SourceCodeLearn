@@ -2,18 +2,6 @@ package xutils3.http.loader;
 
 import android.text.TextUtils;
 
-import xutils3.cache.DiskCacheEntity;
-import xutils3.cache.DiskCacheFile;
-import xutils3.cache.LruDiskCache;
-import xutils3.common.Callback;
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.LogUtil;
-import xutils3.common.util.ProcessLock;
-import xutils3.ex.FileLockedException;
-import xutils3.ex.HttpException;
-import xutils3.http.RequestParams;
-import xutils3.http.request.UriRequest;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -25,6 +13,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Date;
+
+import xutils3.cache.DiskCacheEntity;
+import xutils3.cache.DiskCacheFile;
+import xutils3.cache.LruDiskCache;
+import xutils3.common.Callback;
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.LogUtil;
+import xutils3.common.util.ProcessLock;
+import xutils3.ex.FileLockedException;
+import xutils3.ex.HttpException;
+import xutils3.http.RequestParams;
+import xutils3.http.request.UriRequest;
 
 /**
  * Author: wyouflf
@@ -50,6 +50,51 @@ public class FileLoader extends Loader<File> {
     private String responseFileName;
 
     private DiskCacheFile diskCacheFile;
+
+    private static String getResponseFileName(UriRequest request) {
+        if (request == null) return null;
+        String disposition = request.getResponseHeader("Content-Disposition");
+        if (!TextUtils.isEmpty(disposition)) {
+            int startIndex = disposition.indexOf("filename=");
+            if (startIndex > 0) {
+                startIndex += 9; // "filename=".length()
+                int endIndex = disposition.indexOf(";", startIndex);
+                if (endIndex < 0) {
+                    endIndex = disposition.length();
+                }
+                if (endIndex > startIndex) {
+                    try {
+                        String name = URLDecoder.decode(
+                                disposition.substring(startIndex, endIndex),
+                                request.getParams().getCharset());
+                        if (name.startsWith("\"") && name.endsWith("\"")) {
+                            name = name.substring(1, name.length() - 1);
+                        }
+                        return name;
+                    } catch (UnsupportedEncodingException ex) {
+                        LogUtil.e(ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 服务器是否支持断点续传
+     *
+     * @param request
+     * @return
+     */
+    private static boolean isSupportRange(UriRequest request) {
+        if (request == null) return false;
+        String ranges = request.getResponseHeader("Accept-Ranges");
+        if (ranges != null) {
+            return ranges.contains("bytes");
+        }
+        ranges = request.getResponseHeader("Content-Range");
+        return ranges != null && ranges.contains("bytes");
+    }
 
     @Override
     public Loader<File> newInstance() {
@@ -344,50 +389,6 @@ public class FileLoader extends Loader<File> {
         } else {
             return loadedFile;
         }
-    }
-
-    private static String getResponseFileName(UriRequest request) {
-        if (request == null) return null;
-        String disposition = request.getResponseHeader("Content-Disposition");
-        if (!TextUtils.isEmpty(disposition)) {
-            int startIndex = disposition.indexOf("filename=");
-            if (startIndex > 0) {
-                startIndex += 9; // "filename=".length()
-                int endIndex = disposition.indexOf(";", startIndex);
-                if (endIndex < 0) {
-                    endIndex = disposition.length();
-                }
-                if (endIndex > startIndex) {
-                    try {
-                        String name = URLDecoder.decode(
-                                disposition.substring(startIndex, endIndex),
-                                request.getParams().getCharset());
-                        if (name.startsWith("\"") && name.endsWith("\"")) {
-                            name = name.substring(1, name.length() - 1);
-                        }
-                        return name;
-                    } catch (UnsupportedEncodingException ex) {
-                        LogUtil.e(ex.getMessage(), ex);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 服务器是否支持断点续传
-     * @param request
-     * @return
-     */
-    private static boolean isSupportRange(UriRequest request) {
-        if (request == null) return false;
-        String ranges = request.getResponseHeader("Accept-Ranges");
-        if (ranges != null) {
-            return ranges.contains("bytes");
-        }
-        ranges = request.getResponseHeader("Content-Range");
-        return ranges != null && ranges.contains("bytes");
     }
 
     @Override

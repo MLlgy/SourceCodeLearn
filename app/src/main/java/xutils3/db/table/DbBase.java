@@ -3,14 +3,14 @@ package xutils3.db.table;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import java.util.HashMap;
+
 import xutils3.DbManager;
 import xutils3.common.util.IOUtil;
 import xutils3.common.util.LogUtil;
 import xutils3.db.sqlite.SqlInfo;
 import xutils3.db.sqlite.SqlInfoBuilder;
 import xutils3.ex.DbException;
-
-import java.util.HashMap;
 
 /**
  * DbManager基类, 包含表结构的基本操作.

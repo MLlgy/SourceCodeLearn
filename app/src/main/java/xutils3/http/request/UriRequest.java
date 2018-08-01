@@ -1,5 +1,12 @@
 package xutils3.http.request;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 import xutils3.common.util.LogUtil;
 import xutils3.http.ProgressHandler;
 import xutils3.http.RequestParams;
@@ -7,13 +14,6 @@ import xutils3.http.app.RequestInterceptListener;
 import xutils3.http.loader.Loader;
 import xutils3.http.loader.LoaderFactory;
 import xutils3.x;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wyouflf on 15/7/23.

@@ -3,6 +3,12 @@ package xutils3.cache;
 
 import android.text.TextUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Executor;
+
 import xutils3.DbManager;
 import xutils3.common.task.PriorityExecutor;
 import xutils3.common.util.FileUtil;
@@ -15,12 +21,6 @@ import xutils3.db.sqlite.WhereBuilder;
 import xutils3.ex.DbException;
 import xutils3.ex.FileLockedException;
 import xutils3.x;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 /**
  * Created by wyouflf on 15/7/23.
@@ -36,15 +36,22 @@ public final class LruDiskCache {
     private static final int LOCK_WAIT = 1000 * 3; // 3s
     private static final String CACHE_DIR_NAME = "xUtils_cache";
     private static final String TEMP_FILE_SUFFIX = ".tmp";
-
-    private boolean available = false;
+    private static final long TRIM_TIME_SPAN = 1000;
     private final DbManager cacheDb;
+    private final Executor trimExecutor = new PriorityExecutor(1, true);
+    private boolean available = false;
     private File cacheDir;
     private long diskCacheSize = LIMIT_SIZE;
-    private final Executor trimExecutor = new PriorityExecutor(1, true);
-
     private long lastTrimTime = 0L;
-    private static final long TRIM_TIME_SPAN = 1000;
+
+    private LruDiskCache(String dirName) {
+        this.cacheDb = x.getDb(DbConfigs.HTTP.getConfig());
+        this.cacheDir = FileUtil.getCacheDir(dirName);
+        if (this.cacheDir != null && (this.cacheDir.exists() || this.cacheDir.mkdirs())) {
+            available = true;
+        }
+        deleteNoIndexFiles();
+    }
 
     public synchronized static LruDiskCache getDiskCache(String dirName) {
         if (TextUtils.isEmpty(dirName)) dirName = CACHE_DIR_NAME;
@@ -54,15 +61,6 @@ public final class LruDiskCache {
             DISK_CACHE_MAP.put(dirName, cache);
         }
         return cache;
-    }
-
-    private LruDiskCache(String dirName) {
-        this.cacheDb = x.getDb(DbConfigs.HTTP.getConfig());
-        this.cacheDir = FileUtil.getCacheDir(dirName);
-        if (this.cacheDir != null && (this.cacheDir.exists() || this.cacheDir.mkdirs())) {
-            available = true;
-        }
-        deleteNoIndexFiles();
     }
 
     public LruDiskCache setMaxSize(long maxSize) {

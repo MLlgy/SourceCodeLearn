@@ -5,15 +5,6 @@ import android.text.TextUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import xutils3.common.util.KeyValue;
-import xutils3.common.util.LogUtil;
-import xutils3.http.body.BodyItemWrapper;
-import xutils3.http.body.FileBody;
-import xutils3.http.body.InputStreamBody;
-import xutils3.http.body.MultipartBody;
-import xutils3.http.body.RequestBody;
-import xutils3.http.body.StringBody;
-import xutils3.http.body.UrlEncodedParamsBody;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,12 +18,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import xutils3.common.util.KeyValue;
+import xutils3.common.util.LogUtil;
+import xutils3.http.body.BodyItemWrapper;
+import xutils3.http.body.FileBody;
+import xutils3.http.body.InputStreamBody;
+import xutils3.http.body.MultipartBody;
+import xutils3.http.body.RequestBody;
+import xutils3.http.body.StringBody;
+import xutils3.http.body.UrlEncodedParamsBody;
+
 /**
  * 请求的基础参数
  * Created by wyouflf on 16/1/23.
  */
 /*package*/ abstract class BaseParams {
 
+    private final List<Header> headers = new ArrayList<Header>();
+    private final List<KeyValue> queryStringParams = new ArrayList<KeyValue>();
+    private final List<KeyValue> bodyParams = new ArrayList<KeyValue>();
+    private final List<KeyValue> fileParams = new ArrayList<KeyValue>();
     private String charset = "UTF-8";
     private HttpMethod method;
     private String bodyContent;
@@ -40,10 +45,9 @@ import java.util.Map;
     private boolean asJsonContent = false; // 用json形式的bodyParams上传
     private RequestBody requestBody; // 生成的表单
 
-    private final List<Header> headers = new ArrayList<Header>();
-    private final List<KeyValue> queryStringParams = new ArrayList<KeyValue>();
-    private final List<KeyValue> bodyParams = new ArrayList<KeyValue>();
-    private final List<KeyValue> fileParams = new ArrayList<KeyValue>();
+    public String getCharset() {
+        return charset;
+    }
 
     public void setCharset(String charset) {
         if (!TextUtils.isEmpty(charset)) {
@@ -51,16 +55,12 @@ import java.util.Map;
         }
     }
 
-    public String getCharset() {
-        return charset;
+    public HttpMethod getMethod() {
+        return method;
     }
 
     public void setMethod(HttpMethod method) {
         this.method = method;
-    }
-
-    public HttpMethod getMethod() {
-        return method;
     }
 
     public boolean isMultipart() {
@@ -233,13 +233,13 @@ import java.util.Map;
         }
     }
 
-    public void setBodyContent(String content) {
-        this.bodyContent = content;
-    }
-
     public String getBodyContent() {
         checkBodyParams();
         return bodyContent;
+    }
+
+    public void setBodyContent(String content) {
+        this.bodyContent = content;
     }
 
     public List<Header> getHeaders() {
@@ -351,10 +351,6 @@ import java.util.Map;
         }
     }
 
-    public void setRequestBody(RequestBody requestBody) {
-        this.requestBody = requestBody;
-    }
-
     public RequestBody getRequestBody() throws IOException {
         checkBodyParams();
         if (this.requestBody != null) {
@@ -397,6 +393,10 @@ import java.util.Map;
         }
 
         return result;
+    }
+
+    public void setRequestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
     }
 
     public String toJSONString() {

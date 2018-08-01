@@ -15,9 +15,6 @@
  */
 package eventbus3;
 
-import  eventbus3.meta.SubscriberInfo;
-import  eventbus3.meta.SubscriberInfoIndex;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -25,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import eventbus3.meta.SubscriberInfo;
+import eventbus3.meta.SubscriberInfoIndex;
 
 class SubscriberMethodFinder {
     /*
@@ -37,19 +37,21 @@ class SubscriberMethodFinder {
 
     private static final int MODIFIERS_IGNORE = Modifier.ABSTRACT | Modifier.STATIC | BRIDGE | SYNTHETIC;
     private static final Map<Class<?>, List<SubscriberMethod>> METHOD_CACHE = new ConcurrentHashMap<>();
-
-    private List<SubscriberInfoIndex> subscriberInfoIndexes;
-    private final boolean strictMethodVerification;
-    private final boolean ignoreGeneratedIndex;
-
     private static final int POOL_SIZE = 4;
     private static final FindState[] FIND_STATE_POOL = new FindState[POOL_SIZE];
+    private final boolean strictMethodVerification;
+    private final boolean ignoreGeneratedIndex;
+    private List<SubscriberInfoIndex> subscriberInfoIndexes;
 
     SubscriberMethodFinder(List<SubscriberInfoIndex> subscriberInfoIndexes, boolean strictMethodVerification,
                            boolean ignoreGeneratedIndex) {
         this.subscriberInfoIndexes = subscriberInfoIndexes;
         this.strictMethodVerification = strictMethodVerification;
         this.ignoreGeneratedIndex = ignoreGeneratedIndex;
+    }
+
+    static void clearCaches() {
+        METHOD_CACHE.clear();
     }
 
     List<SubscriberMethod> findSubscriberMethods(Class<?> subscriberClass) {
@@ -182,10 +184,6 @@ class SubscriberMethodFinder {
                         " is a illegal @Subscribe method: must be public, non-static, and non-abstract");
             }
         }
-    }
-
-    static void clearCaches() {
-        METHOD_CACHE.clear();
     }
 
     static class FindState {

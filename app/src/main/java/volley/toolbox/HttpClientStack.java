@@ -16,10 +16,6 @@
 
 package volley.toolbox;
 
-import volley.AuthFailureError;
-import volley.Request;
-import volley.Request.Method;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -44,15 +40,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import volley.AuthFailureError;
+import volley.Request;
+import volley.Request.Method;
+
 /**
  * An HttpStack that performs request over an {@link HttpClient}.
  * 通过httpclient 来执行请求的Http栈;
  * 实现 HttpStack 接口，利用 Apache 的 HttpClient 进行各种请求方式的请求。
  */
 public class HttpClientStack implements HttpStack {
-    protected final HttpClient mClient;
-
     private final static String HEADER_CONTENT_TYPE = "Content-Type";
+    protected final HttpClient mClient;
 
     public HttpClientStack(HttpClient client) {
         mClient = client;
@@ -71,22 +70,6 @@ public class HttpClientStack implements HttpStack {
             result.add(new BasicNameValuePair(key, postParams.get(key)));
         }
         return result;
-    }
-
-    @Override
-    public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
-            throws IOException, AuthFailureError {
-        HttpUriRequest httpRequest = createHttpRequest(request, additionalHeaders);
-        addHeaders(httpRequest, additionalHeaders);
-        addHeaders(httpRequest, request.getHeaders());
-        onPrepareRequest(httpRequest);
-        HttpParams httpParams = httpRequest.getParams();
-        int timeoutMs = request.getTimeoutMs();
-        // TODO: Reevaluate this connection timeout based on more wide-scale
-        // data collection and possibly different for wifi vs. 3G.
-        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-        HttpConnectionParams.setSoTimeout(httpParams, timeoutMs);
-        return mClient.execute(httpRequest);
     }
 
     /**
@@ -152,6 +135,22 @@ public class HttpClientStack implements HttpStack {
             HttpEntity entity = new ByteArrayEntity(body);
             httpRequest.setEntity(entity);
         }
+    }
+
+    @Override
+    public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
+            throws IOException, AuthFailureError {
+        HttpUriRequest httpRequest = createHttpRequest(request, additionalHeaders);
+        addHeaders(httpRequest, additionalHeaders);
+        addHeaders(httpRequest, request.getHeaders());
+        onPrepareRequest(httpRequest);
+        HttpParams httpParams = httpRequest.getParams();
+        int timeoutMs = request.getTimeoutMs();
+        // TODO: Reevaluate this connection timeout based on more wide-scale
+        // data collection and possibly different for wifi vs. 3G.
+        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+        HttpConnectionParams.setSoTimeout(httpParams, timeoutMs);
+        return mClient.execute(httpRequest);
     }
 
     /**

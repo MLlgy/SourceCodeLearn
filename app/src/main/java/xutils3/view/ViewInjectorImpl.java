@@ -20,6 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+
 import xutils3.ViewInjector;
 import xutils3.common.util.LogUtil;
 import xutils3.view.annotation.ContentView;
@@ -27,14 +32,11 @@ import xutils3.view.annotation.Event;
 import xutils3.view.annotation.ViewInject;
 import xutils3.x;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
-
 public final class ViewInjectorImpl implements ViewInjector {
 
     private static final HashSet<Class<?>> IGNORED = new HashSet<Class<?>>();
+    private static final Object lock = new Object();
+    private static volatile ViewInjectorImpl instance;
 
     static {
         IGNORED.add(Object.class);
@@ -46,9 +48,6 @@ public final class ViewInjectorImpl implements ViewInjector {
         } catch (Throwable ignored) {
         }
     }
-
-    private static final Object lock = new Object();
-    private static volatile ViewInjectorImpl instance;
 
     private ViewInjectorImpl() {
     }
@@ -62,63 +61,6 @@ public final class ViewInjectorImpl implements ViewInjector {
             }
         }
         x.Ext.setViewInjector(instance);
-    }
-
-    @Override
-    public void inject(View view) {
-        injectObject(view, view.getClass(), new ViewFinder(view));
-    }
-
-    @Override
-    public void inject(Activity activity) {
-        //获取Activity的ContentView的注解
-        Class<?> handlerType = activity.getClass();
-        try {
-            ContentView contentView = findContentView(handlerType);
-            if (contentView != null) {
-                int viewId = contentView.value();
-                if (viewId > 0) {
-                    //获得 setContentView() 方法对象实例
-                    Method setContentViewMethod = handlerType.getMethod("setContentView", int.class);
-                    //通过反射进行调用指定类的setContentView() 方法，并将 R.layout.xx 设置进去
-                    setContentViewMethod.invoke(activity, viewId);
-                }
-            }
-        } catch (Throwable ex) {
-            LogUtil.e(ex.getMessage(), ex);
-        }
-        // 遍历被注解的属性和方法
-        injectObject(activity, handlerType, new ViewFinder(activity));
-    }
-
-    @Override
-    public void inject(Object handler, View view) {
-        injectObject(handler, handler.getClass(), new ViewFinder(view));
-    }
-
-    @Override
-    public View inject(Object fragment, LayoutInflater inflater, ViewGroup container) {
-        // inject ContentView
-        View view = null;
-        Class<?> handlerType = fragment.getClass();
-        try {
-            // 获取ContentView标签，主要是为了获取ContentView.value()，即R.layout.xxx
-            ContentView contentView = findContentView(handlerType);
-            if (contentView != null) {
-                //拿到布局文件的id
-                int viewId = contentView.value();
-                if (viewId > 0) {
-                    view = inflater.inflate(viewId, container, false);
-                }
-            }
-        } catch (Throwable ex) {
-            LogUtil.e(ex.getMessage(), ex);
-        }
-
-        // inject res & event
-        injectObject(fragment, handlerType, new ViewFinder(view));
-
-        return view;
     }
 
     /**
@@ -153,10 +95,10 @@ public final class ViewInjectorImpl implements ViewInjector {
                 //获取属性的类型
                 Class<?> fieldType = field.getType();
                 if (
-                /* 不注入静态字段 */     Modifier.isStatic(field.getModifiers()) ||
-                /* 不注入final字段 */    Modifier.isFinal(field.getModifiers()) ||
-                /* 不注入基本类型字段 */  fieldType.isPrimitive() ||
-                /* 不注入数组类型字段 */  fieldType.isArray()) {
+                    /* 不注入静态字段 */     Modifier.isStatic(field.getModifiers()) ||
+                        /* 不注入final字段 */    Modifier.isFinal(field.getModifiers()) ||
+                        /* 不注入基本类型字段 */  fieldType.isPrimitive() ||
+                        /* 不注入数组类型字段 */  fieldType.isArray()) {
                     continue;
                 }
                 //判断字段是否被 @InjectView 标注
@@ -222,6 +164,63 @@ public final class ViewInjectorImpl implements ViewInjector {
             }
         } // end inject event
 
+    }
+
+    @Override
+    public void inject(View view) {
+        injectObject(view, view.getClass(), new ViewFinder(view));
+    }
+
+    @Override
+    public void inject(Activity activity) {
+        //获取Activity的ContentView的注解
+        Class<?> handlerType = activity.getClass();
+        try {
+            ContentView contentView = findContentView(handlerType);
+            if (contentView != null) {
+                int viewId = contentView.value();
+                if (viewId > 0) {
+                    //获得 setContentView() 方法对象实例
+                    Method setContentViewMethod = handlerType.getMethod("setContentView", int.class);
+                    //通过反射进行调用指定类的setContentView() 方法，并将 R.layout.xx 设置进去
+                    setContentViewMethod.invoke(activity, viewId);
+                }
+            }
+        } catch (Throwable ex) {
+            LogUtil.e(ex.getMessage(), ex);
+        }
+        // 遍历被注解的属性和方法
+        injectObject(activity, handlerType, new ViewFinder(activity));
+    }
+
+    @Override
+    public void inject(Object handler, View view) {
+        injectObject(handler, handler.getClass(), new ViewFinder(view));
+    }
+
+    @Override
+    public View inject(Object fragment, LayoutInflater inflater, ViewGroup container) {
+        // inject ContentView
+        View view = null;
+        Class<?> handlerType = fragment.getClass();
+        try {
+            // 获取ContentView标签，主要是为了获取ContentView.value()，即R.layout.xxx
+            ContentView contentView = findContentView(handlerType);
+            if (contentView != null) {
+                //拿到布局文件的id
+                int viewId = contentView.value();
+                if (viewId > 0) {
+                    view = inflater.inflate(viewId, container, false);
+                }
+            }
+        } catch (Throwable ex) {
+            LogUtil.e(ex.getMessage(), ex);
+        }
+
+        // inject res & event
+        injectObject(fragment, handlerType, new ViewFinder(view));
+
+        return view;
     }
 
 }

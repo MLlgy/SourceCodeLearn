@@ -29,13 +29,13 @@ public class StringBody implements RequestBody {
     }
 
     @Override
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public String getContentType() {
+        return TextUtils.isEmpty(contentType) ? "application/json;charset=" + charset : contentType;
     }
 
     @Override
-    public String getContentType() {
-        return TextUtils.isEmpty(contentType) ? "application/json;charset=" + charset : contentType;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override

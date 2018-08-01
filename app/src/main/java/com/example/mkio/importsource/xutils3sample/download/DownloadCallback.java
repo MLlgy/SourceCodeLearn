@@ -1,11 +1,11 @@
 package com.example.mkio.importsource.xutils3sample.download;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+
 import xutils3.common.Callback;
 import xutils3.common.util.LogUtil;
 import xutils3.ex.DbException;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
 
 /**
  * Created by wyouflf on 15/11/10.

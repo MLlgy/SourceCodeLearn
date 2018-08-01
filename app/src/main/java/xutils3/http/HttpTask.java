@@ -5,6 +5,16 @@ import android.view.View;
 
 import com.example.mkio.importsource.xutils3sample.HttpFragment;
 
+import java.io.Closeable;
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import xutils3.common.Callback;
 import xutils3.common.task.AbsTask;
 import xutils3.common.task.Priority;
@@ -23,16 +33,6 @@ import xutils3.http.request.UriRequest;
 import xutils3.http.request.UriRequestFactory;
 import xutils3.x;
 
-import java.io.Closeable;
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Created by wyouflf on 15/7/23.
  * http 请求任务
@@ -40,40 +40,39 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class HttpTask<ResultType> extends AbsTask<ResultType> implements ProgressHandler {
 
+    private final static int MAX_FILE_LOAD_WORKER = 3;
+    private final static AtomicInteger sCurrFileLoadCount = new AtomicInteger(0);
+    // 文件下载任务
+    private static final HashMap<String, WeakReference<HttpTask<?>>>
+            DOWNLOAD_TASK = new HashMap<String, WeakReference<HttpTask<?>>>(1);
+    private static final PriorityExecutor HTTP_EXECUTOR = new PriorityExecutor(5, true);
+    private static final PriorityExecutor CACHE_EXECUTOR = new PriorityExecutor(5, true);
+    private static final int FLAG_REQUEST_CREATED = 1;
+    private static final int FLAG_CACHE = 2;
+    private static final int FLAG_PROGRESS = 3;
+    private final Executor executor;//线程池
+    private final Callback.CommonCallback<ResultType> callback;
+    private final Object cacheLock = new Object();
     // 请求相关
     private RequestParams params;//请求参数
     private UriRequest request;//请求对象
     private RequestWorker requestWorker;
-    private final Executor executor;//线程池
     private volatile boolean hasException = false;
-    private final Callback.CommonCallback<ResultType> callback;
-
     // 缓存控制
     private Object rawResult = null;
     private volatile Boolean trustCache = null;
-    private final Object cacheLock = new Object();
-
     // 扩展callback
     private Callback.CacheCallback<ResultType> cacheCallback;
     private Callback.PrepareCallback prepareCallback;
     private Callback.ProgressCallback progressCallback;
     private RequestInterceptListener requestInterceptListener;
-
     // 日志追踪
     private RequestTracker tracker;
-
     // 文件下载线程数限制
     private Type loadType;
-    private final static int MAX_FILE_LOAD_WORKER = 3;
-    private final static AtomicInteger sCurrFileLoadCount = new AtomicInteger(0);
-
-    // 文件下载任务
-    private static final HashMap<String, WeakReference<HttpTask<?>>>
-            DOWNLOAD_TASK = new HashMap<String, WeakReference<HttpTask<?>>>(1);
-
-    private static final PriorityExecutor HTTP_EXECUTOR = new PriorityExecutor(5, true);
-    private static final PriorityExecutor CACHE_EXECUTOR = new PriorityExecutor(5, true);
-
+    // ############################### start: region implements ProgressHandler
+    private long lastUpdateTime;
+    private long loadingUpdateMaxTimeSpan = 300; // 300ms
 
     public HttpTask(RequestParams params, Callback.Cancelable cancelHandler,
                     Callback.CommonCallback<ResultType> callback) {
@@ -389,10 +388,6 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
         return result;
     }
 
-    private static final int FLAG_REQUEST_CREATED = 1;
-    private static final int FLAG_CACHE = 2;
-    private static final int FLAG_PROGRESS = 3;
-
     @Override
     @SuppressWarnings("unchecked")
     protected void onUpdate(int flag, Object... args) {
@@ -479,7 +474,6 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
         callback.onError(ex, isCallbackError);
     }
 
-
     @Override
     protected void onCancelled(Callback.CancelledException cex) {
         if (tracker != null) {
@@ -538,10 +532,6 @@ public class HttpTask<ResultType> extends AbsTask<ResultType> implements Progres
     public Priority getPriority() {
         return params.getPriority();
     }
-
-    // ############################### start: region implements ProgressHandler
-    private long lastUpdateTime;
-    private long loadingUpdateMaxTimeSpan = 300; // 300ms
 
     /**
      * @param total

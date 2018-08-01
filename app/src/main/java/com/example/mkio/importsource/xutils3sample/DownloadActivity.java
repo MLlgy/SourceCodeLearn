@@ -18,14 +18,14 @@ import com.example.mkio.importsource.xutils3sample.download.DownloadManager;
 import com.example.mkio.importsource.xutils3sample.download.DownloadState;
 import com.example.mkio.importsource.xutils3sample.download.DownloadViewHolder;
 
+import java.io.File;
+
 import xutils3.common.Callback;
 import xutils3.ex.DbException;
 import xutils3.view.annotation.ContentView;
 import xutils3.view.annotation.Event;
 import xutils3.view.annotation.ViewInject;
 import xutils3.x;
-
-import java.io.File;
 
 @ContentView(R.layout.activity_download)
 public class DownloadActivity extends BaseActivity {
@@ -47,8 +47,8 @@ public class DownloadActivity extends BaseActivity {
 
     private class DownloadListAdapter extends BaseAdapter {
 
-        private Context mContext;
         private final LayoutInflater mInflater;
+        private Context mContext;
 
         private DownloadListAdapter() {
             mContext = getBaseContext();

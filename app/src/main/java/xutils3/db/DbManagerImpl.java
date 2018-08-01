@@ -20,6 +20,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Build;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import xutils3.DbManager;
 import xutils3.common.util.IOUtil;
 import xutils3.common.util.KeyValue;
@@ -33,12 +39,6 @@ import xutils3.db.table.DbModel;
 import xutils3.db.table.TableEntity;
 import xutils3.ex.DbException;
 import xutils3.x;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class DbManagerImpl extends DbBase {
 

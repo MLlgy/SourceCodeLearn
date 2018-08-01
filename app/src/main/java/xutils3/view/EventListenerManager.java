@@ -18,10 +18,6 @@ package xutils3.view;
 import android.text.TextUtils;
 import android.view.View;
 
-import xutils3.common.util.DoubleKeyValueMap;
-import xutils3.common.util.LogUtil;
-import xutils3.view.annotation.Event;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,19 +26,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import xutils3.common.util.DoubleKeyValueMap;
+import xutils3.common.util.LogUtil;
+import xutils3.view.annotation.Event;
+
 /*package*/ final class EventListenerManager {
 
     private final static long QUICK_EVENT_TIME_SPAN = 300;
     private final static HashSet<String> AVOID_QUICK_EVENT_SET = new HashSet<String>(2);
-
-    static {
-        AVOID_QUICK_EVENT_SET.add("onClick");
-        AVOID_QUICK_EVENT_SET.add("onItemClick");
-    }
-
-    private EventListenerManager() {
-    }
-
     /**
      * k1: viewInjectInfo
      * k2: interface Type
@@ -51,6 +42,13 @@ import java.util.Map;
     private final static DoubleKeyValueMap<ViewInfo, Class<?>, Object>
             listenerCache = new DoubleKeyValueMap<ViewInfo, Class<?>, Object>();
 
+    static {
+        AVOID_QUICK_EVENT_SET.add("onClick");
+        AVOID_QUICK_EVENT_SET.add("onItemClick");
+    }
+
+    private EventListenerManager() {
+    }
 
     public static void addEventMethod(
             //根据页面或view holder生成的ViewFinder
@@ -124,12 +122,11 @@ import java.util.Map;
     }
 
     public static class DynamicHandler implements InvocationHandler {
-        // 存放代理对象，比如Fragment或view holder
-        private WeakReference<Object> handlerRef;
+        private static long lastClickTime = 0;
         // 存放代理方法
         private final HashMap<String, Method> methodMap = new HashMap<String, Method>(1);
-
-        private static long lastClickTime = 0;
+        // 存放代理对象，比如Fragment或view holder
+        private WeakReference<Object> handlerRef;
 
         public DynamicHandler(Object handler) {
             this.handlerRef = new WeakReference<Object>(handler);

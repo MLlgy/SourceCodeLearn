@@ -17,9 +17,8 @@ package eventbus3;
 
 /**
  * An {@link RuntimeException} thrown in cases something went wrong inside EventBus.
- * 
+ *
  * @author Markus
- * 
  */
 public class EventBusException extends RuntimeException {
 

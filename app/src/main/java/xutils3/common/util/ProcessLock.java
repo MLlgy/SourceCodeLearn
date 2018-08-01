@@ -4,8 +4,6 @@ package xutils3.common.util;
 import android.content.Context;
 import android.text.TextUtils;
 
-import xutils3.x;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,16 +16,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import xutils3.x;
+
 /**
  * 进程间锁, 仅在同一个应用中有效.
  */
 public final class ProcessLock implements Closeable {
-
-    private final String mLockName;
-    private final FileLock mFileLock;
-    private final File mFile;
-    private final Closeable mStream;
-    private final boolean mWriteMode;
 
     private final static String LOCK_FILE_DIR = "process_lock";
     /**
@@ -35,11 +29,18 @@ public final class ProcessLock implements Closeable {
      * key2: fileLock.hashCode()
      */
     private final static DoubleKeyValueMap<String, Integer, ProcessLock> LOCK_MAP = new DoubleKeyValueMap<String, Integer, ProcessLock>();
+    private final static DecimalFormat FORMAT = new DecimalFormat("0.##################");
 
     static {
         File dir = x.app().getDir(LOCK_FILE_DIR, Context.MODE_PRIVATE);
         IOUtil.deleteFileOrDir(dir);
     }
+
+    private final String mLockName;
+    private final FileLock mFileLock;
+    private final File mFile;
+    private final Closeable mStream;
+    private final boolean mWriteMode;
 
     private ProcessLock(String lockName, File file, FileLock fileLock, Closeable stream, boolean writeMode) {
         mLockName = lockName;
@@ -89,30 +90,6 @@ public final class ProcessLock implements Closeable {
         return lock;
     }
 
-    /**
-     * 锁是否有效
-     *
-     * @return
-     */
-    public boolean isValid() {
-        return isValid(mFileLock);
-    }
-
-    /**
-     * 释放锁
-     */
-    public void release() {
-        release(mLockName, mFileLock, mFile, mStream);
-    }
-
-    /**
-     * 释放锁
-     */
-    @Override
-    public void close() throws IOException {
-        release();
-    }
-
     private static boolean isValid(FileLock fileLock) {
         return fileLock != null && fileLock.isValid();
     }
@@ -140,8 +117,6 @@ public final class ProcessLock implements Closeable {
             IOUtil.closeQuietly(stream);
         }
     }
-
-    private final static DecimalFormat FORMAT = new DecimalFormat("0.##################");
 
     // 取得字符串的自定义hash值, 尽量保证255字节内的hash不重复.
     private static String customHash(String str) {
@@ -215,6 +190,30 @@ public final class ProcessLock implements Closeable {
         }
 
         return null;
+    }
+
+    /**
+     * 锁是否有效
+     *
+     * @return
+     */
+    public boolean isValid() {
+        return isValid(mFileLock);
+    }
+
+    /**
+     * 释放锁
+     */
+    public void release() {
+        release(mLockName, mFileLock, mFile, mStream);
+    }
+
+    /**
+     * 释放锁
+     */
+    @Override
+    public void close() throws IOException {
+        release();
     }
 
     @Override

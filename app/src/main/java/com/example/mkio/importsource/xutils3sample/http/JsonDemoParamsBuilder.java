@@ -2,14 +2,14 @@ package com.example.mkio.importsource.xutils3sample.http;
 
 import android.text.TextUtils;
 
+import java.util.HashMap;
+
+import javax.net.ssl.SSLSocketFactory;
+
 import xutils3.http.RequestParams;
 import xutils3.http.annotation.HttpRequest;
 import xutils3.http.app.ParamsBuilder;
 import xutils3.x;
-
-import java.util.HashMap;
-
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Created by wyouflf on 16/1/23.

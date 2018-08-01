@@ -16,14 +16,15 @@
 package eventbus3.meta;
 
 
-
 import java.lang.reflect.Method;
 
 import eventbus3.EventBusException;
 import eventbus3.SubscriberMethod;
 import eventbus3.ThreadMode;
 
-/** Base class for generated subscriber meta info classes created by annotation processing. */
+/**
+ * Base class for generated subscriber meta info classes created by annotation processing.
+ */
 public abstract class AbstractSubscriberInfo implements SubscriberInfo {
     private final Class subscriberClass;
     private final Class<? extends SubscriberInfo> superSubscriberInfoClass;
@@ -43,7 +44,7 @@ public abstract class AbstractSubscriberInfo implements SubscriberInfo {
 
     @Override
     public SubscriberInfo getSuperSubscriberInfo() {
-        if(superSubscriberInfoClass == null) {
+        if (superSubscriberInfoClass == null) {
             return null;
         }
         try {

@@ -26,71 +26,76 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 final class CallEnqueueObservable<T> extends Observable<Response<T>> {
-  private final Call<T> originalCall;
+    private final Call<T> originalCall;
 
-  CallEnqueueObservable(Call<T> originalCall) {
-    this.originalCall = originalCall;
-  }
-
-  @Override protected void subscribeActual(Observer<? super Response<T>> observer) {
-    // Since Call is a one-shot type, clone it for each new observer.
-    Call<T> call = originalCall.clone();
-    CallCallback<T> callback = new CallCallback<>(call, observer);
-    observer.onSubscribe(callback);
-    call.enqueue(callback);
-  }
-
-  private static final class CallCallback<T> implements Disposable, Callback<T> {
-    private final Call<?> call;
-    private final Observer<? super Response<T>> observer;
-    boolean terminated = false;
-
-    CallCallback(Call<?> call, Observer<? super Response<T>> observer) {
-      this.call = call;
-      this.observer = observer;
+    CallEnqueueObservable(Call<T> originalCall) {
+        this.originalCall = originalCall;
     }
 
-    @Override public void onResponse(Call<T> call, Response<T> response) {
-      if (call.isCanceled()) return;
+    @Override
+    protected void subscribeActual(Observer<? super Response<T>> observer) {
+        // Since Call is a one-shot type, clone it for each new observer.
+        Call<T> call = originalCall.clone();
+        CallCallback<T> callback = new CallCallback<>(call, observer);
+        observer.onSubscribe(callback);
+        call.enqueue(callback);
+    }
 
-      try {
-        observer.onNext(response);
+    private static final class CallCallback<T> implements Disposable, Callback<T> {
+        private final Call<?> call;
+        private final Observer<? super Response<T>> observer;
+        boolean terminated = false;
 
-        if (!call.isCanceled()) {
-          terminated = true;
-          observer.onComplete();
+        CallCallback(Call<?> call, Observer<? super Response<T>> observer) {
+            this.call = call;
+            this.observer = observer;
         }
-      } catch (Throwable t) {
-        if (terminated) {
-          RxJavaPlugins.onError(t);
-        } else if (!call.isCanceled()) {
-          try {
-            observer.onError(t);
-          } catch (Throwable inner) {
-            Exceptions.throwIfFatal(inner);
-            RxJavaPlugins.onError(new CompositeException(t, inner));
-          }
+
+        @Override
+        public void onResponse(Call<T> call, Response<T> response) {
+            if (call.isCanceled()) return;
+
+            try {
+                observer.onNext(response);
+
+                if (!call.isCanceled()) {
+                    terminated = true;
+                    observer.onComplete();
+                }
+            } catch (Throwable t) {
+                if (terminated) {
+                    RxJavaPlugins.onError(t);
+                } else if (!call.isCanceled()) {
+                    try {
+                        observer.onError(t);
+                    } catch (Throwable inner) {
+                        Exceptions.throwIfFatal(inner);
+                        RxJavaPlugins.onError(new CompositeException(t, inner));
+                    }
+                }
+            }
         }
-      }
-    }
 
-    @Override public void onFailure(Call<T> call, Throwable t) {
-      if (call.isCanceled()) return;
+        @Override
+        public void onFailure(Call<T> call, Throwable t) {
+            if (call.isCanceled()) return;
 
-      try {
-        observer.onError(t);
-      } catch (Throwable inner) {
-        Exceptions.throwIfFatal(inner);
-        RxJavaPlugins.onError(new CompositeException(t, inner));
-      }
-    }
+            try {
+                observer.onError(t);
+            } catch (Throwable inner) {
+                Exceptions.throwIfFatal(inner);
+                RxJavaPlugins.onError(new CompositeException(t, inner));
+            }
+        }
 
-    @Override public void dispose() {
-      call.cancel();
-    }
+        @Override
+        public void dispose() {
+            call.cancel();
+        }
 
-    @Override public boolean isDisposed() {
-      return call.isCanceled();
+        @Override
+        public boolean isDisposed() {
+            return call.isCanceled();
+        }
     }
-  }
 }

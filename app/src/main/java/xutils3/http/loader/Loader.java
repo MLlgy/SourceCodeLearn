@@ -3,6 +3,9 @@ package xutils3.http.loader;
 
 import android.text.TextUtils;
 
+import java.io.InputStream;
+import java.util.Date;
+
 import xutils3.cache.DiskCacheEntity;
 import xutils3.cache.LruDiskCache;
 import xutils3.http.ProgressHandler;
@@ -10,13 +13,10 @@ import xutils3.http.RequestParams;
 import xutils3.http.request.HttpRequest;
 import xutils3.http.request.UriRequest;
 
-import java.io.InputStream;
-import java.util.Date;
-
 /**
  * Author: wyouflf
  * Time: 2014/05/26
- *
+ * <p>
  * 加载数据，
  */
 public abstract class Loader<T> {

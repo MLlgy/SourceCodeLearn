@@ -12,13 +12,12 @@ import xutils3.common.util.LogUtil;
 
 public class GifDrawable extends Drawable implements Runnable, Animatable {
 
-    private int byteCount;
-    private int rate = 300;
-    private volatile boolean running;
-
     private final Movie movie;
     private final int duration;
     private final long begin = SystemClock.uptimeMillis();
+    private int byteCount;
+    private int rate = 300;
+    private volatile boolean running;
 
     public GifDrawable(Movie movie, int byteCount) {
         this.movie = movie;

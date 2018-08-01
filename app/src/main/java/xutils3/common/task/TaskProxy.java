@@ -4,11 +4,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import java.util.concurrent.Executor;
+
 import xutils3.common.Callback;
 import xutils3.common.util.LogUtil;
 import xutils3.x;
-
-import java.util.concurrent.Executor;
 
 /**
  * 异步任务的代理类(仅在task包内可用)
@@ -21,7 +21,14 @@ import java.util.concurrent.Executor;
 
     /*package*/ static final InternalHandler sHandler = new InternalHandler();
     /*package*/ static final PriorityExecutor sDefaultExecutor = new PriorityExecutor(true);
-
+    private final static int MSG_WHAT_BASE = 1000000000;
+    private final static int MSG_WHAT_ON_WAITING = MSG_WHAT_BASE + 1;
+    private final static int MSG_WHAT_ON_START = MSG_WHAT_BASE + 2;
+    private final static int MSG_WHAT_ON_SUCCESS = MSG_WHAT_BASE + 3;
+    private final static int MSG_WHAT_ON_ERROR = MSG_WHAT_BASE + 4;
+    private final static int MSG_WHAT_ON_UPDATE = MSG_WHAT_BASE + 5;
+    private final static int MSG_WHAT_ON_CANCEL = MSG_WHAT_BASE + 6;
+    private final static int MSG_WHAT_ON_FINISHED = MSG_WHAT_BASE + 7;
     private final AbsTask<ResultType> task;//ci
     private final Executor executor;
     private volatile boolean callOnCanceled = false;
@@ -164,15 +171,6 @@ import java.util.concurrent.Executor;
             this.args = args;
         }
     }
-
-    private final static int MSG_WHAT_BASE = 1000000000;
-    private final static int MSG_WHAT_ON_WAITING = MSG_WHAT_BASE + 1;
-    private final static int MSG_WHAT_ON_START = MSG_WHAT_BASE + 2;
-    private final static int MSG_WHAT_ON_SUCCESS = MSG_WHAT_BASE + 3;
-    private final static int MSG_WHAT_ON_ERROR = MSG_WHAT_BASE + 4;
-    private final static int MSG_WHAT_ON_UPDATE = MSG_WHAT_BASE + 5;
-    private final static int MSG_WHAT_ON_CANCEL = MSG_WHAT_BASE + 6;
-    private final static int MSG_WHAT_ON_FINISHED = MSG_WHAT_BASE + 7;
 
     /*package*/ final static class InternalHandler extends Handler {
 

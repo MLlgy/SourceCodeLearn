@@ -18,55 +18,59 @@ package retrofit2;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-//import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.Constructor;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
+
 import javax.annotation.Nullable;
+
+//import java.lang.invoke.MethodHandles.Lookup;
 //import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 class Platform {
-  private static final Platform PLATFORM = findPlatform();
+    private static final Platform PLATFORM = findPlatform();
 
-  static Platform get() {
-    return PLATFORM;
-  }
-
-  private static Platform findPlatform() {
-    try {
-      Class.forName("android.os.Build");
-      if (Build.VERSION.SDK_INT != 0) {
-        return new Android();
-      }
-    } catch (ClassNotFoundException ignored) {
+    static Platform get() {
+        return PLATFORM;
     }
-    try {
-      Class.forName("java.util.Optional");
-      return new Platform();
-    } catch (ClassNotFoundException ignored) {
+
+    private static Platform findPlatform() {
+        try {
+            Class.forName("android.os.Build");
+            if (Build.VERSION.SDK_INT != 0) {
+                return new Android();
+            }
+        } catch (ClassNotFoundException ignored) {
+        }
+        try {
+            Class.forName("java.util.Optional");
+            return new Platform();
+        } catch (ClassNotFoundException ignored) {
+        }
+        return new Platform();
     }
-    return new Platform();
-  }
 
-  @Nullable Executor defaultCallbackExecutor() {
-    return null;
-  }
-
-  CallAdapter.Factory defaultCallAdapterFactory(@Nullable Executor callbackExecutor) {
-    if (callbackExecutor != null) {
-      return new ExecutorCallAdapterFactory(callbackExecutor);
+    @Nullable
+    Executor defaultCallbackExecutor() {
+        return null;
     }
-    return DefaultCallAdapterFactory.INSTANCE;
-  }
 
-  boolean isDefaultMethod(Method method) {
-    return false;
-  }
+    CallAdapter.Factory defaultCallAdapterFactory(@Nullable Executor callbackExecutor) {
+        if (callbackExecutor != null) {
+            return new ExecutorCallAdapterFactory(callbackExecutor);
+        }
+        return DefaultCallAdapterFactory.INSTANCE;
+    }
 
-  @Nullable Object invokeDefaultMethod(Method method, Class<?> declaringClass, Object object,
-      @Nullable Object... args) throws Throwable {
-    throw new UnsupportedOperationException();
-  }
+    boolean isDefaultMethod(Method method) {
+        return false;
+    }
+
+    @Nullable
+    Object invokeDefaultMethod(Method method, Class<?> declaringClass, Object object,
+                               @Nullable Object... args) throws Throwable {
+        throw new UnsupportedOperationException();
+    }
 
 //  @IgnoreJRERequirement // Only classloaded and used on Java 8.
 //  static class Java8 extends Platform {
@@ -87,22 +91,26 @@ class Platform {
 //    }
 //  }
 
-  static class Android extends Platform {
-    @Override public Executor defaultCallbackExecutor() {
-      return new MainThreadExecutor();
-    }
+    static class Android extends Platform {
+        @Override
+        public Executor defaultCallbackExecutor() {
+            return new MainThreadExecutor();
+        }
 
-    @Override CallAdapter.Factory defaultCallAdapterFactory(@Nullable Executor callbackExecutor) {
-      if (callbackExecutor == null) throw new AssertionError();
-      return new ExecutorCallAdapterFactory(callbackExecutor);
-    }
-    // 自定义线程池，通过 hander 来执行相应的 runnable
-    static class MainThreadExecutor implements Executor {
-      private final Handler handler = new Handler(Looper.getMainLooper());
+        @Override
+        CallAdapter.Factory defaultCallAdapterFactory(@Nullable Executor callbackExecutor) {
+            if (callbackExecutor == null) throw new AssertionError();
+            return new ExecutorCallAdapterFactory(callbackExecutor);
+        }
 
-      @Override public void execute(Runnable r) {
-        handler.post(r);
-      }
+        // 自定义线程池，通过 hander 来执行相应的 runnable
+        static class MainThreadExecutor implements Executor {
+            private final Handler handler = new Handler(Looper.getMainLooper());
+
+            @Override
+            public void execute(Runnable r) {
+                handler.post(r);
+            }
+        }
     }
-  }
 }

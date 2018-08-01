@@ -1,7 +1,7 @@
 package com.example.mkio.importsource.volleyexample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -14,8 +14,6 @@ import volley.RequestQueue;
 import volley.Response;
 import volley.VolleyError;
 import volley.toolbox.JsonObjectRequest;
-import volley.toolbox.JsonRequest;
-import volley.toolbox.StringRequest;
 import volley.toolbox.Volley;
 
 public class VolleyExActivity extends AppCompatActivity {

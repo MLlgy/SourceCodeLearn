@@ -15,14 +15,14 @@
 
 package xutils3.db.table;
 
-import xutils3.common.util.LogUtil;
-import xutils3.db.annotation.Column;
-import xutils3.db.converter.ColumnConverterFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import xutils3.common.util.LogUtil;
+import xutils3.db.annotation.Column;
+import xutils3.db.converter.ColumnConverterFactory;
 
 /* package */ final class TableUtils {
 

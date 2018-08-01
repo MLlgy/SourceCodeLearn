@@ -1,9 +1,9 @@
 package xutils3.http.app;
 
 
-import xutils3.http.request.UriRequest;
-
 import java.lang.reflect.Type;
+
+import xutils3.http.request.UriRequest;
 
 /**
  * Created by wyouflf on 15/8/4.

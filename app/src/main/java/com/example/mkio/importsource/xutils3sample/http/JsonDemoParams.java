@@ -1,12 +1,12 @@
 package com.example.mkio.importsource.xutils3sample.http;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xutils3.common.Callback;
 import xutils3.http.RequestParams;
 import xutils3.http.annotation.HttpRequest;
 import xutils3.x;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by wyouflf on 16/1/23.

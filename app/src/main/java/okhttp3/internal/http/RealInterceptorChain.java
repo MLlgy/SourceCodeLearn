@@ -17,6 +17,7 @@ package okhttp3.internal.http;
 
 import java.io.IOException;
 import java.util.List;
+
 import okhttp3.Connection;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -30,79 +31,82 @@ import okhttp3.internal.connection.StreamAllocation;
  * 包含整个拦截链的具体拦截链:所有应用程序*拦截器、OkHttp核心、所有网络拦截器，最后是网络调用者
  */
 public final class RealInterceptorChain implements Interceptor.Chain {
-  private final List<Interceptor> interceptors;
-  private final StreamAllocation streamAllocation;
-  private final HttpCodec httpCodec;
-  private final RealConnection connection;
-  private final int index;
-  private final Request request;
-  private int calls;
+    private final List<Interceptor> interceptors;
+    private final StreamAllocation streamAllocation;
+    private final HttpCodec httpCodec;
+    private final RealConnection connection;
+    private final int index;
+    private final Request request;
+    private int calls;
 
-  public RealInterceptorChain(List<Interceptor> interceptors, StreamAllocation streamAllocation,
-      HttpCodec httpCodec, RealConnection connection, int index, Request request) {
-    this.interceptors = interceptors;
-    this.connection = connection;
-    this.streamAllocation = streamAllocation;
-    this.httpCodec = httpCodec;
-    this.index = index;
-    this.request = request;
-  }
-
-  @Override public Connection connection() {
-    return connection;
-  }
-
-  public StreamAllocation streamAllocation() {
-    return streamAllocation;
-  }
-
-  public HttpCodec httpStream() {
-    return httpCodec;
-  }
-
-  @Override public Request request() {
-    return request;
-  }
-
-  @Override public Response proceed(Request request) throws IOException {
-    return proceed(request, streamAllocation, httpCodec, connection);
-  }
-
-  public Response proceed(Request request, StreamAllocation streamAllocation, HttpCodec httpCodec,
-      RealConnection connection) throws IOException {
-    if (index >= interceptors.size()) throw new AssertionError();
-
-    calls++;
-
-    // If we already have a stream, confirm that the incoming request will use it.
-    if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
-      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)
-          + " must retain the same host and port");
+    public RealInterceptorChain(List<Interceptor> interceptors, StreamAllocation streamAllocation,
+                                HttpCodec httpCodec, RealConnection connection, int index, Request request) {
+        this.interceptors = interceptors;
+        this.connection = connection;
+        this.streamAllocation = streamAllocation;
+        this.httpCodec = httpCodec;
+        this.index = index;
+        this.request = request;
     }
 
-    // If we already have a stream, confirm that this is the only call to chain.proceed().
-    if (this.httpCodec != null && calls > 1) {
-      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)
-          + " must call proceed() exactly once");
+    @Override
+    public Connection connection() {
+        return connection;
     }
 
-    // Call the next interceptor in the chain.
-    RealInterceptorChain next = new RealInterceptorChain(
-        interceptors, streamAllocation, httpCodec, connection, index + 1, request);
-    Interceptor interceptor = interceptors.get(index);
-    Response response = interceptor.intercept(next);
-
-    // Confirm that the next interceptor made its required call to chain.proceed().
-    if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
-      throw new IllegalStateException("network interceptor " + interceptor
-          + " must call proceed() exactly once");
+    public StreamAllocation streamAllocation() {
+        return streamAllocation;
     }
 
-    // Confirm that the intercepted response isn't null.
-    if (response == null) {
-      throw new NullPointerException("interceptor " + interceptor + " returned null");
+    public HttpCodec httpStream() {
+        return httpCodec;
     }
 
-    return response;
-  }
+    @Override
+    public Request request() {
+        return request;
+    }
+
+    @Override
+    public Response proceed(Request request) throws IOException {
+        return proceed(request, streamAllocation, httpCodec, connection);
+    }
+
+    public Response proceed(Request request, StreamAllocation streamAllocation, HttpCodec httpCodec,
+                            RealConnection connection) throws IOException {
+        if (index >= interceptors.size()) throw new AssertionError();
+
+        calls++;
+
+        // If we already have a stream, confirm that the incoming request will use it.
+        if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
+            throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)
+                    + " must retain the same host and port");
+        }
+
+        // If we already have a stream, confirm that this is the only call to chain.proceed().
+        if (this.httpCodec != null && calls > 1) {
+            throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)
+                    + " must call proceed() exactly once");
+        }
+
+        // Call the next interceptor in the chain.
+        RealInterceptorChain next = new RealInterceptorChain(
+                interceptors, streamAllocation, httpCodec, connection, index + 1, request);
+        Interceptor interceptor = interceptors.get(index);
+        Response response = interceptor.intercept(next);
+
+        // Confirm that the next interceptor made its required call to chain.proceed().
+        if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
+            throw new IllegalStateException("network interceptor " + interceptor
+                    + " must call proceed() exactly once");
+        }
+
+        // Confirm that the intercepted response isn't null.
+        if (response == null) {
+            throw new NullPointerException("interceptor " + interceptor + " returned null");
+        }
+
+        return response;
+    }
 }

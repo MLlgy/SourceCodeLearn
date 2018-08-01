@@ -15,18 +15,15 @@
 
 package xutils3.db.table;
 
-import xutils3.common.util.LogUtil;
-import xutils3.db.converter.ColumnConverter;
-import xutils3.db.converter.ColumnConverterFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 
-public final class ColumnUtils {
+import xutils3.common.util.LogUtil;
+import xutils3.db.converter.ColumnConverter;
+import xutils3.db.converter.ColumnConverterFactory;
 
-    private ColumnUtils() {
-    }
+public final class ColumnUtils {
 
     private static final HashSet<Class<?>> BOOLEAN_TYPES = new HashSet<Class<?>>(2);
     private static final HashSet<Class<?>> INTEGER_TYPES = new HashSet<Class<?>>(2);
@@ -42,6 +39,9 @@ public final class ColumnUtils {
         AUTO_INCREMENT_TYPES.addAll(INTEGER_TYPES);
         AUTO_INCREMENT_TYPES.add(long.class);
         AUTO_INCREMENT_TYPES.add(Long.class);
+    }
+
+    private ColumnUtils() {
     }
 
     public static boolean isAutoIdType(Class<?> fieldType) {

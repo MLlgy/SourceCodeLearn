@@ -2,11 +2,6 @@ package xutils3.http.app;
 
 
 import org.json.JSONException;
-import xutils3.common.Callback;
-import xutils3.common.util.LogUtil;
-import xutils3.ex.HttpException;
-import xutils3.http.HttpMethod;
-import xutils3.http.request.UriRequest;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -17,13 +12,17 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 
+import xutils3.common.Callback;
+import xutils3.common.util.LogUtil;
+import xutils3.ex.HttpException;
+import xutils3.http.HttpMethod;
+import xutils3.http.request.UriRequest;
+
 /**
  * Author: wyouflf
  * Time: 2014/05/30
  */
 public class HttpRetryHandler {
-
-    protected int maxRetryCount = 2;
 
     protected static HashSet<Class<?>> blackList = new HashSet<Class<?>>();
 
@@ -41,6 +40,8 @@ public class HttpRetryHandler {
         blackList.add(UnknownHostException.class);
         blackList.add(IllegalArgumentException.class);
     }
+
+    protected int maxRetryCount = 2;
 
     public HttpRetryHandler() {
     }

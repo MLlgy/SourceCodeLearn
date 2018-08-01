@@ -2,6 +2,12 @@ package xutils3.http.loader;
 
 import android.text.TextUtils;
 
+import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.List;
+
 import xutils3.cache.DiskCacheEntity;
 import xutils3.common.util.IOUtil;
 import xutils3.common.util.ParameterizedTypeUtil;
@@ -11,12 +17,6 @@ import xutils3.http.app.InputStreamResponseParser;
 import xutils3.http.app.ResponseParser;
 import xutils3.http.request.UriRequest;
 
-import java.io.InputStream;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.List;
-
 /**
  * Created by lei.jiao on 2014/6/27.
  * 其他对象的下载转换.
@@ -24,12 +24,11 @@ import java.util.List;
  */
 /*package*/ class ObjectLoader extends Loader<Object> {
 
-    private String charset = "UTF-8";
-    private String resultStr = null;
-
     private final Type objectType;
     private final Class<?> objectClass;
     private final ResponseParser parser;
+    private String charset = "UTF-8";
+    private String resultStr = null;
 
     public ObjectLoader(Type objectType) {
         this.objectType = objectType;

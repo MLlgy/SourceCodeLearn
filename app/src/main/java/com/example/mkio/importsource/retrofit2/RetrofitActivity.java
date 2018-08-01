@@ -1,8 +1,7 @@
 package com.example.mkio.importsource.retrofit2;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.mkio.importsource.R;
 
@@ -20,18 +19,18 @@ public class RetrofitActivity extends AppCompatActivity {
         findViewById(R.id.tv_check_net).setOnClickListener(view -> {
             RetrofitFactory.getInstance().checkCoupon("2018040202512043", "133", 315)
                     .enqueue(new Callback<CouponResp>() {
-                @Override
-                public void onResponse(Call<CouponResp> call, Response<CouponResp> response) {
-                    CouponResp mCouponResp = response.body();
-                    LogUtil.d(mCouponResp.toString());
+                        @Override
+                        public void onResponse(Call<CouponResp> call, Response<CouponResp> response) {
+                            CouponResp mCouponResp = response.body();
+                            LogUtil.d(mCouponResp.toString());
 
-                }
+                        }
 
-                @Override
-                public void onFailure(Call<CouponResp> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<CouponResp> call, Throwable t) {
 
-                }
-            });
+                        }
+                    });
         });
     }
 }

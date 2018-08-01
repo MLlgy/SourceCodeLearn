@@ -18,7 +18,9 @@ package eventbus3.meta;
 
 import eventbus3.SubscriberMethod;
 
-/** Base class for generated index classes created by annotation processing. */
+/**
+ * Base class for generated index classes created by annotation processing.
+ */
 public interface SubscriberInfo {
     Class<?> getSubscriberClass();
 

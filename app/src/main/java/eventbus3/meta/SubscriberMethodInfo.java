@@ -15,7 +15,7 @@
  */
 package eventbus3.meta;
 
-import  eventbus3.ThreadMode;
+import eventbus3.ThreadMode;
 
 public class SubscriberMethodInfo {
     final String methodName;

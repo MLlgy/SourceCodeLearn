@@ -2,11 +2,11 @@ package xutils3.http.cookie;
 
 import android.text.TextUtils;
 
-import xutils3.db.annotation.Column;
-import xutils3.db.annotation.Table;
-
 import java.net.HttpCookie;
 import java.net.URI;
+
+import xutils3.db.annotation.Column;
+import xutils3.db.annotation.Table;
 
 /**
  * Created by wyouflf on 15/8/20.

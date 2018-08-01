@@ -36,12 +36,12 @@ public final class AsyncDrawable extends Drawable {
         return imageLoaderReference.get();
     }
 
-    public void setBaseDrawable(Drawable baseDrawable) {
-        this.baseDrawable = baseDrawable;
-    }
-
     public Drawable getBaseDrawable() {
         return baseDrawable;
+    }
+
+    public void setBaseDrawable(Drawable baseDrawable) {
+        this.baseDrawable = baseDrawable;
     }
 
     @Override
@@ -85,15 +85,15 @@ public final class AsyncDrawable extends Drawable {
     }
 
     @Override
+    public int getChangingConfigurations() {
+        return baseDrawable == null ? 0 : baseDrawable.getChangingConfigurations();
+    }
+
+    @Override
     public void setChangingConfigurations(int configs) {
         if (baseDrawable != null) {
             baseDrawable.setChangingConfigurations(configs);
         }
-    }
-
-    @Override
-    public int getChangingConfigurations() {
-        return baseDrawable == null ? 0 : baseDrawable.getChangingConfigurations();
     }
 
     @Override

@@ -2,12 +2,12 @@ package xutils3.common.task;
 
 import android.os.Looper;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import xutils3.common.Callback;
 import xutils3.common.TaskController;
 import xutils3.common.util.LogUtil;
 import xutils3.x;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by wyouflf on 15/6/5.
@@ -17,10 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class TaskControllerImpl implements TaskController {
 
+    private static volatile TaskController instance;
+
     private TaskControllerImpl() {
     }
-
-    private static volatile TaskController instance;
 
     public static void registerInstance() {
         if (instance == null) {

@@ -2,6 +2,13 @@ package xutils3.http.cookie;
 
 import android.text.TextUtils;
 
+import java.net.CookieStore;
+import java.net.HttpCookie;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+
 import xutils3.DbManager;
 import xutils3.common.task.PriorityExecutor;
 import xutils3.common.util.LogUtil;
@@ -11,13 +18,6 @@ import xutils3.db.sqlite.WhereBuilder;
 import xutils3.db.table.DbModel;
 import xutils3.x;
 
-import java.net.CookieStore;
-import java.net.HttpCookie;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-
 /**
  * Created by wyouflf on 15/8/20.
  * 基于数据库的CookieStore实现.
@@ -26,12 +26,11 @@ public enum DbCookieStore implements CookieStore {
 
     INSTANCE;
 
+    private static final int LIMIT_COUNT = 5000; // 限制最多5000条数据
+    private static final long TRIM_TIME_SPAN = 1000;
     private final DbManager db;
     private final Executor trimExecutor = new PriorityExecutor(1, true);
-    private static final int LIMIT_COUNT = 5000; // 限制最多5000条数据
-
     private long lastTrimTime = 0L;
-    private static final long TRIM_TIME_SPAN = 1000;
 
     DbCookieStore() {
         db = x.getDb(DbConfigs.COOKIE.getConfig());

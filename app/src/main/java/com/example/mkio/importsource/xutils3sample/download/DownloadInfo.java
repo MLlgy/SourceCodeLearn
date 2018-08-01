@@ -11,35 +11,27 @@ import xutils3.db.annotation.Table;
 @Table(name = "download", onCreated = "CREATE UNIQUE INDEX index_name ON download(label,fileSavePath)")
 public class DownloadInfo {
 
-    public DownloadInfo() {
-    }
-
     @Column(name = "id", isId = true)
     private long id;
-
     @Column(name = "state")
     private DownloadState state = DownloadState.STOPPED;
-
     @Column(name = "url")
     private String url;
-
     @Column(name = "label")
     private String label;
-
     @Column(name = "fileSavePath")
     private String fileSavePath;
-
     @Column(name = "progress")
     private int progress;
-
     @Column(name = "fileLength")
     private long fileLength;
-
     @Column(name = "autoResume")
     private boolean autoResume;
-
     @Column(name = "autoRename")
     private boolean autoRename;
+
+    public DownloadInfo() {
+    }
 
     public long getId() {
         return id;

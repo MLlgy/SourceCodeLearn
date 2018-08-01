@@ -12,6 +12,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicLong;
+
 import xutils3.cache.LruCache;
 import xutils3.cache.LruDiskCache;
 import xutils3.common.Callback;
@@ -22,14 +30,6 @@ import xutils3.common.util.LogUtil;
 import xutils3.ex.FileLockedException;
 import xutils3.http.RequestParams;
 import xutils3.x;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by wyouflf on 15/10/9.
@@ -42,21 +42,7 @@ import java.util.concurrent.atomic.AtomicLong;
         Callback.TypedCallback<Drawable>,
         Callback.Cancelable {
 
-    private MemCacheKey key;
-    private ImageOptions options;
-    private WeakReference<ImageView> viewRef;
-
     private final static AtomicLong SEQ_SEEK = new AtomicLong(0);
-    private final long seq = SEQ_SEEK.incrementAndGet();
-
-    private volatile boolean stopped = false;
-    private volatile boolean cancelled = false;
-    private Callback.Cancelable cancelable;
-    private Callback.CommonCallback<Drawable> callback;
-    private Callback.PrepareCallback<File, Drawable> prepareCallback;
-    private Callback.CacheCallback<Drawable> cacheCallback;
-    private Callback.ProgressCallback<Drawable> progressCallback;
-
     private final static String DISK_CACHE_DIR_NAME = "xUtils_img";
     private final static Executor EXECUTOR = new PriorityExecutor(10, false);
     private final static int MEM_CACHE_MIN_SIZE = 1024 * 1024 * 4; // 4M
@@ -92,6 +78,8 @@ import java.util.concurrent.atomic.AtomicLong;
                     }
                 }
             };
+    private final static HashMap<String, FakeImageView> FAKE_IMG_MAP = new HashMap<String, FakeImageView>();
+    private static final Type loadType = File.class;
 
     static {
         int memClass = ((ActivityManager) x.app()
@@ -105,6 +93,19 @@ import java.util.concurrent.atomic.AtomicLong;
         MEM_CACHE.resize(cacheSize);
     }
 
+    private final long seq = SEQ_SEEK.incrementAndGet();
+    private MemCacheKey key;
+    private ImageOptions options;
+    private WeakReference<ImageView> viewRef;
+    private volatile boolean stopped = false;
+    private volatile boolean cancelled = false;
+    private Callback.Cancelable cancelable;
+    private Callback.CommonCallback<Drawable> callback;
+    private Callback.PrepareCallback<File, Drawable> prepareCallback;
+    private Callback.CacheCallback<Drawable> cacheCallback;
+    private Callback.ProgressCallback<Drawable> progressCallback;
+    private boolean hasCache = false;
+
     private ImageLoader() {
     }
 
@@ -117,8 +118,6 @@ import java.util.concurrent.atomic.AtomicLong;
     static void clearCacheFiles() {
         LruDiskCache.getDiskCache(DISK_CACHE_DIR_NAME).clearCacheFiles();
     }
-
-    private final static HashMap<String, FakeImageView> FAKE_IMG_MAP = new HashMap<String, FakeImageView>();
 
     /**
      * load from Network or DiskCache, invoke in any thread.
@@ -282,6 +281,64 @@ import java.util.concurrent.atomic.AtomicLong;
         return null;
     }
 
+    private static RequestParams createRequestParams(String url, ImageOptions options) {
+        RequestParams params = new RequestParams(url);
+        //设置缓存地址
+        params.setCacheDirName(DISK_CACHE_DIR_NAME);
+        params.setConnectTimeout(1000 * 8);
+        //设置优先级
+        params.setPriority(Priority.BG_LOW);
+        //指定线程池
+        params.setExecutor(EXECUTOR);
+        params.setCancelFast(true);
+        params.setUseCookie(false);
+        if (options != null) {
+            ImageOptions.ParamsBuilder paramsBuilder = options.getParamsBuilder();
+            if (paramsBuilder != null) {
+                params = paramsBuilder.buildParams(params, options);
+            }
+        }
+        return params;
+    }
+
+    private static void postArgsException(
+            final ImageView view, final ImageOptions options,
+            final String exMsg, final Callback.CommonCallback<?> callback) {
+        x.task().autoPost(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (callback instanceof ProgressCallback) {
+                        ((ProgressCallback) callback).onWaiting();
+                    }
+                    if (view != null && options != null) {
+                        view.setScaleType(options.getPlaceholderScaleType());
+                        view.setImageDrawable(options.getFailureDrawable(view));
+                    }
+                    if (callback != null) {
+                        callback.onError(new IllegalArgumentException(exMsg), false);
+                    }
+                } catch (Throwable ex) {
+                    if (callback != null) {
+                        try {
+                            callback.onError(ex, true);
+                        } catch (Throwable ignored) {
+                            LogUtil.e(ignored.getMessage(), ignored);
+                        }
+                    }
+                } finally {
+                    if (callback != null) {
+                        try {
+                            callback.onFinished();
+                        } catch (Throwable ignored) {
+                            LogUtil.e(ignored.getMessage(), ignored);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * load from Network or DiskCache
      *
@@ -369,8 +426,6 @@ import java.util.concurrent.atomic.AtomicLong;
         }
     }
 
-    private static final Type loadType = File.class;
-
     @Override
     public Type getLoadType() {
         return loadType;
@@ -401,8 +456,6 @@ import java.util.concurrent.atomic.AtomicLong;
         }
         return null;
     }
-
-    private boolean hasCache = false;
 
     @Override
     public boolean onCache(Drawable result) {
@@ -485,26 +538,6 @@ import java.util.concurrent.atomic.AtomicLong;
         }
     }
 
-    private static RequestParams createRequestParams(String url, ImageOptions options) {
-        RequestParams params = new RequestParams(url);
-        //设置缓存地址
-        params.setCacheDirName(DISK_CACHE_DIR_NAME);
-        params.setConnectTimeout(1000 * 8);
-        //设置优先级
-        params.setPriority(Priority.BG_LOW);
-        //指定线程池
-        params.setExecutor(EXECUTOR);
-        params.setCancelFast(true);
-        params.setUseCookie(false);
-        if (options != null) {
-            ImageOptions.ParamsBuilder paramsBuilder = options.getParamsBuilder();
-            if (paramsBuilder != null) {
-                params = paramsBuilder.buildParams(params, options);
-            }
-        }
-        return params;
-    }
-
     private boolean validView4Callback(boolean forceValidAsyncDrawable) {
         final ImageView view = viewRef.get();
         if (view != null) {
@@ -565,44 +598,6 @@ import java.util.concurrent.atomic.AtomicLong;
             view.setScaleType(options.getPlaceholderScaleType());
             view.setImageDrawable(drawable);
         }
-    }
-
-    private static void postArgsException(
-            final ImageView view, final ImageOptions options,
-            final String exMsg, final Callback.CommonCallback<?> callback) {
-        x.task().autoPost(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (callback instanceof ProgressCallback) {
-                        ((ProgressCallback) callback).onWaiting();
-                    }
-                    if (view != null && options != null) {
-                        view.setScaleType(options.getPlaceholderScaleType());
-                        view.setImageDrawable(options.getFailureDrawable(view));
-                    }
-                    if (callback != null) {
-                        callback.onError(new IllegalArgumentException(exMsg), false);
-                    }
-                } catch (Throwable ex) {
-                    if (callback != null) {
-                        try {
-                            callback.onError(ex, true);
-                        } catch (Throwable ignored) {
-                            LogUtil.e(ignored.getMessage(), ignored);
-                        }
-                    }
-                } finally {
-                    if (callback != null) {
-                        try {
-                            callback.onFinished();
-                        } catch (Throwable ignored) {
-                            LogUtil.e(ignored.getMessage(), ignored);
-                        }
-                    }
-                }
-            }
-        });
     }
 
     @SuppressLint("ViewConstructor")

@@ -16,18 +16,18 @@
 
 package volley.toolbox;
 
-import volley.Request;
-import volley.Response;
-import volley.VolleyError;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import volley.Request;
+import volley.Response;
+import volley.VolleyError;
+
 /**
  * A Future that represents a Volley request.
- *
+ * <p>
  * Used by providing as your response and error listeners. For example:
  * <pre>
  * RequestFuture&lt;JSONObject&gt; future = RequestFuture.newFuture();
@@ -52,17 +52,18 @@ import java.util.concurrent.TimeoutException;
  * @param <T> The type of parsed response this future expects.
  */
 public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
-       Response.ErrorListener {
+        Response.ErrorListener {
     private Request<?> mRequest;
     private boolean mResultReceived = false;
     private T mResult;
     private VolleyError mException;
 
+    private RequestFuture() {
+    }
+
     public static <E> RequestFuture<E> newFuture() {
         return new RequestFuture<E>();
     }
-
-    private RequestFuture() {}
 
     public void setRequest(Request<?> request) {
         mRequest = request;

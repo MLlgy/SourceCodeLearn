@@ -17,27 +17,25 @@ package xutils3.db.table;
 
 import android.database.Cursor;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import xutils3.common.util.LogUtil;
 import xutils3.db.annotation.Column;
 import xutils3.db.converter.ColumnConverter;
 import xutils3.db.converter.ColumnConverterFactory;
 import xutils3.db.sqlite.ColumnDbType;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 public final class ColumnEntity {
 
     protected final String name;
+    protected final Method getMethod;
+    protected final Method setMethod;
+    protected final Field columnField;
+    protected final ColumnConverter columnConverter;
     private final String property;
     private final boolean isId;
     private final boolean isAutoId;
-
-    protected final Method getMethod;
-    protected final Method setMethod;
-
-    protected final Field columnField;
-    protected final ColumnConverter columnConverter;
 
     /* package */ ColumnEntity(Class<?> entityType, Field field, Column column) {
         field.setAccessible(true);

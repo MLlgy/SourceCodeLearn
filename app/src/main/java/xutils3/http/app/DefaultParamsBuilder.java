@@ -1,9 +1,5 @@
 package xutils3.http.app;
 
-import xutils3.common.util.LogUtil;
-import xutils3.http.RequestParams;
-import xutils3.http.annotation.HttpRequest;
-
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
@@ -11,13 +7,53 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import xutils3.common.util.LogUtil;
+import xutils3.http.RequestParams;
+import xutils3.http.annotation.HttpRequest;
+
 /**
  * Created by wyouflf on 15/8/20.
  * 默认参数构造器
  */
 public class DefaultParamsBuilder implements ParamsBuilder {
 
+    private static SSLSocketFactory trustAllSSlSocketFactory;
+
     public DefaultParamsBuilder() {
+    }
+
+    public static SSLSocketFactory getTrustAllSSLSocketFactory() {
+        if (trustAllSSlSocketFactory == null) {
+            synchronized (DefaultParamsBuilder.class) {
+                if (trustAllSSlSocketFactory == null) {
+
+                    // 信任所有证书
+                    TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }};
+                    try {
+                        SSLContext sslContext = SSLContext.getInstance("TLS");
+                        sslContext.init(null, trustAllCerts, null);
+                        trustAllSSlSocketFactory = sslContext.getSocketFactory();
+                    } catch (Throwable ex) {
+                        LogUtil.e(ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
+
+        return trustAllSSlSocketFactory;
     }
 
     /**
@@ -86,42 +122,6 @@ public class DefaultParamsBuilder implements ParamsBuilder {
     @Override
     public void buildSign(RequestParams params, String[] signs) throws Throwable {
 
-    }
-
-    private static SSLSocketFactory trustAllSSlSocketFactory;
-
-    public static SSLSocketFactory getTrustAllSSLSocketFactory() {
-        if (trustAllSSlSocketFactory == null) {
-            synchronized (DefaultParamsBuilder.class) {
-                if (trustAllSSlSocketFactory == null) {
-
-                    // 信任所有证书
-                    TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                        @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return null;
-                        }
-
-                        @Override
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                        }
-                    }};
-                    try {
-                        SSLContext sslContext = SSLContext.getInstance("TLS");
-                        sslContext.init(null, trustAllCerts, null);
-                        trustAllSSlSocketFactory = sslContext.getSocketFactory();
-                    } catch (Throwable ex) {
-                        LogUtil.e(ex.getMessage(), ex);
-                    }
-                }
-            }
-        }
-
-        return trustAllSSlSocketFactory;
     }
 
 }

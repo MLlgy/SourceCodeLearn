@@ -26,6 +26,27 @@ import java.util.Map;
  */
 public class NetworkResponse {
     /**
+     * The HTTP status code.响应码
+     */
+    public final int statusCode;
+    /**
+     * Raw data from this response.相应的原始数据
+     */
+    public final byte[] data;
+    /**
+     * Response headers.
+     */
+    public final Map<String, String> headers;
+    /**
+     * True if the server returned a 304 (Not Modified).
+     */
+    public final boolean notModified;
+    /**
+     * Network roundtrip time in milliseconds.
+     */
+    public final long networkTimeMs;
+
+    /**
      * Creates a new network response.
      *
      * @param statusCode    the HTTP status code
@@ -55,30 +76,5 @@ public class NetworkResponse {
     public NetworkResponse(byte[] data, Map<String, String> headers) {
         this(HttpStatus.SC_OK, data, headers, false, 0);
     }
-
-    /**
-     * The HTTP status code.响应码
-     */
-    public final int statusCode;
-
-    /**
-     * Raw data from this response.相应的原始数据
-     */
-    public final byte[] data;
-
-    /**
-     * Response headers.
-     */
-    public final Map<String, String> headers;
-
-    /**
-     * True if the server returned a 304 (Not Modified).
-     */
-    public final boolean notModified;
-
-    /**
-     * Network roundtrip time in milliseconds.
-     */
-    public final long networkTimeMs;
 }
 

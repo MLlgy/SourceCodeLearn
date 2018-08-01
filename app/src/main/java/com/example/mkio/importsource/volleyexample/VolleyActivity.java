@@ -1,13 +1,12 @@
 package com.example.mkio.importsource.volleyexample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.example.mkio.importsource.R;
 
-import org.json.JSONArray;
 import org.json.JSONArray;
 
 import java.util.HashMap;
@@ -24,8 +23,8 @@ import volley.toolbox.Volley;
 
 public class VolleyActivity extends AppCompatActivity {
 
-    private RequestQueue mQueue;
     JSONArray commandsArray = new JSONArray();
+    private RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +54,11 @@ public class VolleyActivity extends AppCompatActivity {
 
             }
         }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                    }
-                }) {
+            }
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
 //                String token = SPUtil.getToken();

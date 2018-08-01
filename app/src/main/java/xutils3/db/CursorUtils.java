@@ -17,11 +17,11 @@ package xutils3.db;
 
 import android.database.Cursor;
 
+import java.util.HashMap;
+
 import xutils3.db.table.ColumnEntity;
 import xutils3.db.table.DbModel;
 import xutils3.db.table.TableEntity;
-
-import java.util.HashMap;
 
 /*package*/ final class CursorUtils {
 

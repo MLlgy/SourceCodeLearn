@@ -17,13 +17,13 @@ package xutils3.db.sqlite;
 
 import android.text.TextUtils;
 
-import xutils3.db.converter.ColumnConverterFactory;
-import xutils3.db.table.ColumnUtils;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import xutils3.db.converter.ColumnConverterFactory;
+import xutils3.db.table.ColumnUtils;
 
 /**
  * Author: wyouflf

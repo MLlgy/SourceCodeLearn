@@ -4,6 +4,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import xutils3.common.util.KeyValue;
 import xutils3.db.Selector;
 import xutils3.db.sqlite.SqlInfo;
@@ -11,11 +16,6 @@ import xutils3.db.sqlite.WhereBuilder;
 import xutils3.db.table.DbModel;
 import xutils3.db.table.TableEntity;
 import xutils3.ex.DbException;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * 数据库访问接口
@@ -171,9 +171,17 @@ public interface DbManager extends Closeable {
         public DaoConfig() {
         }
 
+        public File getDbDir() {
+            return dbDir;
+        }
+
         public DaoConfig setDbDir(File dbDir) {
             this.dbDir = dbDir;
             return this;
+        }
+
+        public String getDbName() {
+            return dbName;
         }
 
         public DaoConfig setDbName(String dbName) {
@@ -183,9 +191,17 @@ public interface DbManager extends Closeable {
             return this;
         }
 
+        public int getDbVersion() {
+            return dbVersion;
+        }
+
         public DaoConfig setDbVersion(int dbVersion) {
             this.dbVersion = dbVersion;
             return this;
+        }
+
+        public boolean isAllowTransaction() {
+            return allowTransaction;
         }
 
         public DaoConfig setAllowTransaction(boolean allowTransaction) {
@@ -193,9 +209,17 @@ public interface DbManager extends Closeable {
             return this;
         }
 
+        public DbOpenListener getDbOpenListener() {
+            return dbOpenListener;
+        }
+
         public DaoConfig setDbOpenListener(DbOpenListener dbOpenListener) {
             this.dbOpenListener = dbOpenListener;
             return this;
+        }
+
+        public DbUpgradeListener getDbUpgradeListener() {
+            return dbUpgradeListener;
         }
 
         public DaoConfig setDbUpgradeListener(DbUpgradeListener dbUpgradeListener) {
@@ -203,37 +227,13 @@ public interface DbManager extends Closeable {
             return this;
         }
 
+        public TableCreateListener getTableCreateListener() {
+            return tableCreateListener;
+        }
+
         public DaoConfig setTableCreateListener(TableCreateListener tableCreateListener) {
             this.tableCreateListener = tableCreateListener;
             return this;
-        }
-
-        public File getDbDir() {
-            return dbDir;
-        }
-
-        public String getDbName() {
-            return dbName;
-        }
-
-        public int getDbVersion() {
-            return dbVersion;
-        }
-
-        public boolean isAllowTransaction() {
-            return allowTransaction;
-        }
-
-        public DbOpenListener getDbOpenListener() {
-            return dbOpenListener;
-        }
-
-        public DbUpgradeListener getDbUpgradeListener() {
-            return dbUpgradeListener;
-        }
-
-        public TableCreateListener getTableCreateListener() {
-            return tableCreateListener;
         }
 
         @Override

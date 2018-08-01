@@ -12,10 +12,6 @@ public enum DownloadState {
         this.value = value;
     }
 
-    public int value() {
-        return value;
-    }
-
     public static DownloadState valueOf(int value) {
         switch (value) {
             case 0:
@@ -31,5 +27,9 @@ public enum DownloadState {
             default:
                 return STOPPED;
         }
+    }
+
+    public int value() {
+        return value;
     }
 }

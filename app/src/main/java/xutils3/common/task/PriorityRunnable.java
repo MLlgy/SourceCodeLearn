@@ -6,10 +6,9 @@ package xutils3.common.task;
  */
 /*package*/ class PriorityRunnable implements Runnable {
 
-    /*package*/ long SEQ;
-
     public final Priority priority;
     private final Runnable runnable;
+    /*package*/ long SEQ;
 
     public PriorityRunnable(Priority priority, Runnable runnable) {
         this.priority = priority == null ? Priority.DEFAULT : priority;

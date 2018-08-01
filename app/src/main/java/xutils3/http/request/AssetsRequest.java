@@ -1,12 +1,5 @@
 package xutils3.http.request;
 
-import xutils3.cache.DiskCacheEntity;
-import xutils3.cache.LruDiskCache;
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.LogUtil;
-import xutils3.http.RequestParams;
-import xutils3.x;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +7,13 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import xutils3.cache.DiskCacheEntity;
+import xutils3.cache.LruDiskCache;
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.LogUtil;
+import xutils3.http.RequestParams;
+import xutils3.x;
 
 /**
  * Created by wyouflf on 15/11/4.

@@ -2,15 +2,15 @@ package xutils3.http.body;
 
 import android.text.TextUtils;
 
-import xutils3.common.Callback;
-import xutils3.common.util.IOUtil;
-import xutils3.http.ProgressHandler;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import xutils3.common.Callback;
+import xutils3.common.util.IOUtil;
+import xutils3.http.ProgressHandler;
 
 
 /**
@@ -19,10 +19,9 @@ import java.io.OutputStream;
  */
 public class InputStreamBody implements ProgressBody {
 
+    private final long total;
     private InputStream content;
     private String contentType;
-
-    private final long total;
     private long current = 0;
 
     private ProgressHandler callBackHandler;
@@ -37,6 +36,17 @@ public class InputStreamBody implements ProgressBody {
         this.total = getInputStreamLength(inputStream);
     }
 
+    public static long getInputStreamLength(InputStream inputStream) {
+        try {
+            if (inputStream instanceof FileInputStream ||
+                    inputStream instanceof ByteArrayInputStream) {
+                return inputStream.available();
+            }
+        } catch (Throwable ignored) {
+        }
+        return -1L;
+    }
+
     @Override
     public void setProgressHandler(ProgressHandler progressHandler) {
         this.callBackHandler = progressHandler;
@@ -48,13 +58,13 @@ public class InputStreamBody implements ProgressBody {
     }
 
     @Override
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public String getContentType() {
+        return TextUtils.isEmpty(contentType) ? "application/octet-stream" : contentType;
     }
 
     @Override
-    public String getContentType() {
-        return TextUtils.isEmpty(contentType) ? "application/octet-stream" : contentType;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override
@@ -81,16 +91,5 @@ public class InputStreamBody implements ProgressBody {
         } finally {
             IOUtil.closeQuietly(content);
         }
-    }
-
-    public static long getInputStreamLength(InputStream inputStream) {
-        try {
-            if (inputStream instanceof FileInputStream ||
-                    inputStream instanceof ByteArrayInputStream) {
-                return inputStream.available();
-            }
-        } catch (Throwable ignored) {
-        }
-        return -1L;
     }
 }

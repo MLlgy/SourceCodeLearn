@@ -1,11 +1,11 @@
 package xutils3.cache;
 
-import xutils3.common.util.IOUtil;
-import xutils3.common.util.ProcessLock;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+
+import xutils3.common.util.IOUtil;
+import xutils3.common.util.ProcessLock;
 
 /**
  * Created by wyouflf on 15/8/3.
