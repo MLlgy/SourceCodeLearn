@@ -213,6 +213,7 @@ public final class RealConnection extends Http2Connection.Listener implements Co
     }
 
     /**
+     * 建立 socket 连接
      * Does all the work necessary to build a full HTTP or HTTPS connection on a raw socket.
      */
     private void connectSocket(int connectTimeout, int readTimeout) throws IOException {

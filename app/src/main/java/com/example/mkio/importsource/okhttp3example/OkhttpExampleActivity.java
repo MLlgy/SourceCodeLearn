@@ -92,8 +92,9 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
      */
     private void getAsynHttp() {
 
-        Request.Builder requestBuilder = new Request.Builder().url("http://www.baidu.com");
-        requestBuilder.method("GET", null);
+        Request.Builder requestBuilder = new Request.Builder().url("http://www.baidu.com")
+                .method("GET", null);
+//        requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call mcall = mOkHttpClient.newCall(request);
         mcall.enqueue(new Callback() {

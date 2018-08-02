@@ -105,13 +105,14 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-
+        // 三个参数分别对应：(1)全局的连接池，(2)连接线路Address, (3)堆栈对象
         streamAllocation = new StreamAllocation(
                 client.connectionPool(), createAddress(request.url()), callStackTrace);
 
         int followUpCount = 0;
         Response priorResponse = null;
         while (true) {
+
             if (canceled) {
                 streamAllocation.release();
                 throw new IOException("Canceled");
@@ -120,10 +121,14 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
             Response response = null;
             boolean releaseConnection = true;
             try {
+                //  执行下一个拦截器，即BridgeInterceptor
+                // 这里有个很重的信息，即会将初始化好的连接对象传递给下一个拦截器，也是贯穿整个请求的连击对象，
+                // 上面我们说过，在拦截器执行过程中，RealInterceptorChain的几个属性字段会一步一步赋值
                 response = ((RealInterceptorChain) chain).proceed(request, streamAllocation, null, null);
                 releaseConnection = false;
             } catch (RouteException e) {
                 // The attempt to connect via a route failed. The request will not have been sent.
+                //  如果有异常，判断是否要恢复
                 if (!recover(e.getLastConnectException(), false, request)) {
                     throw e.getLastConnectException();
                 }
@@ -144,14 +149,8 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
             }
 
             // Attach the prior response if it exists. Such responses never have a body.
-            if (priorResponse != null) {
-                response = response.newBuilder()
-                        .priorResponse(priorResponse.newBuilder()
-                                .body(null)
-                                .build())
-                        .build();
-            }
 
+            // 检查是否符合要求 符合返回响应，不符合关闭连接
             Request followUp = followUpRequest(response);
 
             if (followUp == null) {
@@ -207,6 +206,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
      * {@code e} is recoverable, or false if the failure is permanent. Requests with a body can only
      * be recovered if the body is buffered or if the failure occurred before the request has been
      * sent.
+     * 检查是否可以恢复
      */
     private boolean recover(IOException e, boolean requestSendStarted, Request userRequest) {
         streamAllocation.streamFailed(e);
@@ -264,6 +264,8 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
      * Figures out the HTTP request to make in response to receiving {@code userResponse}. This will
      * either add authentication headers, follow redirects or handle a client request timeout. If a
      * follow-up is either unnecessary or not applicable, this returns null.
+     * 重定向的判断followUpReque
+     * 这里主要是根据响应码(code)和响应头(header)，查看是否需要重定向，并重新设置请求，当然，如果是正常响应则直接返回Response停止循环
      */
     private Request followUpRequest(Response userResponse) throws IOException {
         if (userResponse == null) throw new IllegalStateException();

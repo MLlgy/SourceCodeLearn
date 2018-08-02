@@ -39,6 +39,15 @@ public final class RealInterceptorChain implements Interceptor.Chain {
     private final Request request;
     private int calls;
 
+    /**
+     * , , ,  , , originalRequest
+     * @param interceptors  interceptors
+     * @param streamAllocation  null
+     * @param httpCodec null
+     * @param connection null
+     * @param index  0
+     * @param request originalRequest
+     */
     public RealInterceptorChain(List<Interceptor> interceptors, StreamAllocation streamAllocation,
                                 HttpCodec httpCodec, RealConnection connection, int index, Request request) {
         this.interceptors = interceptors;
@@ -91,6 +100,9 @@ public final class RealInterceptorChain implements Interceptor.Chain {
         }
 
         // Call the next interceptor in the chain.
+        /**
+         * 责任链模式的体现
+         */
         RealInterceptorChain next = new RealInterceptorChain(
                 interceptors, streamAllocation, httpCodec, connection, index + 1, request);
         Interceptor interceptor = interceptors.get(index);

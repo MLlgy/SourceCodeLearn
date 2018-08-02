@@ -92,6 +92,9 @@ public final class BridgeInterceptor implements Interceptor {
             requestBuilder.header("User-Agent", Version.userAgent());
         }
 
+        /**
+         * 最终所有的链会回的第一个链的此处
+         */
         Response networkResponse = chain.proceed(requestBuilder.build());
 
         HttpHeaders.receiveHeaders(cookieJar, userRequest.url(), networkResponse.headers());

@@ -35,7 +35,7 @@ import static okhttp3.internal.Util.closeQuietly;
 
 /**
  * This class coordinates the relationship between three entities:
- * （这个类协调三个实体之间的关系）
+ * （这个类协调三个实体之间的关系） Connections  Streams   Calls
  * <p>
  * <ul>
  * <li><strong>Connections:</strong> physical socket connections to remote servers. These are

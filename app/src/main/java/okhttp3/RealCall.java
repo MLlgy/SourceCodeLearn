@@ -49,8 +49,8 @@ final class RealCall implements Call {
         final EventListener.Factory eventListenerFactory = client.eventListenerFactory();
 
         this.client = client;
-        this.originalRequest = originalRequest;
-        this.forWebSocket = forWebSocket;
+        this.originalRequest = originalRequest;//请求参数
+        this.forWebSocket = forWebSocket;//是不是websocket 请求
         this.retryAndFollowUpInterceptor = new RetryAndFollowUpInterceptor(client, forWebSocket);
 
         // TODO(jwilson): this is unsafe publication and not threadsafe.
@@ -152,6 +152,9 @@ final class RealCall implements Call {
         return chain.proceed(originalRequest);
     }
 
+    /**
+     * 一个有名字的runnable
+     */
     final class AsyncCall extends NamedRunnable {
         private final Callback responseCallback;
 
@@ -176,6 +179,9 @@ final class RealCall implements Call {
         protected void execute() {
             boolean signalledCallback = false;
             try {
+                /**
+                 * 开始真正的发起网络请求
+                 */
                 Response response = getResponseWithInterceptorChain();
                 if (retryAndFollowUpInterceptor.isCanceled()) {
                     signalledCallback = true;
