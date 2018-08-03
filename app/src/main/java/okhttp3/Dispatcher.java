@@ -192,6 +192,10 @@ public final class Dispatcher {
         for (Iterator<AsyncCall> i = readyAsyncCalls.iterator(); i.hasNext(); ) {
             AsyncCall call = i.next();
 
+            /**
+             * 在遍历过程中如果runningAsyncCalls超过maxRequest则不再添加，否则一直添加
+             * 也就是说最多一次可以有5个并发线程
+             */
             if (runningCallsForHost(call) < maxRequestsPerHost) {
                 i.remove();
                 runningAsyncCalls.add(call);
@@ -204,6 +208,7 @@ public final class Dispatcher {
 
     /**
      * Returns the number of running calls that share a host with {@code call}.
+     * 返回同一个host 的 call 的数量
      */
     private int runningCallsForHost(AsyncCall call) {
         int result = 0;
@@ -234,12 +239,19 @@ public final class Dispatcher {
         finished(runningSyncCalls, call, false);
     }
 
+    /**
+     * 从ready到running,在每个call结束的时候都会调用finished  注意是每个call都会执行该操作。 promoteCalls() 继续执行下面的call
+     * @param calls
+     * @param call
+     * @param promoteCalls
+     * @param <T>
+     */
     private <T> void finished(Deque<T> calls, T call, boolean promoteCalls) {
         int runningCallsCount;
         Runnable idleCallback;
         synchronized (this) {
             if (!calls.remove(call)) throw new AssertionError("Call wasn't in-flight!");
-            if (promoteCalls) promoteCalls();
+            if (promoteCalls) promoteCalls();//promote 促进
             runningCallsCount = runningCallsCount();
             idleCallback = this.idleCallback;
         }
