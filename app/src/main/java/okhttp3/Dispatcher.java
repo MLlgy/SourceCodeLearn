@@ -182,6 +182,9 @@ public final class Dispatcher {
         }
     }
 
+    /**
+     * 进行下一个 call 的请求
+     */
     private void promoteCalls() {
         if (runningAsyncCalls.size() >= maxRequests) return; // Already running max capacity.
         if (readyAsyncCalls.isEmpty()) return; // No ready calls to promote.
