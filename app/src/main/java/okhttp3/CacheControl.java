@@ -9,6 +9,8 @@ import okhttp3.internal.http.HttpHeaders;
 /**
  * A Cache-Control header with cache directives from a server or client. These directives set policy
  * on what responses can be stored, and which requests can be satisfied by those stored responses.
+ *
+ * 缓存控制头，包含来自服务器或客户端的缓存指令。这些指令设置了可以存储哪些响应、哪些请求可以由这些存储响应满足的策略。
  * <p>
  * <p>See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9">RFC 2616,
  * 14.9</a>.
@@ -296,6 +298,7 @@ public final class CacheControl {
 
         /**
          * Don't accept an unvalidated cached response.
+         * 不接受没有经过验证的响应
          */
         public Builder noCache() {
             this.noCache = true;

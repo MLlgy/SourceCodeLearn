@@ -802,7 +802,7 @@ public final class DiskLruCache implements Closeable, Flushable {
     }
 
     /**
-     * A snapshot of the values for an entry.
+     * A snapshot of the values for an entry. 条目值的快照。
      */
     public final class Snapshot implements Closeable {
         private final String key;
@@ -981,6 +981,9 @@ public final class DiskLruCache implements Closeable, Flushable {
         }
     }
 
+    /**
+     * 一个 url 对应一个 Entry
+     */
     private final class Entry {
         final String key;
 
@@ -993,16 +996,19 @@ public final class DiskLruCache implements Closeable, Flushable {
 
         /**
          * True if this entry has ever been published.
+         * 如果该条目曾经被发布过，则为真。
          */
         boolean readable;
 
         /**
          * The ongoing edit or null if this entry is not being edited.
+         * 如果该条目没有被编辑，则持续编辑或null
          */
         Editor currentEditor;
 
         /**
          * The sequence number of the most recently committed edit to this entry.
+         * 最近提交的对该条目的编辑的序号。
          */
         long sequenceNumber;
 
@@ -1014,6 +1020,7 @@ public final class DiskLruCache implements Closeable, Flushable {
             dirtyFiles = new File[valueCount];
 
             // The names are repetitive so re-use the same builder to avoid allocations.
+//            名称是重复的，所以要重复使用相同的构建器以避免分配
             StringBuilder fileBuilder = new StringBuilder(key).append('.');
             int truncateTo = fileBuilder.length();
             for (int i = 0; i < valueCount; i++) {
@@ -1027,6 +1034,7 @@ public final class DiskLruCache implements Closeable, Flushable {
 
         /**
          * Set lengths using decimal numbers like "10123".
+         * 用“10123”这样的小数来设置长度。
          */
         void setLengths(String[] strings) throws IOException {
             if (strings.length != valueCount) {

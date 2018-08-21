@@ -107,7 +107,7 @@ public final class CacheInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response cacheCandidate = cache != null
                 ? cache.get(chain.request())
-                : null;
+                : null;//本地缓存
 
         long now = System.currentTimeMillis();
         // 缓存策略
@@ -125,7 +125,7 @@ public final class CacheInterceptor implements Interceptor {
             closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
         }
 
-        //缓存和网络皆为空
+        //缓存和网络皆为空，返回code 为504 的响应
         // If we're forbidden from using the network and the cache is insufficient, fail.
         if (networkRequest == null && cacheResponse == null) {
             return new Response.Builder()
@@ -139,7 +139,7 @@ public final class CacheInterceptor implements Interceptor {
                     .build();
         }
 
-        // If we don't need the network, we're done.
+        // If we don't need the network, we're done.  缓存策略请求为null，则使用缓存
         if (networkRequest == null) {
             return cacheResponse.newBuilder()
                     .cacheResponse(stripBody(cacheResponse))
@@ -156,7 +156,7 @@ public final class CacheInterceptor implements Interceptor {
             }
         }
 
-        // If we have a cache response too, then we're doing a conditional get.
+        // If we have a cache response too, then we're doing a conditional get. 本地缓存和网络请求响应均不为空时，根据条件选择使用哪个
         if (cacheResponse != null) {
             if (networkResponse.code() == HTTP_NOT_MODIFIED) {
                 Response response = cacheResponse.newBuilder()

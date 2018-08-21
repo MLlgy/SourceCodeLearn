@@ -213,6 +213,7 @@ public final class CacheStrategy {
 
         /**
          * Returns a strategy to use assuming the request can use the network.
+         * 返回一个缓存策略
          */
         private CacheStrategy getCandidate() {
             // No cached response.

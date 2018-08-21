@@ -109,7 +109,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
                     String str = response.cacheResponse().toString();
                     Log.i("wangshu", "cache---" + str);
                 } else {
-                    response.body().string();
+//                    response.body().string();
                     String str = response.networkResponse().toString();
                     Log.i("wangshu", "network---" + str + "    " + response.body().string());
                 }
