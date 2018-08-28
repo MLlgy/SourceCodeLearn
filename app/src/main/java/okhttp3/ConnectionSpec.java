@@ -32,6 +32,8 @@ import static okhttp3.internal.Util.nonEmptyIntersection;
  * Specifies configuration for the socket connection that HTTP traffic travels through. For {@code
  * https:} URLs, this includes the TLS version and cipher suites to use when negotiating a secure
  * connection.
+ *
+ * 指定HTTP流量通过的套接字连接的配置
  * <p>
  * <p>The TLS versions configured in a connection spec are only be used if they are also enabled in
  * the SSL socket. For example, if an SSL socket does not have TLS 1.3 enabled, it will not be used

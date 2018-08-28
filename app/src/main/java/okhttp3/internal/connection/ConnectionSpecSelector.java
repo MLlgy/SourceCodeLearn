@@ -35,6 +35,10 @@ import okhttp3.internal.Internal;
  * Handles the connection spec fallback strategy: When a secure socket connection fails due to a
  * handshake / protocol problem the connection may be retried with different protocols. Instances
  * are stateful and should be created and used for a single connection attempt.
+ *
+ * 处理连接规范回退策略:当一个安全套接字连接由于
+ * 握手/协议问题而失败时，可以使用不同的协议重试连接。实例
+ * 是有状态的，应该创建并用于单个连接尝试。
  */
 public final class ConnectionSpecSelector {
 

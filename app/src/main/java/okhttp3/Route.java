@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 /**
  * The concrete route used by a connection to reach an abstract origin server. When creating a
  * connection the client has many options:
- * 建立连接远程服务的连接会用到具体的路由。 建立连接时客户端有多个选择：
+ * 建立连接远程服务的连接会用到具体的路由。 建立连接时客户端有多个选择： http 代理 、 Ip Address
  * <p>
  * <ul>
  * <li><strong>HTTP proxy:</strong> a proxy server may be explicitly configured for the client.

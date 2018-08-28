@@ -1,7 +1,6 @@
 package com.example.mkio.importsource.okhttp3example;
 
 import android.os.Bundle;
-//import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +26,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+//import android.support.v7.app.AppCompatActivity;
+
 public class OkhttpExampleActivity extends AppCompatActivity implements View.OnClickListener {
     public static final MediaType MEDIA_TYPE_MARKDOWN
             = MediaType.parse("text/x-markdown; charset=utf-8");
@@ -43,10 +44,10 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_okhttp_example);
         initperssion();
         initOkHttpClient();
-        bt_send = (Button) this.findViewById(R.id.bt_send);
-        bt_sendfile = (Button) this.findViewById(R.id.bt_sendfile);
-        bt_postsend = (Button) this.findViewById(R.id.bt_postsend);
-        bt_downfile = (Button) this.findViewById(R.id.bt_downfile);
+        bt_send = this.findViewById(R.id.bt_send);
+        bt_sendfile = this.findViewById(R.id.bt_sendfile);
+        bt_postsend = this.findViewById(R.id.bt_postsend);
+        bt_downfile = this.findViewById(R.id.bt_downfile);
         bt_send.setOnClickListener(this);
         bt_postsend.setOnClickListener(this);
         bt_sendfile.setOnClickListener(this);

@@ -79,10 +79,15 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
      * Immediately closes the socket connection if it's currently held. Use this to interrupt an
      * in-flight request from any thread. It's the caller's responsibility to close the request body
      * and response body streams; otherwise resources may be leaked.
+     *
+     * 立即关闭套接字连接，如果它当前持有。
+     * 使用此命令可以中断来自任何线程的正在运行的请求。
+     * 调用方有责任关闭请求主体和响应主体流;否则，资源可能会被泄露。
      * <p>
      * <p>This method is safe to be called concurrently, but provides limited guarantees. If a
      * transport layer connection has been established (such as a HTTP/2 stream) that is terminated.
      * Otherwise if a socket connection is being established, that is terminated.
+     * 这种方法可以安全地并发调用，但是提供了有限的保证。如果已建立*传输层连接(如HTTP/2流)，则终止该连接。否则，如果正在建立套接字连接，则终止该连接
      */
     public void cancel() {
         canceled = true;
