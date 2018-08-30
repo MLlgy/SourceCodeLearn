@@ -147,6 +147,7 @@ public final class StreamAllocation {
     }
 
     /**
+     * 获得连接的顺序：
      * Returns a connection to host a new stream. This prefers the existing connection if it exists,
      * then the pool, finally building a new connection.
      */
@@ -158,13 +159,13 @@ public final class StreamAllocation {
             if (codec != null) throw new IllegalStateException("codec != null");
             if (canceled) throw new IOException("Canceled");
 
-            // Attempt to use an already-allocated connection.
+            // Attempt to use an already-allocated connection.  尝试拿到已存在的 connection ，直接返回
             RealConnection allocatedConnection = this.connection;
             if (allocatedConnection != null && !allocatedConnection.noNewStreams) {
                 return allocatedConnection;
             }
 
-            // Attempt to get a connection from the pool.
+            // Attempt to get a connection from the pool. 从 connectpool 拿到 connection 直接返回
             Internal.instance.get(connectionPool, address, this, null);
             if (connection != null) {
                 return connection;
@@ -173,6 +174,9 @@ public final class StreamAllocation {
             selectedRoute = route;
         }
 
+        /**
+         * 更换路由，在 ConnectionPool 中继续寻找 连接，寻找到之后直接返回
+         */
         // If we need a route, make one. This is a blocking operation.
         if (selectedRoute == null) {
             selectedRoute = routeSelector.next();
@@ -190,6 +194,9 @@ public final class StreamAllocation {
                 return connection;
             }
 
+            /**
+             * 如果上面两部操作还是不能找到对应的 Connection ，那么就新建 Connection
+             */
             // Create a connection and assign it to this allocation immediately. This makes it possible
             // for an asynchronous cancel() to interrupt the handshake we're about to do.
             route = selectedRoute;
@@ -198,7 +205,7 @@ public final class StreamAllocation {
             acquire(result);
         }
 
-        // Do TCP + TLS handshakes. This is a blocking operation.
+        // Do TCP + TLS handshakes. This is a blocking operation. 进行 TCP + Tls 连接，这是阻塞操作
         result.connect(connectTimeout, readTimeout, writeTimeout, connectionRetryEnabled);
         routeDatabase().connected(result.route());
 
@@ -353,6 +360,8 @@ public final class StreamAllocation {
     /**
      * Use this allocation to hold {@code connection}. Each call to this must be paired with a call to
      * {@link #release} on the same connection.
+     *
+     * 使用这个分配来保存connection。每一个调用都必须与同一个连接上的 release的调用相匹配。
      */
     public void acquire(RealConnection connection) {
         assert (Thread.holdsLock(connectionPool));

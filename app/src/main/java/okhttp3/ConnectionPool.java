@@ -42,6 +42,9 @@ import static okhttp3.internal.Util.closeQuietly;
  * Manages reuse of HTTP and HTTP/2 connections for reduced network latency. HTTP requests that
  * share the same {@link Address} may share a {@link Connection}. This class implements the policy
  * of which connections to keep open for future use.
+ *
+ * 管理HTTP和HTTP/2连接的重用，以减少网络延迟。
+ * 共享同一个地址的HTTP请求可能共享一个连接。该类实现了策略，该策略*将来使用而保持连接的打开状态。
  */
 public final class ConnectionPool {
     /**
@@ -123,6 +126,7 @@ public final class ConnectionPool {
     /**
      * Returns a recycled connection to {@code address}, or null if no such connection exists. The
      * route is null if the address has not yet been routed.
+     * 根据 Address 遍历 ConnectionPool 寻找对应的 RealConnection
      */
     @Nullable
     RealConnection get(Address address, StreamAllocation streamAllocation, Route route) {
@@ -137,6 +141,7 @@ public final class ConnectionPool {
     }
 
     /**
+     * deduplicate ： 删除处理
      * Replaces the connection held by {@code streamAllocation} with a shared connection if possible.
      * This recovers when multiple multiplexed connections are created concurrently.
      */
