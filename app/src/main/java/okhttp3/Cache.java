@@ -211,7 +211,7 @@ public final class Cache implements Closeable, Flushable {
         DiskLruCache.Snapshot snapshot;
         Entry entry;
         try {
-            snapshot = cache.get(key);
+            snapshot = cache.get(key);// 在这里会执行 initialize(),进行一次初始化
             if (snapshot == null) {
                 return null;
             }
@@ -270,9 +270,9 @@ public final class Cache implements Closeable, Flushable {
 
         //由Response对象构建一个Entry对象,Entry是Cache的一个内部类
         Entry entry = new Entry(response);
-        DiskLruCache.Editor editor = null;
+        DiskLruCache.Editor editor = null;// disk 缓存的编辑
         try {
-            editor = cache.edit(key(response.request().url()));
+            editor = cache.edit(key(response.request().url()));// key(response.request().url()) 根据 URL生成唯一 key
             if (editor == null) {
                 return null;
             }
@@ -604,9 +604,15 @@ public final class Cache implements Closeable, Flushable {
             this.receivedResponseMillis = response.receivedResponseAtMillis();
         }
 
+        /**
+         * 其主要逻辑就是将对应请求的meta数据写入对应CacheEntry的索引为ENTRY_METADATA（0）的dirtyfile中
+         * @param editor
+         * @throws IOException
+         */
         public void writeTo(DiskLruCache.Editor editor) throws IOException {
+            // 写入 的dirtyfile 文件的 buffersink 输出流
             BufferedSink sink = Okio.buffer(editor.newSink(ENTRY_METADATA));
-
+            // TODO: 在这里出现了 0.tmp
             sink.writeUtf8(url)
                     .writeByte('\n');
             sink.writeUtf8(requestMethod)

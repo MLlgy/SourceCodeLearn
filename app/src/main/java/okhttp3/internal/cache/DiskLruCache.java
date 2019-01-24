@@ -55,36 +55,39 @@ import static okhttp3.internal.platform.Platform.WARN;
  * <p>The cache stores its data in a directory on the filesystem. This directory must be exclusive
  * to the cache; the cache may delete or overwrite files from its directory. It is an error for
  * multiple processes to use the same cache directory at the same time.
+ * 多个进程使用相同的缓存目录会导致错误。
  * <p>
  * <p>This cache limits the number of bytes that it will store on the filesystem. When the number of
  * stored bytes exceeds the limit, the cache will remove entries in the background until the limit
  * is satisfied. The limit is not strict: the cache may temporarily exceed it while waiting for
  * files to be deleted. The limit does not include filesystem overhead or the cache journal so
  * space-sensitive applications should set a conservative limit.
+ * 限制字节大小，超过字节后，缓存会在后台删除实体，直到满足限制条件。
  * <p>
  * <p>Clients call {@link #edit} to create or update the values of an entry. An entry may have only
  * one editor at one time; if a value is not available to be edited then {@link #edit} will return
  * null.
- * <p>
+ * <p>一个实体一次只能有一个 editor
  * <ul>
  * <li>When an entry is being <strong>created</strong> it is necessary to supply a full set of
- * values; the empty value should be used as a placeholder if necessary.
+ * values; the empty value should be used as a placeholder if necessary.  entry 被创造处理，可以提供一系列的值
  * <li>When an entry is being <strong>edited</strong>, it is not necessary to supply data for
- * every value; values default to their previous value.
+ * every value; values default to their previous value. entry 在编辑时，不需要提供每个值
  * </ul>
  * <p>
  * <p>Every {@link #edit} call must be matched by a call to {@link Editor#commit} or {@link
  * Editor#abort}. Committing is atomic: a read observes the full set of values as they were before
- * or after the commit, but never a mix of values.
+ * or after the commit, but never a mix of values.  edit 必须 和 一个call 匹配，去执行 commit 或 abort 操作。
  * <p>
  * <p>Clients call {@link #get} to read a snapshot of an entry. The read will observe the value at
  * the time that {@link #get} was called. Updates and removals after the call do not impact ongoing
- * reads.
+ * reads.调用 get 获得一个entry 的 快照，在 get 被调用时读取值，在 call 后 updates 和renmove 对
  * <p>
  * <p>This class is tolerant of some I/O errors. If files are missing from the filesystem, the
  * corresponding entries will be dropped from the cache. If an error occurs while writing a cache
  * value, the edit will fail silently. Callers should handle other problems by catching {@code
  * IOException} and responding appropriately.
+ *  该类可容忍一下 io 错误，如果
  */
 public final class DiskLruCache implements Closeable, Flushable {
     static final String JOURNAL_FILE = "journal";
@@ -237,7 +240,7 @@ public final class DiskLruCache implements Closeable, Flushable {
             return; // Already initialized.
         }
 
-        // If a bkp file exists, use it instead.
+        // If a bkp file exists, use it instead. journal文件备份是否存在
         if (fileSystem.exists(journalFileBackup)) {
             // If journal file also exists just delete backup file.
             if (fileSystem.exists(journalFile)) {
@@ -388,23 +391,26 @@ public final class DiskLruCache implements Closeable, Flushable {
 
     /**
      * Creates a new journal that omits redundant information. This replaces the current journal if it
-     * exists.
+     * exists.创建新的忽略多余信息的journal文件。如果存在 journal文件，则覆盖. 每一次app初始化后请求都会重写journal文件
      */
     synchronized void rebuildJournal() throws IOException {
         if (journalWriter != null) {
             journalWriter.close();
         }
-
+        // TODO: 2019/1/24 产生 journal.tmp 文件
         BufferedSink writer = Okio.buffer(fileSystem.sink(journalFileTmp));
-        try {
+        try {// 写入 journal 文件内容
             writer.writeUtf8(MAGIC).writeByte('\n');
             writer.writeUtf8(VERSION_1).writeByte('\n');
             writer.writeDecimalLong(appVersion).writeByte('\n');
             writer.writeDecimalLong(valueCount).writeByte('\n');
             writer.writeByte('\n');
 
+            /**
+             *  将 lruEntries 的值重新写入 journal 文件
+             */
             for (Entry entry : lruEntries.values()) {
-                if (entry.currentEditor != null) {
+                if (entry.currentEditor != null) { // 当前的 editor 不为 null 说明当前 journal 为非稳定态
                     writer.writeUtf8(DIRTY).writeByte(' ');
                     writer.writeUtf8(entry.key);
                     writer.writeByte('\n');
@@ -418,7 +424,7 @@ public final class DiskLruCache implements Closeable, Flushable {
         } finally {
             writer.close();
         }
-
+        // TODO: 2019/1/24 journal.tmp --> journal
         if (fileSystem.exists(journalFile)) {
             fileSystem.rename(journalFile, journalFileBackup);
         }
@@ -446,6 +452,7 @@ public final class DiskLruCache implements Closeable, Flushable {
         if (snapshot == null) return null;
 
         redundantOpCount++;
+        // 写入 journal 日志记录
         journalWriter.writeUtf8(READ).writeByte(' ').writeUtf8(key).writeByte('\n');
         if (journalRebuildRequired()) {
             executor.execute(cleanupRunnable);
@@ -467,7 +474,7 @@ public final class DiskLruCache implements Closeable, Flushable {
 
         checkNotClosed();
         validateKey(key);
-        Entry entry = lruEntries.get(key);
+        Entry entry = lruEntries.get(key);// 查看是否存在 key 相同的 entry
         if (expectedSequenceNumber != ANY_SEQUENCE_NUMBER && (entry == null
                 || entry.sequenceNumber != expectedSequenceNumber)) {
             return null; // Snapshot is stale.
@@ -555,7 +562,7 @@ public final class DiskLruCache implements Closeable, Flushable {
                 }
             }
         }
-
+        // TODO: 2019/1/24 key.0.tmp key.1.tmp --> key.0 key.1
         for (int i = 0; i < valueCount; i++) {
             File dirty = entry.dirtyFiles[i];
             if (success) {
@@ -574,6 +581,7 @@ public final class DiskLruCache implements Closeable, Flushable {
 
         redundantOpCount++;
         entry.currentEditor = null;
+        //更新日志 journal
         if (entry.readable | success) {
             entry.readable = true;
             journalWriter.writeUtf8(CLEAN).writeByte(' ');
@@ -591,6 +599,7 @@ public final class DiskLruCache implements Closeable, Flushable {
         }
         journalWriter.flush();
 
+        // 日志过多，清除日志
         if (size > maxSize || journalRebuildRequired()) {
             executor.execute(cleanupRunnable);
         }
@@ -907,6 +916,11 @@ public final class DiskLruCache implements Closeable, Flushable {
          * Returns a new unbuffered output stream to write the value at {@code index}. If the underlying
          * output stream encounters errors when writing to the filesystem, this edit will be aborted
          * when {@link #commit} is called. The returned output stream does not throw IOExceptions.
+         *
+         *
+         * 返回一个新的非缓冲输出流写入索引处的值。如果底层输出流写入到文件系统时遇到错误，
+         * 当调用 commit 时 这个edit 会被终止。
+         * 返回的输出流不抛出错误。
          */
         public Sink newSink(int index) {
             synchronized (DiskLruCache.this) {
@@ -921,7 +935,7 @@ public final class DiskLruCache implements Closeable, Flushable {
                 }
                 File dirtyFile = entry.dirtyFiles[index];
                 Sink sink;
-                try {
+                try { // TODO: 2019/1/24 在这里创建了 1.tmp 文件
                     sink = fileSystem.sink(dirtyFile);
                 } catch (FileNotFoundException e) {
                     return Okio.blackhole();
@@ -1025,9 +1039,9 @@ public final class DiskLruCache implements Closeable, Flushable {
             int truncateTo = fileBuilder.length();
             for (int i = 0; i < valueCount; i++) {
                 fileBuilder.append(i);
-                cleanFiles[i] = new File(directory, fileBuilder.toString());
+                cleanFiles[i] = new File(directory, fileBuilder.toString()); // key.0 key.1
                 fileBuilder.append(".tmp");
-                dirtyFiles[i] = new File(directory, fileBuilder.toString());
+                dirtyFiles[i] = new File(directory, fileBuilder.toString());// key.0.tmp key.1.tmp
                 fileBuilder.setLength(truncateTo);
             }
         }

@@ -106,7 +106,7 @@ public final class CacheInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response cacheCandidate = cache != null
-                ? cache.get(chain.request())
+                ? cache.get(chain.request())// 执行 DiskLruCache#initialize() ，会对 journal 文件进行一些操作
                 : null;//本地缓存
 
         long now = System.currentTimeMillis();
@@ -158,6 +158,9 @@ public final class CacheInterceptor implements Interceptor {
 
         // If we have a cache response too, then we're doing a conditional get. 本地缓存和网络请求响应均不为空时，根据条件选择使用哪个
         if (cacheResponse != null) {
+            // 304 304 的标准解释是：Not Modified 客户端有缓冲的文档并发出了一个条件性的请求（
+            // 一般是提供If-Modified-Since头表示客户只想比指定日期更新的文档）。
+            // 服务器告诉客户，原来缓冲的文档还可以继续使用。
             if (networkResponse.code() == HTTP_NOT_MODIFIED) {
                 Response response = cacheResponse.newBuilder()
                         .headers(combine(cacheResponse.headers(), networkResponse.headers()))
@@ -186,7 +189,7 @@ public final class CacheInterceptor implements Interceptor {
         if (cache != null) {
             if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
                 // Offer this request to the cache.
-                CacheRequest cacheRequest = cache.put(response);
+                CacheRequest cacheRequest = cache.put(response);// 将 response 写入内存中
                 return cacheWritingResponse(cacheRequest, response);
             }
 

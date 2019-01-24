@@ -140,7 +140,7 @@ final class RealCall implements Call {
         interceptors.addAll(client.interceptors());
         interceptors.add(retryAndFollowUpInterceptor);
         interceptors.add(new BridgeInterceptor(client.cookieJar()));
-        interceptors.add(new CacheInterceptor(client.internalCache()));
+        interceptors.add(new CacheInterceptor(client.internalCache()));// 在 CacheInterceptor 中传入 缓存路径、大小等相关的对象
         interceptors.add(new ConnectInterceptor(client));
         if (!forWebSocket) {
             interceptors.addAll(client.networkInterceptors());

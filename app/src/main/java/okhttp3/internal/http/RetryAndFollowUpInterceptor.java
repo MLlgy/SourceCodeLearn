@@ -56,6 +56,8 @@ import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
 /**
  * This interceptor recovers from failures and follows redirects as necessary. It may throw an
  * {@link IOException} if the call was canceled.
+ *
+ * 这个拦截器恢复失败\重定向的请求。如果中断请求，可能会抛出 IOException
  */
 public final class RetryAndFollowUpInterceptor implements Interceptor {
     /**
@@ -146,7 +148,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
                 releaseConnection = false;
                 continue;
             } finally {
-                // We're throwing an unchecked exception. Release any resources.
+                // We're throwing an unchecked exception. Release any resources.  当抛出一个不可检查的异常时，释放所有的资源。
                 if (releaseConnection) {
                     streamAllocation.streamFailed(null);
                     streamAllocation.release();
@@ -155,7 +157,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
 
             // Attach the prior response if it exists. Such responses never have a body.
 
-            // 检查是否符合要求 符合返回响应，不符合关闭连接
+            // 检查是否符合要求 符合返回响应，不符合关闭连接,重新发起请求
             Request followUp = followUpRequest(response);
 
             if (followUp == null) {
@@ -282,7 +284,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
 
         final String method = userResponse.request().method();
         switch (responseCode) {
-            case HTTP_PROXY_AUTH:
+            case HTTP_PROXY_AUTH://407
                 Proxy selectedProxy = route != null
                         ? route.proxy()
                         : client.proxy();

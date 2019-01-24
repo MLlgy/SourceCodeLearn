@@ -21,6 +21,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
+ * okhttp 内部的内存接口，应用不应该实现此接口，应该实现 cache 接口
  * OkHttp's internal cache interface. Applications shouldn't implement this: instead use {@link
  * okhttp3.Cache}.
  */

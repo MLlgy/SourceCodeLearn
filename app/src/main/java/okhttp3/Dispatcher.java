@@ -152,9 +152,16 @@ public final class Dispatcher {
         this.idleCallback = idleCallback;
     }
 
-    synchronized void enqueue(AsyncCall call) {
+    /**
+     * 异步调用
+     * @param call
+     */
+    synchronized void  enqueue(AsyncCall call) {
         /**
          * 正在运行的异步请求队列的大小 < 最大并发请求数  同一个host发起的请求数 < 并且每个主机最大请求数
+         *
+         * 满足该要求，把 Call 添加到运行着的消息的队列
+         * 不满足的话，把消息添加到将要运行的信息的队列
          */
         if (runningAsyncCalls.size() < maxRequests && runningCallsForHost(call) < maxRequestsPerHost) {
             runningAsyncCalls.add(call);

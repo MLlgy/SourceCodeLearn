@@ -16,6 +16,8 @@
  */
 package okhttp3.internal.connection;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.lang.ref.Reference;
 import java.net.ConnectException;
@@ -28,6 +30,7 @@ import java.net.UnknownServiceException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -248,12 +251,14 @@ public final class RealConnection extends Http2Connection.Listener implements Co
     }
 
     private void establishProtocol(ConnectionSpecSelector connectionSpecSelector) throws IOException {
+        // 如果为 Http 则返回
         if (route.address().sslSocketFactory() == null) {
             protocol = Protocol.HTTP_1_1;
             socket = rawSocket;
             return;
         }
 
+        // Https 连接 tls、ssl
         connectTls(connectionSpecSelector);
 
         if (protocol == Protocol.HTTP_2) {
@@ -276,7 +281,7 @@ public final class RealConnection extends Http2Connection.Listener implements Co
             sslSocket = (SSLSocket) sslSocketFactory.createSocket(
                     rawSocket, address.url().host(), address.url().port(), true /* autoClose */);
 
-            // Configure the socket's ciphers, TLS versions, and extensions.
+            // Configure the socket's ciphers(密码), TLS versions, and extensions.
             ConnectionSpec connectionSpec = connectionSpecSelector.configureSecureSocket(sslSocket);
             if (connectionSpec.supportsTlsExtensions()) {
                 Platform.get().configureTlsExtensions(

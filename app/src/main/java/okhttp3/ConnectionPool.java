@@ -132,6 +132,9 @@ public final class ConnectionPool {
     RealConnection get(Address address, StreamAllocation streamAllocation, Route route) {
         assert (Thread.holdsLock(this));
         for (RealConnection connection : connections) {
+            /**
+             * 判断 connetion 是否有资格 Eligible：资格
+             */
             if (connection.isEligible(address, route)) {
                 streamAllocation.acquire(connection);
                 return connection;

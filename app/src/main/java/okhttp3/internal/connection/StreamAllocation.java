@@ -147,7 +147,7 @@ public final class StreamAllocation {
     }
 
     /**
-     * 获得连接的顺序：
+     * 获得连接的顺序：存在的链接 、 连接池、新建一个连接
      * Returns a connection to host a new stream. This prefers the existing connection if it exists,
      * then the pool, finally building a new connection.
      */
@@ -165,7 +165,7 @@ public final class StreamAllocation {
                 return allocatedConnection;
             }
 
-            // Attempt to get a connection from the pool. 从 connectpool 拿到 connection 直接返回
+            // Attempt to get a connection from the pool. 从 connectionpool 拿到 connection 直接返回
             Internal.instance.get(connectionPool, address, this, null);
             if (connection != null) {
                 return connection;

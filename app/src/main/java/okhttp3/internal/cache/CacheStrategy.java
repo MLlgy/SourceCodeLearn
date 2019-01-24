@@ -165,9 +165,9 @@ public final class CacheStrategy {
             this.cacheResponse = cacheResponse;
 
             if (cacheResponse != null) {
-                this.sentRequestMillis = cacheResponse.sentRequestAtMillis();
-                this.receivedResponseMillis = cacheResponse.receivedResponseAtMillis();
-                Headers headers = cacheResponse.headers();
+                this.sentRequestMillis = cacheResponse.sentRequestAtMillis();//获得请求的发起时间
+                this.receivedResponseMillis = cacheResponse.receivedResponseAtMillis();// 获取响应的返回时间
+                Headers headers = cacheResponse.headers();// 获取缓存响应的 Header
                 for (int i = 0, size = headers.size(); i < size; i++) {
                     String fieldName = headers.name(i);
                     String value = headers.value(i);
@@ -198,13 +198,13 @@ public final class CacheStrategy {
         }
 
         /**
-         * Returns a strategy to satisfy {@code request} using the a cached response {@code response}.
+         * Returns a strategy to satisfy {@code request} using the a cached response {@code response}. 返回一个返回一个战略，以满足请求使用缓存的响应
          */
         public CacheStrategy get() {
             CacheStrategy candidate = getCandidate();
 
             if (candidate.networkRequest != null && request.cacheControl().onlyIfCached()) {
-                // We're forbidden from using the network and the cache is insufficient.
+                // We're forbidden from using the network and the cache is insufficient. 我们禁止使用网络，并且该缓存是不够的
                 return new CacheStrategy(null, null);
             }
 
@@ -238,7 +238,7 @@ public final class CacheStrategy {
                 return new CacheStrategy(request, null);
             }
 
-            long ageMillis = cacheResponseAge();
+            long ageMillis = cacheResponseAge();// age
             long freshMillis = computeFreshnessLifetime();
 
             if (requestCaching.maxAgeSeconds() != -1) {
@@ -269,7 +269,7 @@ public final class CacheStrategy {
             }
 
             // Find a condition to add to the request. If the condition is satisfied, the response body
-            // will not be transmitted.
+            // will not be transmitted. transmitted：传送 寻找一种添加 reques 的情况。如果这个请求满足要求，响应体不会被传送。
             String conditionName;
             String conditionValue;
             if (etag != null) {
@@ -296,7 +296,7 @@ public final class CacheStrategy {
 
         /**
          * Returns the number of milliseconds that the response was fresh for, starting from the served
-         * date.
+         * date. 返回响应从服务器返回后的新鲜时间
          */
         private long computeFreshnessLifetime() {
             CacheControl responseCaching = cacheResponse.cacheControl();

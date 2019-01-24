@@ -50,6 +50,7 @@ import static okhttp3.internal.http2.Header.TARGET_SCHEME;
 
 /**
  * Encode requests and responses using HTTP/2 frames.
+ * 使用HTTP/2帧编码的请求和响应。
  */
 public final class Http2Codec implements HttpCodec {
     private static final ByteString CONNECTION = ByteString.encodeUtf8("connection");
@@ -88,7 +89,7 @@ public final class Http2Codec implements HttpCodec {
             UPGRADE);
     final StreamAllocation streamAllocation;
     private final OkHttpClient client;
-    private final Http2Connection connection;
+    private final Http2Connection  connection;
     private Http2Stream stream;
 
     public Http2Codec(

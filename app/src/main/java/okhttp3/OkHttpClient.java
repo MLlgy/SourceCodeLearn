@@ -357,10 +357,15 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
         return cookieJar;
     }
 
+    /**
+     * 获取 app 的缓存
+     * @return
+     */
     public Cache cache() {
         return cache;
     }
 
+    // 获取内部的缓存
     InternalCache internalCache() {
         return cache != null ? cache.internalCache : internalCache;
     }

@@ -31,6 +31,7 @@ import okio.Timeout;
 
 /**
  * A logical bidirectional stream.
+ * 逻辑双向流
  */
 public final class Http2Stream {
     // Internal state is guarded by this. No long-running or potentially

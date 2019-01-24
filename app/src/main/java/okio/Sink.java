@@ -24,6 +24,9 @@ import java.io.IOException;
  * needed: to the network, storage, or a buffer in memory. Sinks may be layered
  * to transform received data, such as to compress, encrypt, throttle, or add
  * protocol framing.
+ *
+ *  接收字节流。可以使用这个接口对网络、存储设备、内存进行写数据。接收器模块可以用来转换接收到的字节流：压缩、加密、节流
+ *  或添加协议框架。
  * <p>
  * <p>Most application code shouldn't operate on a sink directly, but rather on a
  * {@link BufferedSink} which is both more efficient and more convenient. Use
