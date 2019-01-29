@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import com.example.mkio.importsource.R;
 
 import java.io.File;
@@ -34,7 +35,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-//import android.support.v7.app.AppCompatActivity;
 
 public class OkhttpExampleActivity extends AppCompatActivity implements View.OnClickListener {
     public static final MediaType MEDIA_TYPE_MARKDOWN
@@ -234,7 +234,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
 
 
     /**
-     * 异步下载文件
+     * 异步下载文件 在 这里read 真正执行的为 {@link okio.RealBufferedSource#read(byte[], int, int)}
      */
     private void downAsynFile() {
         i++;
@@ -252,7 +252,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
                 InputStream inputStream = response.body().byteStream();
                 FileOutputStream fileOutputStream = null;
                 File mFile = new File(Environment.getExternalStorageDirectory().getPath() + "/wangshu.jpg");
-                try {
+                try {// TODO: 2019/1/24 此时在这里 文件仍为 0.tmp 和 1.tmp
                     fileOutputStream = new FileOutputStream(mFile);
                     byte[] buffer = new byte[2048];
                     int len = 0;

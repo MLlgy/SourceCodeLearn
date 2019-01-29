@@ -278,7 +278,7 @@ public final class StreamAllocation {
      * connection will be detached or closed. Callers must be synchronized on the connection pool.
      * <p>
      * <p>Returns a closeable that the caller should pass to {@link Util#closeQuietly} upon completion
-     * of the synchronized block. (We don't do I/O while synchronized on the connection pool.)
+     * of the synchronized block. (We don't do I/O while synchronized on the connection pool.)接触分配
      */
     private Socket deallocate(boolean noNewStreams, boolean released, boolean streamFinished) {
         assert (Thread.holdsLock(connectionPool));

@@ -327,6 +327,11 @@ public final class DiskLruCache implements Closeable, Flushable {
         return Okio.buffer(faultHidingSink);
     }
 
+    /**
+     * 读取日志文件的一行，根据内容操作 lruEntries 中的对象
+     * @param line
+     * @throws IOException
+     */
     private void readJournalLine(String line) throws IOException {
         int firstSpace = line.indexOf(' ');
         if (firstSpace == -1) {
@@ -351,7 +356,7 @@ public final class DiskLruCache implements Closeable, Flushable {
             entry = new Entry(key);
             lruEntries.put(key, entry);
         }
-
+        // 根据每一行的日志状态初始化 entry
         if (secondSpace != -1 && firstSpace == CLEAN.length() && line.startsWith(CLEAN)) {
             String[] parts = line.substring(secondSpace + 1).split(" ");
             entry.readable = true;
@@ -367,8 +372,8 @@ public final class DiskLruCache implements Closeable, Flushable {
     }
 
     /**
-     * Computes the initial size and collects garbage as a part of opening the cache. Dirty entries
-     * are assumed to be inconsistent and will be deleted.
+     * Computes the initial size and collects garbage as a part of opening the cache.
+     * Dirty entries are assumed to be inconsistent and will be deleted.计算初始大小和收集一部分缓存垃圾。肮脏状态的条目被认为是不一致的，会被删除。
      */
     private void processJournal() throws IOException {
         fileSystem.delete(journalFileTmp);
@@ -916,8 +921,8 @@ public final class DiskLruCache implements Closeable, Flushable {
          * Returns a new unbuffered output stream to write the value at {@code index}. If the underlying
          * output stream encounters errors when writing to the filesystem, this edit will be aborted
          * when {@link #commit} is called. The returned output stream does not throw IOExceptions.
-         *
-         *
+         * {@link okhttp3.Cache.Entry#writeTo(Editor)} 处的 Okio.buffer(editor.newSink(ENTRY_METADATA)); 生成 0.tmp
+         * {@link okhttp3.Cache.CacheRequestImpl#CacheRequestImpl(Editor)} 中的 this.cacheOut = editor.newSink(ENTRY_BODY); 生成 1.tmp
          * 返回一个新的非缓冲输出流写入索引处的值。如果底层输出流写入到文件系统时遇到错误，
          * 当调用 commit 时 这个edit 会被终止。
          * 返回的输出流不抛出错误。
@@ -935,8 +940,8 @@ public final class DiskLruCache implements Closeable, Flushable {
                 }
                 File dirtyFile = entry.dirtyFiles[index];
                 Sink sink;
-                try { // TODO: 2019/1/24 在这里创建了 1.tmp 文件
-                    sink = fileSystem.sink(dirtyFile);
+                try { // TODO: 2019/1/24 在这里创建了 1.tmp 文件 以及 0.tmp
+                     sink = fileSystem.sink(dirtyFile);
                 } catch (FileNotFoundException e) {
                     return Okio.blackhole();
                 }

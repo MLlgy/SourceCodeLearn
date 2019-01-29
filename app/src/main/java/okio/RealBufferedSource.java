@@ -26,7 +26,7 @@ import static okio.Util.checkOffsetAndCount;
 
 final class RealBufferedSource implements BufferedSource {
     public final Buffer buffer = new Buffer();
-    public final Source source;
+    public final Source source; //source 对象为 DiskLrucache 中的 Source cacheWritingSource
     boolean closed;
 
     RealBufferedSource(Source source) {
@@ -473,7 +473,7 @@ final class RealBufferedSource implements BufferedSource {
                 checkOffsetAndCount(data.length, offset, byteCount);
 
                 if (buffer.size == 0) {
-                    long count = source.read(buffer, Segment.SIZE);
+                    long count = source.read(buffer, Segment.SIZE);////source 对象为 DiskLrucache 中的 Source cacheWritingSource
                     if (count == -1) return -1;
                 }
 

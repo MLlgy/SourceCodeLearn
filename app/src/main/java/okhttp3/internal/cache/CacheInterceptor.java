@@ -189,7 +189,7 @@ public final class CacheInterceptor implements Interceptor {
         if (cache != null) {
             if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
                 // Offer this request to the cache.
-                CacheRequest cacheRequest = cache.put(response);// 将 response 写入内存中
+                CacheRequest cacheRequest = cache.put(response);// 将 response 写入内存中，此时进行的步骤： 创建 0.tmp(已经写入数据) 和 1.tmp(尚未写入数据)
                 return cacheWritingResponse(cacheRequest, response);
             }
 

@@ -272,16 +272,16 @@ public final class Cache implements Closeable, Flushable {
         Entry entry = new Entry(response);
         DiskLruCache.Editor editor = null;// disk 缓存的编辑
         try {
-            editor = cache.edit(key(response.request().url()));// key(response.request().url()) 根据 URL生成唯一 key
+            editor = cache.edit(key(response.request().url()));// key(response.request().url()) 根据 URL生成唯一 key,并对 journal日志进行写相关日志
             if (editor == null) {
                 return null;
             }
 
             //把这个entry写入
             //方法内部是通过Okio.buffer(editor.newSink(ENTRY_METADATA));获取到一个BufferedSink对象，随后将Entry中存储的Http报头数据写入到sink流中。
-            entry.writeTo(editor);
+            entry.writeTo(editor);// 触发生成 0.tmp
             //构建一个CacheRequestImpl对象，构造器中通过editor.newSink(ENTRY_BODY)方法获得Sink对象
-            return new CacheRequestImpl(editor);
+            return new CacheRequestImpl(editor);// 触发生成 1.tmp
         } catch (IOException e) {
             abortQuietly(editor);
             return null;
@@ -607,10 +607,10 @@ public final class Cache implements Closeable, Flushable {
         /**
          * 其主要逻辑就是将对应请求的meta数据写入对应CacheEntry的索引为ENTRY_METADATA（0）的dirtyfile中
          * @param editor
-         * @throws IOException
+         * @throws IOException  {@link DiskLruCache.Editor#newSink}
          */
         public void writeTo(DiskLruCache.Editor editor) throws IOException {
-            // 写入 的dirtyfile 文件的 buffersink 输出流
+            // TODO: 2019/1/24 写入 0.tmp 数据 // 写入 的dirtyfile 文件的 buffersink 输出流
             BufferedSink sink = Okio.buffer(editor.newSink(ENTRY_METADATA));
             // TODO: 在这里出现了 0.tmp
             sink.writeUtf8(url)
@@ -771,12 +771,12 @@ public final class Cache implements Closeable, Flushable {
     private final class CacheRequestImpl implements CacheRequest {
         private final DiskLruCache.Editor editor;
         boolean done;
-        private Sink cacheOut;
+        private Sink cacheOut;// 1.tmp 的 Okio 输出流
         private Sink body;
 
         CacheRequestImpl(final DiskLruCache.Editor editor) {
             this.editor = editor;
-            this.cacheOut = editor.newSink(ENTRY_BODY);
+            this.cacheOut = editor.newSink(ENTRY_BODY);// TODO: 2019/1/24 在这里生成 1.tmp
             this.body = new ForwardingSink(cacheOut) {
                 @Override
                 public void close() throws IOException {
@@ -788,7 +788,7 @@ public final class Cache implements Closeable, Flushable {
                         writeSuccessCount++;
                     }
                     super.close();
-                    editor.commit();
+                    editor.commit();// TODO: 2019/1/24 最终调用了此函数，0.tmp 1.tmp --》 key.0  key.1 
                 }
             };
         }
