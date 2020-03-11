@@ -145,6 +145,9 @@ public final class DiskLruCache implements Closeable, Flushable {
     final FileSystem fileSystem;
     final File directory;
     final int valueCount;
+    /**
+     * 通过 LinkedHashMap 实现 LRU 算法
+     */
     final LinkedHashMap<String, Entry> lruEntries = new LinkedHashMap<>(0, 0.75f, true);
     private final File journalFile;
     private final File journalFileTmp;
@@ -276,7 +279,12 @@ public final class DiskLruCache implements Closeable, Flushable {
         initialized = true;
     }
 
+    /**
+     * 读取文件 --  journal
+     * @throws IOException
+     */
     private void readJournal() throws IOException {
+        // 通过 okio 读取 文件
         BufferedSource source = Okio.buffer(fileSystem.source(journalFile));
         try {
             String magic = source.readUtf8LineStrict();
@@ -294,8 +302,12 @@ public final class DiskLruCache implements Closeable, Flushable {
             }
 
             int lineCount = 0;
+            /**
+             * 循环读取 journal 文件，初始化 lruEntries 对象中的元素，为接下来的 LRU 做准备
+             */
             while (true) {
                 try {
+                    // 读取下一行，为缓存文件的文件名
                     readJournalLine(source.readUtf8LineStrict());
                     lineCount++;
                 } catch (EOFException endOfJournal) {
@@ -328,7 +340,11 @@ public final class DiskLruCache implements Closeable, Flushable {
     }
 
     /**
-     * 读取日志文件的一行，根据内容操作 lruEntries 中的对象
+     * 读取日志文件 journal 的一行，根据内容操作 lruEntries 中的对象
+     *
+     * 比如：
+     * DIRTY fdijdifjdojfofjdofey93943r
+     * CLEAN fdijdifjdojfofjdofey93943r 7832
      * @param line
      * @throws IOException
      */
@@ -351,6 +367,7 @@ public final class DiskLruCache implements Closeable, Flushable {
             key = line.substring(keyBegin, secondSpace);
         }
 
+        // 获取到缓存文件对应的 key
         Entry entry = lruEntries.get(key);
         if (entry == null) {
             entry = new Entry(key);
@@ -373,7 +390,10 @@ public final class DiskLruCache implements Closeable, Flushable {
 
     /**
      * Computes the initial size and collects garbage as a part of opening the cache.
-     * Dirty entries are assumed to be inconsistent and will be deleted.计算初始大小和收集一部分缓存垃圾。肮脏状态的条目被认为是不一致的，会被删除。
+     * Dirty entries are assumed to be inconsistent and will be deleted.
+     * 计算初始大小和收集一部分缓存垃圾。肮脏状态的条目被认为是不一致的，会被删除。
+     *
+     * 处理日志文件 -- journal
      */
     private void processJournal() throws IOException {
         fileSystem.delete(journalFileTmp);
@@ -396,7 +416,9 @@ public final class DiskLruCache implements Closeable, Flushable {
 
     /**
      * Creates a new journal that omits redundant information. This replaces the current journal if it
-     * exists.创建新的忽略多余信息的journal文件。如果存在 journal文件，则覆盖. 每一次app初始化后请求都会重写journal文件
+     * exists.
+     *
+     * 创建新的忽略多余信息的journal文件。如果存在 journal文件，则覆盖. 每一次app初始化后请求都会重写journal文件
      */
     synchronized void rebuildJournal() throws IOException {
         if (journalWriter != null) {
@@ -405,10 +427,10 @@ public final class DiskLruCache implements Closeable, Flushable {
         // TODO: 2019/1/24 产生 journal.tmp 文件
         BufferedSink writer = Okio.buffer(fileSystem.sink(journalFileTmp));
         try {// 写入 journal 文件内容
-            writer.writeUtf8(MAGIC).writeByte('\n');
-            writer.writeUtf8(VERSION_1).writeByte('\n');
-            writer.writeDecimalLong(appVersion).writeByte('\n');
-            writer.writeDecimalLong(valueCount).writeByte('\n');
+            writer.writeUtf8(MAGIC).writeByte('\n');// 写入魔数
+            writer.writeUtf8(VERSION_1).writeByte('\n');// 写入 版本号
+            writer.writeDecimalLong(appVersion).writeByte('\n'); //
+            writer.writeDecimalLong(valueCount).writeByte('\n');//
             writer.writeByte('\n');
 
             /**
@@ -416,8 +438,8 @@ public final class DiskLruCache implements Closeable, Flushable {
              */
             for (Entry entry : lruEntries.values()) {
                 if (entry.currentEditor != null) { // 当前的 editor 不为 null 说明当前 journal 为非稳定态
-                    writer.writeUtf8(DIRTY).writeByte(' ');
-                    writer.writeUtf8(entry.key);
+                    writer.writeUtf8(DIRTY).writeByte(' ');//写入当前状态
+                    writer.writeUtf8(entry.key);// 写入 key
                     writer.writeByte('\n');
                 } else {
                     writer.writeUtf8(CLEAN).writeByte(' ');

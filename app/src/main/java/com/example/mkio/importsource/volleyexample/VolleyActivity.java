@@ -31,6 +31,7 @@ public class VolleyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volley);
         mQueue = Volley.newRequestQueue(this);
+        mQueue.start();
     }
 
     public void start(View view) {

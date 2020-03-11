@@ -37,6 +37,9 @@ import static okhttp3.internal.Util.hostHeader;
  * Bridges from application code to network code. First it builds a network request from a user
  * request. Then it proceeds to call the network. Finally it builds a user response from the network
  * response.
+ *
+ * application 与 网络之间的桥梁。首先它创建一个网络请求，接着进行网络请求，最后将 network 响应转变成 用户响应。
+ *
  */
 public final class BridgeInterceptor implements Interceptor {
     private final CookieJar cookieJar;
@@ -99,6 +102,9 @@ public final class BridgeInterceptor implements Interceptor {
 
         HttpHeaders.receiveHeaders(cookieJar, userRequest.url(), networkResponse.headers());
 
+        /**
+         * 将网络响应转变成用户响应
+         */
         Response.Builder responseBuilder = networkResponse.newBuilder()
                 .request(userRequest);
 

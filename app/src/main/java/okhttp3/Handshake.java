@@ -100,6 +100,23 @@ public final class Handshake {
 
     /**
      * Returns a possibly-empty list of certificates that identify the remote peer.
+     *
+     *
+     * Certificate
+     *
+     * 用于管理各种标识证书的抽象类。
+     *   标识证书是主体与公钥的绑定，该公钥
+     *   由另一个委托人担保。 （主体表示
+     *   实体，如单个用户、组或公司。
+     *
+     * 此类是具有不同
+     * 格式，但重要的常见用途。 例如，不同类型的证书（如 X.509 和 PGP）共享常规证书
+     *   功能（如编码和验证）和
+     *   某些类型的信息（如公钥）。
+     *
+     * X.509、PGP 和 SDSI 证书都可以由
+     *   对证书类进行子类化，即使它们包含不同的
+     *   信息集，它们以不同的方式存储和检索信息。
      */
     public List<Certificate> peerCertificates() {
         return peerCertificates;

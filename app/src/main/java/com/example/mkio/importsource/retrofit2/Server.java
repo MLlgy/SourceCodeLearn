@@ -1,5 +1,7 @@
 package com.example.mkio.importsource.retrofit2;
 
+import com.example.mkio.importsource.retrofit2.coverters.CustomCall;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -12,4 +14,6 @@ public interface Server {
 
     @GET("/sherpa-web-api/newcoupon")
     Call<CouponResp> checkCoupon(@Query("customId") String customId, @Query("couponNumber") String code, @Query("totolValue") int totalValue);
+    @GET("/sherpa-web-api/newcoupon")
+    CustomCall<CouponResp> loadThree(@Query("customId") String customId, @Query("couponNumber") String code, @Query("totolValue") int totalValue);
 }

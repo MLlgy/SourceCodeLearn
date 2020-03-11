@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * A call is a request that has been prepared for execution. A call can be canceled. As this object
  * represents a single request/response pair (stream), it cannot be executed twice.
- * 调用是为执行而准备的请求。call 可以被取消。由于该对象*表示单个请求/响应对(流)，因此不能执行两次。
+ * 调用是为执行而准备的请求。call 可以被取消。由于该对象表示单个请求/响应对(流)，因此不能执行两次。
  */
 public interface Call extends Cloneable {
     /**

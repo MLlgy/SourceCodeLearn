@@ -165,6 +165,7 @@ public final class Dispatcher {
          */
         if (runningAsyncCalls.size() < maxRequests && runningCallsForHost(call) < maxRequestsPerHost) {
             runningAsyncCalls.add(call);
+            // 线程池执行请求
             executorService().execute(call);
         } else {
             readyAsyncCalls.add(call);

@@ -205,13 +205,16 @@ public final class Cache implements Closeable, Flushable {
         }
     }
 
+    /**
+     * 根据请求获得缓存响应
+     */
     @Nullable
     Response get(Request request) {
         String key = key(request.url());
         DiskLruCache.Snapshot snapshot;
         Entry entry;
         try {
-            snapshot = cache.get(key);// 在这里会执行 initialize(),进行一次初始化
+            snapshot = cache.get(key);// 在这里会执行 DiskLruCache#initialize(),进行一次初始化
             if (snapshot == null) {
                 return null;
             }

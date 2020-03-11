@@ -5,7 +5,9 @@ import android.text.TextUtils;
 
 import com.example.mkio.importsource.InitApp;
 import com.example.mkio.importsource.NetWorkUtil;
+import com.example.mkio.importsource.retrofit2.coverters.CustomCall;
 import com.example.mkio.importsource.retrofit2.coverters.CustomCallAdapterFactory;
+import com.example.mkio.importsource.retrofit2.coverters.StringConverterFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -100,7 +102,7 @@ public class RetrofitFactory {
                         .client(builder.build())
 //                        .addConverterFactory(StringConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(CustomCallAdapterFactory.CUSTOM_CALL_ADAPTER_FACTORY)
+                        .addCallAdapterFactory(CustomCallAdapterFactory.create())
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
                         .build();
@@ -114,6 +116,9 @@ public class RetrofitFactory {
         return mServer.checkCoupon(customerId, code, totalValue);
     }
 
+    public CustomCall<CouponResp> loadThree(String customerId, String code, int totalValue) {
+        return mServer.loadThree(customerId, code, totalValue);
+    }
     private static class RetrofitFactoryHolder {
         private static RetrofitFactory Instance = new RetrofitFactory();
     }

@@ -14,8 +14,6 @@ import retrofit2.Retrofit;
  * Time: 2018/7/5 0005 18:39
  */
 public class CustomCallAdapterFactory extends CallAdapter.Factory {
-    public static final CustomCallAdapterFactory CUSTOM_CALL_ADAPTER_FACTORY = new CustomCallAdapterFactory();
-
     @Nullable
     @Override
     public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
@@ -28,4 +26,10 @@ public class CustomCallAdapterFactory extends CallAdapter.Factory {
         }
         return null;
     }
+
+    public static CustomCallAdapterFactory create(){
+        return new CustomCallAdapterFactory();
+    }
 }
+
+

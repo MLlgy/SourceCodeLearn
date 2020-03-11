@@ -27,6 +27,4 @@ public class CustomCallAdapter<R> implements CallAdapter<R, CustomCall<?>> {
     public CustomCall<?> adapt(Call<R> call) {
         return new CustomCall<>(call);
     }
-
-
 }

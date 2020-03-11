@@ -15,6 +15,8 @@
  */
 package retrofit2;
 
+import android.util.Log;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -147,6 +149,7 @@ public final class Retrofit {
                         if (platform.isDefaultMethod(method)) {
                             return platform.invokeDefaultMethod(method, service, proxy, args);
                         }
+                        Log.e("Method","method is :" + method.toString() + ", args is " + args.toString());
                         //根据我们的method将其包装成ServiceMethod
                         ServiceMethod<Object, Object> serviceMethod =
                                 (ServiceMethod<Object, Object>) loadServiceMethod(method);
@@ -154,7 +157,9 @@ public final class Retrofit {
 //            通过ServiceMethod和方法的参数构造retrofit2.OkHttpCall对象
                         OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
 
-//              通过serviceMethod.callAdapter.adapt()方法，将OkHttpCall进行代理包装，最后返回的对象是 {@link ExecutorCallAdapterFactory#ExecutorCallbackCall}
+//              通过serviceMethod.callAdapter.adapt()方法，将OkHttpCall进行代理包装，
+// 最后返回的对象是 {@link ExecutorCallAdapterFactory#ExecutorCallbackCall},
+// 得到 Call 对象 或自定义 对象如 Observer
                         return serviceMethod.callAdapter.adapt(okHttpCall);
                     }
                 });
@@ -229,6 +234,8 @@ public final class Retrofit {
 
         int start = adapterFactories.indexOf(skipPast) + 1;
         for (int i = start, count = adapterFactories.size(); i < count; i++) {
+            // Android 中默认实现为：ExecutorCallAdapterFactory
+            // 将返回值信息、注解传入，查看是否有对应的 CallAdapter
             CallAdapter<?, ?> adapter = adapterFactories.get(i).get(returnType, annotations, this);
             if (adapter != null) {
                 return adapter;
@@ -337,6 +344,7 @@ public final class Retrofit {
 
         int start = converterFactories.indexOf(skipPast) + 1;
         for (int i = start, count = converterFactories.size(); i < count; i++) {
+            // 默认实现为 BuiltInConverters
             Converter<ResponseBody, ?> converter =
                     converterFactories.get(i).responseBodyConverter(type, annotations, this);
             if (converter != null) {

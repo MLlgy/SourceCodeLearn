@@ -430,6 +430,9 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
      * Returns an immutable list of interceptors that observe the full span of each call: from before
      * the connection is established (if any) until after the response source is selected (either the
      * origin server, cache, or both).
+     *
+     * 返回可以观察每个请求的所有范围的拦截器集合，这个范围为：在连接建立之前到获得响应
+     * 返回一个不可变的列表的拦截器观察每个调用的跨度;
      */
     public List<Interceptor> interceptors() {
         return interceptors;
@@ -439,6 +442,8 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
      * Returns an immutable list of interceptors that observe a single network request and response.
      * These interceptors must call {@link Interceptor.Chain#proceed} exactly once: it is an error for
      * a network interceptor to short-circuit or repeat a network request.
+     *
+     * 获得网络请求和响应的
      */
     public List<Interceptor> networkInterceptors() {
         return networkInterceptors;

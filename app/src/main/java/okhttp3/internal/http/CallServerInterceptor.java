@@ -15,6 +15,8 @@
  */
 package okhttp3.internal.http;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.net.ProtocolException;
 
@@ -107,6 +109,7 @@ public final class CallServerInterceptor implements Interceptor {
             throw new ProtocolException(
                     "HTTP " + code + " had non-zero Content-Length: " + response.body().contentLength());
         }
+        Log.e("CallServerInterceptor",response.toString());
 
         return response;
     }

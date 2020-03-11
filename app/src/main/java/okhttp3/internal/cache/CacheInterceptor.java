@@ -110,7 +110,7 @@ public final class CacheInterceptor implements Interceptor {
                 : null;//本地缓存
 
         long now = System.currentTimeMillis();
-        // 缓存策略
+        // 获取缓存策略
         CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
         //策略中的请求
         Request networkRequest = strategy.networkRequest;
@@ -189,7 +189,8 @@ public final class CacheInterceptor implements Interceptor {
         if (cache != null) {
             if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
                 // Offer this request to the cache.
-                CacheRequest cacheRequest = cache.put(response);// 将 response 写入内存中，此时进行的步骤： 创建 0.tmp(已经写入数据) 和 1.tmp(尚未写入数据)
+                // 将 response 写入内存中，此时进行的步骤： 创建 0.tmp(已经写入数据) 和 1.tmp(尚未写入数据)
+                CacheRequest cacheRequest = cache.put(response);
                 return cacheWritingResponse(cacheRequest, response);
             }
 

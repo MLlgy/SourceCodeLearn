@@ -198,7 +198,8 @@ final class OkHttpCall<T> implements Call<T> {
     }
 
     private okhttp3.Call createRawCall() throws IOException {
-        Request request = serviceMethod.toRequest(args);//完成了对 Request 的构建
+        //完成对 Request 的构建
+        Request request = serviceMethod.toRequest(args);
         okhttp3.Call call = serviceMethod.callFactory.newCall(request);
         if (call == null) {
             throw new NullPointerException("Call.Factory returned null.");

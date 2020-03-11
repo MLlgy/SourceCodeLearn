@@ -66,6 +66,10 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
             delegate.enqueue(new Callback<T>() {
                 @Override
                 public void onResponse(Call<T> call, final Response<T> response) {
+                    /**
+                     * 线程池的执行
+                     * 将 Runnable 发送到 UI 线程中
+                     */
                     callbackExecutor.execute(new Runnable() {
                         @Override
                         public void run() {

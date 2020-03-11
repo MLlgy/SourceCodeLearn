@@ -194,6 +194,10 @@ final class ServiceMethod<R, T> {
             this.parameterAnnotationsArray = method.getParameterAnnotations();//获取参数注解数组
         }
 
+        /**
+         * 将 相应的方法包装成相应的 ServiceMethod 类对象
+         * @return
+         */
         public ServiceMethod build() {
             callAdapter = createCallAdapter();//获取对应的 calladdpter
             responseType = callAdapter.responseType();//返回的是我们方法的实际类型，例如:Call<User>,则返回User类型
@@ -202,7 +206,7 @@ final class ServiceMethod<R, T> {
                         + Utils.getRawType(responseType).getName()
                         + "' is not a valid response body type. Did you mean ResponseBody?");
             }
-            responseConverter = createResponseConverter();
+            responseConverter = createResponseConverter();// 将 http 数据解析成相应的 Java 对象
 
             //遍历方法接口注解
             for (Annotation annotation : methodAnnotations) {
@@ -258,7 +262,7 @@ final class ServiceMethod<R, T> {
         }
 
         private CallAdapter<T, R> createCallAdapter() {
-            Type returnType = method.getGenericReturnType();
+            Type returnType = method.getGenericReturnType();//获取方法返回的指的类型
             if (Utils.hasUnresolvableType(returnType)) {
                 throw methodError(
                         "Method return type must not include a type variable or wildcard: %s", returnType);
@@ -266,7 +270,7 @@ final class ServiceMethod<R, T> {
             if (returnType == void.class) {
                 throw methodError("Service methods cannot return void.");
             }
-            Annotation[] annotations = method.getAnnotations();
+            Annotation[] annotations = method.getAnnotations();//获取方法上的所有注解
             try {
                 //noinspection unchecked
                 return (CallAdapter<T, R>) retrofit.callAdapter(returnType, annotations);

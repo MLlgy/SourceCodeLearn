@@ -32,5 +32,8 @@ public class RetrofitActivity extends AppCompatActivity {
                         }
                     });
         });
+
+//        RetrofitFactory.getInstance().
+//        Response{protocol=http/1.1, code=200, message=OK, url=http://test1-ordersite.sherpa.com.cn/sherpa-web-api/newcoupon?customId=2018040202512043&couponNumber=133&totolValue=315&language=zh_CN&platform=3&appType=2&cityId=&version=2.2.0&gdId=&token=59c20a1f-3df4-4586-91d2-6bcb0d320eb4&gdId=}
     }
 }
