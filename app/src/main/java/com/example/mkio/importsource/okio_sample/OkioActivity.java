@@ -1,0 +1,15 @@
+package com.example.mkio.importsource.okio_sample;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.example.mkio.importsource.R;
+
+public class OkioActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_okio);
+    }
+}

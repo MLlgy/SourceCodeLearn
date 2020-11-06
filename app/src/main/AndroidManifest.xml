@@ -18,17 +18,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".okio_sample.OkioActivity"></activity>
         <activity android:name=".OkHttpMainActivity" />
         <activity android:name=".volleyexample.VolleyExActivity" />
         <activity android:name=".volleyexample.VolleyActivity" />
         <activity
             android:name=".xutils3sample.XutilsMainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".xutils3sample.DownloadActivity" />
-        <activity android:name=".okhttp3example.OkhttpExampleActivity">
-
-        </activity>
+        <activity android:name=".okhttp3example.OkhttpExampleActivity"></activity>
         <activity android:name=".retrofit2.RetrofitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
