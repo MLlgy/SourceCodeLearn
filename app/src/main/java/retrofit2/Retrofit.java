@@ -150,7 +150,7 @@ public final class Retrofit {
                             return platform.invokeDefaultMethod(method, service, proxy, args);
                         }
                         Log.e("Method","method is :" + method.toString() + ", args is " + args.toString());
-                        //根据我们的method将其包装成ServiceMethod
+                        //根据我们的method将其包装成ServiceMethod,已经初始化完成 CallAdapter 和 Covert 相关事项
                         ServiceMethod<Object, Object> serviceMethod =
                                 (ServiceMethod<Object, Object>) loadServiceMethod(method);
 
@@ -160,6 +160,7 @@ public final class Retrofit {
 //              通过serviceMethod.callAdapter.adapt()方法，将OkHttpCall进行代理包装，
 // 最后返回的对象是 {@link ExecutorCallAdapterFactory#ExecutorCallbackCall},
 // 得到 Call 对象 或自定义 对象如 Observer
+                        // 使用 calladapter 转化返回者类型
                         return serviceMethod.callAdapter.adapt(okHttpCall);
                     }
                 });
@@ -233,9 +234,11 @@ public final class Retrofit {
         checkNotNull(annotations, "annotations == null");
 
         int start = adapterFactories.indexOf(skipPast) + 1;
+        // TODO: 2020/10/29 CallAdapter
         for (int i = start, count = adapterFactories.size(); i < count; i++) {
             // Android 中默认实现为：ExecutorCallAdapterFactory
             // 将返回值信息、注解传入，查看是否有对应的 CallAdapter
+            // TODO: 2020/10/29 CallAdapter,根据 returnType 返回特定的 CallAdapter，此处为 CustomCallAdapter
             CallAdapter<?, ?> adapter = adapterFactories.get(i).get(returnType, annotations, this);
             if (adapter != null) {
                 return adapter;

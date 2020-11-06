@@ -26,6 +26,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
+import okhttp3.Authenticator;
 import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,6 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.Route;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
@@ -143,8 +147,22 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
                 .readTimeout(20, TimeUnit.SECONDS)
 //                .cache(new Cache(sdcache.getAbsoluteFile(), cacheSize))
                 .addInterceptor(new LoggingInterceptor())
+//                .sslSocketFactory(null,null)
+                .authenticator(new Authenticator() {
+                    @Nullable
+                    @Override
+                    public Request authenticate(Route route, Response response) throws IOException {
+
+                        // 通过操作获得 token
+                        String token = "";
+
+                        return response.request().newBuilder().addHeader("Authorization","Bearer " + token).build();
+                    }
+                })
+
+                .cache(new Cache(new File(getCacheDir() + "/test_cache"),1024 * 1024 * 50));
 //                .addNetworkInterceptor(new LoggingInterceptor())
-                ;
+
         mOkHttpClient = builder.build();
     }
 
@@ -159,6 +177,7 @@ public class OkhttpExampleActivity extends AppCompatActivity implements View.OnC
 //        requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call mcall = mOkHttpClient.newCall(request);
+        // 在子线程中执行相关代码
         mcall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

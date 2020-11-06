@@ -59,6 +59,7 @@ final class RxJava2CallAdapter<R> implements CallAdapter<R, Object> {
 
     @Override
     public Object adapt(Call<R> call) {
+        // TODO: 2020/10/29 将最原始的 Call 包装起来
         Observable<Response<R>> responseObservable = isAsync
                 ? new CallEnqueueObservable<>(call)
                 : new CallExecuteObservable<>(call);

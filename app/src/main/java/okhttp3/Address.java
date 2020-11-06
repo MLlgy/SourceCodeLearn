@@ -34,6 +34,12 @@ import static okhttp3.internal.Util.equal;
  * proxy} is explicitly requested), this also includes that proxy information. For secure
  * connections the address also includes the SSL socket factory, hostname verifier, and certificate
  * pinner.
+ *
+ * 与服务器建立连接的规范。
+ * 一些简单连接的规范为服务器的 hostName 和 端口，
+ * 如果request 显式的声明 proxy，那么规范也会包括代理相关的内容；
+ * 对于 HTTPS 连接，规范同时会包括  SSL socket 工厂、hostname 验证器、证书相关内容
+ *
  * <p>
  * <p>HTTP requests that share the same {@code Address} may also share the same {@link Connection}.
  */

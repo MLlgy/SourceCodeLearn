@@ -150,6 +150,9 @@ final class ServiceMethod<R, T> {
 
     /**
      * Builds a method return value from an HTTP response body.
+     *
+     * 通过 Convert 将 ResponseBody 转化为具体类型
+     *
      */
     R toResponse(ResponseBody body) throws IOException {
         return responseConverter.convert(body);
@@ -186,6 +189,30 @@ final class ServiceMethod<R, T> {
         Converter<ResponseBody, T> responseConverter;
         CallAdapter<T, R> callAdapter;
 
+        /**
+         *
+         *
+         * @Multipart
+         * @POST("upload")
+         * Call<ResponseBody> uploadOneFile(@Part MultipartBody.Part body);
+         *
+         * 解析相关注解
+         *
+         * methodAnnotations：
+         * 0: @retrofit2.http.Multipart()
+         * 1: @retrofit2.http.POST(value=upload)
+         *
+         * parameterTypes
+         * 0: class okhttp3.MultipartBody$Part
+         *
+         *
+         * parameterAnnotationsArray：
+         * 0: @retrofit2.http.Part(encoding=binary, value=)
+         *
+         * @param retrofit
+         * @param method
+         */
+
         Builder(Retrofit retrofit, Method method) {
             this.retrofit = retrofit;
             this.method = method;
@@ -199,13 +226,18 @@ final class ServiceMethod<R, T> {
          * @return
          */
         public ServiceMethod build() {
+
+            // TODO: 2020/10/29 CallAdapter
             callAdapter = createCallAdapter();//获取对应的 calladdpter
-            responseType = callAdapter.responseType();//返回的是我们方法的实际类型，例如:Call<User>,则返回User类型
+            //返回的是我们方法的实际类型，例如:Call<User>,则返回User类型
+            responseType = callAdapter.responseType();
             if (responseType == Response.class || responseType == okhttp3.Response.class) {
                 throw methodError("'"
                         + Utils.getRawType(responseType).getName()
                         + "' is not a valid response body type. Did you mean ResponseBody?");
             }
+
+            // TODO: 2020/10/30 Converter
             responseConverter = createResponseConverter();// 将 http 数据解析成相应的 Java 对象
 
             //遍历方法接口注解
@@ -262,6 +294,7 @@ final class ServiceMethod<R, T> {
         }
 
         private CallAdapter<T, R> createCallAdapter() {
+            // TODO: 2020/10/29 CallAdapter 此处为接口中定义方法的返回值，比如自定义类型： CustomCall
             Type returnType = method.getGenericReturnType();//获取方法返回的指的类型
             if (Utils.hasUnresolvableType(returnType)) {
                 throw methodError(
@@ -273,6 +306,7 @@ final class ServiceMethod<R, T> {
             Annotation[] annotations = method.getAnnotations();//获取方法上的所有注解
             try {
                 //noinspection unchecked
+                // TODO: 2020/10/29 CallAdapte ，此时 returnType 接口的返回值类型，此处为 CustomCall
                 return (CallAdapter<T, R>) retrofit.callAdapter(returnType, annotations);
             } catch (RuntimeException e) { // Wide exception range because factories are user code.
                 throw methodError(e, "Unable to create call adapter for %s", returnType);
@@ -776,6 +810,7 @@ final class ServiceMethod<R, T> {
         private Converter<ResponseBody, T> createResponseConverter() {
             Annotation[] annotations = method.getAnnotations();
             try {
+                // TODO: 2020/10/30 Coverter 将请求的 RequestBody 转换为 responseType
                 return retrofit.responseBodyConverter(responseType, annotations);
             } catch (RuntimeException e) { // Wide exception range because factories are user code.
                 throw methodError(e, "Unable to create converter for %s", responseType);

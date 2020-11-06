@@ -132,6 +132,7 @@ public final class RealConnection extends Http2Connection.Listener implements Co
         if (protocol != null) throw new IllegalStateException("already connected");
 
         RouteException routeException = null;
+        // okhttp builder 中设置的有关 tls 相关的变量
         List<ConnectionSpec> connectionSpecs = route.address().connectionSpecs();
         ConnectionSpecSelector connectionSpecSelector = new ConnectionSpecSelector(connectionSpecs);
 
@@ -152,8 +153,10 @@ public final class RealConnection extends Http2Connection.Listener implements Co
                 if (route.requiresTunnel()) {
                     connectTunnel(connectTimeout, readTimeout, writeTimeout);
                 } else {
+                    // TCP 连接，Okhttp 自己实现建立连接，而其他的网络库没有自己实现，它们一般是使用 HttpClient 或者 HttpUrlConnection
                     connectSocket(connectTimeout, readTimeout);
                 }
+                // 建立 TLS 连接，Protocol 协议版本
                 establishProtocol(connectionSpecSelector);
                 break;
             } catch (IOException e) {
@@ -223,12 +226,14 @@ public final class RealConnection extends Http2Connection.Listener implements Co
         Proxy proxy = route.proxy();
         Address address = route.address();
 
+        // 获取 Socket，
         rawSocket = proxy.type() == Proxy.Type.DIRECT || proxy.type() == Proxy.Type.HTTP
                 ? address.socketFactory().createSocket()
                 : new Socket(proxy);
 
         rawSocket.setSoTimeout(readTimeout);
         try {
+            // 建立连接
             Platform.get().connectSocket(rawSocket, route.socketAddress(), connectTimeout);
         } catch (ConnectException e) {
             ConnectException ce = new ConnectException("Failed to connect to " + route.socketAddress());
@@ -405,6 +410,9 @@ public final class RealConnection extends Http2Connection.Listener implements Co
     /**
      * Returns true if this connection can carry a stream allocation to {@code address}. If non-null
      * {@code route} is the resolved route for a connection.
+     *
+     *  如果该连接携带 address 的 流，返回 true
+     *
      */
     public boolean isEligible(Address address, @Nullable Route route) {
         // If this connection is not accepting new streams, we're done.

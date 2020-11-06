@@ -16,6 +16,8 @@
  */
 package okhttp3.internal.cache;
 
+import android.support.v7.widget.DividerItemDecoration;
+
 import java.io.IOException;
 
 import okhttp3.Headers;
@@ -105,6 +107,7 @@ public final class CacheInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        // 获取缓存中的响应数据
         Response cacheCandidate = cache != null
                 ? cache.get(chain.request())// 执行 DiskLruCache#initialize() ，会对 journal 文件进行一些操作
                 : null;//本地缓存
@@ -125,6 +128,7 @@ public final class CacheInterceptor implements Interceptor {
             closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
         }
 
+        // 情况一：
         //缓存和网络皆为空，返回code 为504 的响应
         // If we're forbidden from using the network and the cache is insufficient, fail.
         if (networkRequest == null && cacheResponse == null) {
@@ -138,7 +142,7 @@ public final class CacheInterceptor implements Interceptor {
                     .receivedResponseAtMillis(System.currentTimeMillis())
                     .build();
         }
-
+        // 情况二：如果 networkRequest 为 null，说明
         // If we don't need the network, we're done.  缓存策略请求为null，则使用缓存
         if (networkRequest == null) {
             return cacheResponse.newBuilder()
@@ -161,6 +165,8 @@ public final class CacheInterceptor implements Interceptor {
             // 304 304 的标准解释是：Not Modified 客户端有缓冲的文档并发出了一个条件性的请求（
             // 一般是提供If-Modified-Since头表示客户只想比指定日期更新的文档）。
             // 服务器告诉客户，原来缓冲的文档还可以继续使用。
+
+            // 如果返回 304，说明响应没有发生变化，那么复用缓存中的响应
             if (networkResponse.code() == HTTP_NOT_MODIFIED) {
                 Response response = cacheResponse.newBuilder()
                         .headers(combine(cacheResponse.headers(), networkResponse.headers()))
@@ -174,6 +180,7 @@ public final class CacheInterceptor implements Interceptor {
                 // Update the cache after combining headers but before stripping the
                 // Content-Encoding header (as performed by initContentStream()).
                 cache.trackConditionalCacheHit();
+                // 更新缓存中的响应数据
                 cache.update(cacheResponse, response);
                 return response;
             } else {
@@ -186,6 +193,9 @@ public final class CacheInterceptor implements Interceptor {
                 .networkResponse(stripBody(networkResponse))
                 .build();
 
+        /**
+         * 如果缓存不为 null，那么需要将响应写入缓存中
+         */
         if (cache != null) {
             if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
                 // Offer this request to the cache.

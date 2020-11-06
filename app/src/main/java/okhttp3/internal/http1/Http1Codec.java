@@ -186,6 +186,8 @@ public final class Http1Codec implements HttpCodec {
      */
     public void writeRequest(Headers headers, String requestLine) throws IOException {
         if (state != STATE_IDLE) throw new IllegalStateException("state: " + state);
+        // 写入 HTTP 请求行
+        // POST /path HTTP/1.1，将数据写入 Socket 中，服务器会收到
         sink.writeUtf8(requestLine).writeUtf8("\r\n");
         for (int i = 0, size = headers.size(); i < size; i++) {
             sink.writeUtf8(headers.name(i))
@@ -197,6 +199,12 @@ public final class Http1Codec implements HttpCodec {
         state = STATE_OPEN_REQUEST_BODY;
     }
 
+    /**
+     * 读取响应的 Header
+     * @param expectContinue true to return null if this is an intermediate response with a "100"
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response.Builder readResponseHeaders(boolean expectContinue) throws IOException {
         if (state != STATE_OPEN_REQUEST_BODY && state != STATE_READ_RESPONSE_HEADERS) {

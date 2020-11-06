@@ -43,6 +43,10 @@ public final class ConnectInterceptor implements Interceptor {
 
         // We need the network to satisfy this request. Possibly for validating a conditional GET.
         boolean doExtensiveHealthChecks = !request.method().equals("GET");
+        // 和网络交互就会创建一个 Stream
+        // Co:Compressor Dec:Decompressor, HttpCodec 编码解码器，对网络数据进行编码解码
+        // Http/1.1 用的是 文本形式进行网络数据的传输，
+        // Http/1.2 用的是 二进制的形式进行网络数据的传输，所以需要实现两套算法，分别为 Http1Codec、Http2Codec
         HttpCodec httpCodec = streamAllocation.newStream(client, doExtensiveHealthChecks);
         RealConnection connection = streamAllocation.connection();
 

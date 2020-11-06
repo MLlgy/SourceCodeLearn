@@ -95,6 +95,7 @@ public final class RxJava2CallAdapterFactory extends CallAdapter.Factory {
 
     @Override
     public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
+        // 获取 returnType 的类型
         Class<?> rawType = getRawType(returnType);
 
         if (rawType == Completable.class) {
@@ -142,6 +143,7 @@ public final class RxJava2CallAdapterFactory extends CallAdapter.Factory {
             isBody = true;
         }
 
+        // TODO: 2020/10/29 CallAdapter，如果 Service 中方法的返回值类型满足该 Factory 的要求，则返回对应的 CallAdapter
         return new RxJava2CallAdapter(responseType, scheduler, isAsync, isResult, isBody, isFlowable,
                 isSingle, isMaybe, false);
     }

@@ -54,6 +54,11 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
         final Executor callbackExecutor;
         final Call<T> delegate;
 
+        /**
+         *
+         * @param callbackExecutor MainThreadExecutor
+         * @param delegate  OkHttpCall，最终为 RealCall
+         */
         ExecutorCallbackCall(Executor callbackExecutor, Call<T> delegate) {
             this.callbackExecutor = callbackExecutor;
             this.delegate = delegate;
@@ -63,11 +68,15 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
         public void enqueue(final Callback<T> callback) {
             checkNotNull(callback, "callback == null");
             //delegate 实际为 OkHttpCall
+            /**
+             * {@link OkHttpCall#enqueue(Callback)}，完成网络请求在子线程中执行，当然最终需要在 {@link okhttp3.Dispatcher#enqueue(RealCall.AsyncCall)} 中真正实现线程切换动作
+             *
+             */
             delegate.enqueue(new Callback<T>() {
                 @Override
                 public void onResponse(Call<T> call, final Response<T> response) {
                     /**
-                     * 线程池的执行
+                     * 线程池的执行,主线程线程池 MainThreadExecutor，实现将请求的结果发送到主线程
                      * 将 Runnable 发送到 UI 线程中
                      */
                     callbackExecutor.execute(new Runnable() {

@@ -17,6 +17,7 @@ public class CustomCall<R> {
     }
 
     public R get() throws IOException {
+        // TODO: 2020/10/29 CallAdapter 返回自定义 Call 的执行结果
         return mRCall.execute().body();
     }
 }

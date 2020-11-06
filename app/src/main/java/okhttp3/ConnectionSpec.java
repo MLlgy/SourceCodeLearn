@@ -46,6 +46,8 @@ public final class ConnectionSpec {
 
     /**
      * Unencrypted, unauthenticated connections for {@code http:} URLs.
+     *
+     * CLEARTEXT 即为 HTTP
      */
     public static final ConnectionSpec CLEARTEXT = new Builder(false).build();
     // This is nearly equal to the cipher suites supported in Chrome 51, current as of 2016-05-25.

@@ -27,14 +27,14 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".xutils3sample.DownloadActivity" />
         <activity android:name=".okhttp3example.OkhttpExampleActivity">
+
+        </activity>
+        <activity android:name=".retrofit2.RetrofitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".retrofit2.RetrofitActivity">
-
         </activity>
     </application>
 

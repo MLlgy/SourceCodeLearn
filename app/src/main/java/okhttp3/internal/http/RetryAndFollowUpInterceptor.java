@@ -58,6 +58,9 @@ import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
  * {@link IOException} if the call was canceled.
  *
  * 这个拦截器恢复失败\重定向的请求。如果中断请求，可能会抛出 IOException
+ *
+ * 失败重试(20次) + 重定向请求
+ *
  */
 public final class RetryAndFollowUpInterceptor implements Interceptor {
     /**
@@ -129,7 +132,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
             boolean releaseConnection = true;
             try {
                 //  执行下一个拦截器，即BridgeInterceptor
-                // 这里有个很重的信息，即会将初始化好的连接对象传递给下一个拦截器，也是贯穿整个请求的连击对象，
+                // 这里有个很重的信息，即：会将初始化好的连接对象传递给下一个拦截器，也是贯穿整个请求的连击对象，
                 // 上面我们说过，在拦截器执行过程中，RealInterceptorChain的几个属性字段会一步一步赋值
                 response = ((RealInterceptorChain) chain).proceed(request, streamAllocation, null, null);
                 releaseConnection = false;
@@ -169,6 +172,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
 
             closeQuietly(response.body());
 
+            // 设置最大重试次数
             if (++followUpCount > MAX_FOLLOW_UPS) {
                 streamAllocation.release();
                 throw new ProtocolException("Too many follow-up requests: " + followUpCount);

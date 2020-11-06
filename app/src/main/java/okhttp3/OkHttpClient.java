@@ -210,37 +210,56 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
         };
     }
 
-    final Dispatcher dispatcher;
+    final Dispatcher dispatcher;// 作用一：线程调度，用于切换线程；作用二：性能平衡，限制最大连接数和最大路由连接数
     final @Nullable
-    Proxy proxy;
-    final List<Protocol> protocols;
+    Proxy proxy;// 可以用户配置的代理，什么是代理？A 通过代理服务器 B 去访问 服务器 C
+    final List<Protocol> protocols;//  Protocol 是什么？列出 Okhttp 可以支持的协议 HTTP/1.1 HTTP/1.2 等，Okhttp 在工作过程中会以此为选项，去做调配
+    // ConnectionSpec: 配置使用 HTTP 还是使用 HTTPS，
+    // 使用 HTTPS 时可支持的 SSL 版本，非对称算法、对称加密算法、hash 算法等算法套件列表，将此列表发送给服务端，让其选择
+
+    // 用来配置是否支持 HTTP，是否支持 HTTPS，以及如何支持 HTTPS（提供哪些加密套件）
     final List<ConnectionSpec> connectionSpecs;
     final List<Interceptor> interceptors;
     final List<Interceptor> networkInterceptors;
     final EventListener.Factory eventListenerFactory;
     final ProxySelector proxySelector;
+    // Cookie 的存储器，可以自定义实现 Cookie 的存、取
     final CookieJar cookieJar;
-    final @Nullable
-    Cache cache;
+    //HTTP 的 cache
+    final @Nullable Cache cache;
     final @Nullable
     InternalCache internalCache;
+    // 创建 socket 连接的端口，tcp 建立连接的过程
     final SocketFactory socketFactory;
-    final @Nullable
-    SSLSocketFactory sslSocketFactory;
-    final @Nullable
-    CertificateChainCleaner certificateChainCleaner;
+    // 创建 ssl socket 连接的端口，tls 建立连接的过程
+    final @Nullable SSLSocketFactory sslSocketFactory;
+    // 从服务器拿下来的证书，有时候包含多个证书，CertificateChainCleaner 将多个证书整理成证书链，第一个为服务器证书
+    final @Nullable CertificateChainCleaner certificateChainCleaner;
+    // HTTPS 中用于验证 HostName
     final HostnameVerifier hostnameVerifier;
+    // 用来做自签名，配置证书的公钥，将下载下来的证书与在此处配置的证书信息比较，相同则通过验证，不会走证书机构验证证书的过程。比 TrustManager 实现自签名更简单
     final CertificatePinner certificatePinner;
+
+    // 用来实现 http 中的 Header 机制： Authertation，用来做权限验证
+    // 如果配置了 Authenticator，那么当请求权限不足时，配置的 Authenticator 会被执行，在 Authenticator 对象的可以做些操作：去请求 token 或者组装 basic 信息，添加进入
     final Authenticator proxyAuthenticator;
     final Authenticator authenticator;
+    // 连接池，带缓存的集合
     final ConnectionPool connectionPool;
+    //
     final Dns dns;
+    // http 和 https 是否可以互相跳转
     final boolean followSslRedirects;
     final boolean followRedirects;
+    // 请求失败，是否重新连接
     final boolean retryOnConnectionFailure;
+    // 设置 tcp 连接时间最大时间
     final int connectTimeout;
+    // 下载的时间
     final int readTimeout;
+    // 写入的时间
     final int writeTimeout;
+    // ping 的间隔，心跳包
     final int pingInterval;
 
     public OkHttpClient() {
@@ -265,11 +284,12 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
         for (ConnectionSpec spec : connectionSpecs) {
             isTLS = isTLS || spec.isTls();
         }
-
+        //
         if (builder.sslSocketFactory != null || !isTLS) {
             this.sslSocketFactory = builder.sslSocketFactory;
             this.certificateChainCleaner = builder.certificateChainCleaner;
         } else {
+            // 系统默认的 TrustManager 等
             X509TrustManager trustManager = systemDefaultTrustManager();
             this.sslSocketFactory = systemDefaultSslSocketFactory(trustManager);
             this.certificateChainCleaner = CertificateChainCleaner.get(trustManager);
@@ -301,6 +321,7 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
                 throw new IllegalStateException("Unexpected default trust managers:"
                         + Arrays.toString(trustManagers));
             }
+            // trustManagers[0]
             return (X509TrustManager) trustManagers[0];
         } catch (GeneralSecurityException e) {
             throw new AssertionError(); // The system has no TLS. Just give up.
@@ -479,7 +500,7 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
     public static final class Builder {
         final List<Interceptor> interceptors = new ArrayList<>();
         final List<Interceptor> networkInterceptors = new ArrayList<>();
-        Dispatcher dispatcher;
+        Dispatcher dispatcher;// 调度器，用于操作线程，切换线程
         @Nullable
         Proxy proxy;
         List<Protocol> protocols;

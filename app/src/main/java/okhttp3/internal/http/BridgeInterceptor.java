@@ -40,6 +40,9 @@ import static okhttp3.internal.Util.hostHeader;
  *
  * application 与 网络之间的桥梁。首先它创建一个网络请求，接着进行网络请求，最后将 network 响应转变成 用户响应。
  *
+ *
+ * 开始为建立 Http 请求做准备：处理 Http 请求中的 Header 字段，根据不同的请求添加不同的 Header
+ *
  */
 public final class BridgeInterceptor implements Interceptor {
     private final CookieJar cookieJar;

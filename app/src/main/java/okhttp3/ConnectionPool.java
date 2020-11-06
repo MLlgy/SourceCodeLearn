@@ -136,6 +136,7 @@ public final class ConnectionPool {
              * 判断 connetion 是否有资格 Eligible：资格
              */
             if (connection.isEligible(address, route)) {
+                // 将符合条件的 Connection 传递出去
                 streamAllocation.acquire(connection);
                 return connection;
             }

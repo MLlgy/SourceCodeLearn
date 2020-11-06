@@ -185,9 +185,11 @@ final class RealCall implements Call {
                 Response response = getResponseWithInterceptorChain();
                 if (retryAndFollowUpInterceptor.isCanceled()) {
                     signalledCallback = true;
+                    // 回调失败的结果
                     responseCallback.onFailure(RealCall.this, new IOException("Canceled"));
                 } else {
                     signalledCallback = true;
+                    // 回调正确的结果
                     responseCallback.onResponse(RealCall.this, response);
                 }
             } catch (IOException e) {

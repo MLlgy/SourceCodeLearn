@@ -49,6 +49,8 @@ public final class CallServerInterceptor implements Interceptor {
         Request request = realChain.request();
 
         long sentRequestMillis = System.currentTimeMillis();
+
+        // HttpCodec: HTTP 编码解码器，直接和 Socket 沟通，比如向 Socket 写数据，HTTPCodec 从 Socket 读取数据，编码解码为 Http 协议中识别的数据
         httpCodec.writeRequestHeaders(request);
 
         Response.Builder responseBuilder = null;
@@ -63,6 +65,7 @@ public final class CallServerInterceptor implements Interceptor {
 
             if (responseBuilder == null) {
                 // Write the request body if the "Expect: 100-continue" expectation was met.
+                // 写入请求 Body
                 Sink requestBodyOut = httpCodec.createRequestBody(request, request.body().contentLength());
                 BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
                 request.body().writeTo(bufferedRequestBody);
@@ -78,6 +81,7 @@ public final class CallServerInterceptor implements Interceptor {
         httpCodec.finishRequest();
 
         if (responseBuilder == null) {
+            // 读取响应的 Header
             responseBuilder = httpCodec.readResponseHeaders(false);
         }
 
@@ -88,6 +92,7 @@ public final class CallServerInterceptor implements Interceptor {
                 .receivedResponseAtMillis(System.currentTimeMillis())
                 .build();
 
+         // 读取响应中的响应码
         int code = response.code();
         if (forWebSocket && code == 101) {
             // Connection is upgrading, but we need to ensure interceptors see a non-null response body.
@@ -96,7 +101,7 @@ public final class CallServerInterceptor implements Interceptor {
                     .build();
         } else {
             response = response.newBuilder()
-                    .body(httpCodec.openResponseBody(response))
+                    .body(httpCodec.openResponseBody(response))// 获取响应中的 Body
                     .build();
         }
 

@@ -28,6 +28,10 @@ import retrofit2.Response;
 final class CallEnqueueObservable<T> extends Observable<Response<T>> {
     private final Call<T> originalCall;
 
+    /**
+     *
+     * @param originalCall okHttpCall
+     */
     CallEnqueueObservable(Call<T> originalCall) {
         this.originalCall = originalCall;
     }
@@ -37,10 +41,17 @@ final class CallEnqueueObservable<T> extends Observable<Response<T>> {
         // Since Call is a one-shot type, clone it for each new observer.
         Call<T> call = originalCall.clone();
         CallCallback<T> callback = new CallCallback<>(call, observer);
+        // 产生订阅关系
         observer.onSubscribe(callback);
+        // 将网络请求结果通过回调的方式传递给 CallCallback
         call.enqueue(callback);
     }
 
+    /**
+     * CallCallback 即为 Observerable 的概念
+     *
+     * @param <T>
+     */
     private static final class CallCallback<T> implements Disposable, Callback<T> {
         private final Call<?> call;
         private final Observer<? super Response<T>> observer;
@@ -56,6 +67,7 @@ final class CallEnqueueObservable<T> extends Observable<Response<T>> {
             if (call.isCanceled()) return;
 
             try {
+                // 向接下来的 Observer、Observerable 传递事件
                 observer.onNext(response);
 
                 if (!call.isCanceled()) {

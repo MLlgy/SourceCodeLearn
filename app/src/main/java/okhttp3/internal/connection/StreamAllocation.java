@@ -104,8 +104,10 @@ public final class StreamAllocation {
         boolean connectionRetryEnabled = client.retryOnConnectionFailure();
 
         try {
+            // 获得 Connection，HealthyConnection：现在就可用的 Connectation
             RealConnection resultConnection = findHealthyConnection(connectTimeout, readTimeout,
                     writeTimeout, connectionRetryEnabled, doExtensiveHealthChecks);
+
             HttpCodec resultCodec = resultConnection.newCodec(client, this);
 
             synchronized (connectionPool) {
@@ -120,6 +122,9 @@ public final class StreamAllocation {
     /**
      * Finds a connection and returns it if it is healthy. If it is unhealthy the process is repeated
      * until a healthy connection is found.
+     *
+     *
+     *
      */
     private RealConnection findHealthyConnection(int connectTimeout, int readTimeout,
                                                  int writeTimeout, boolean connectionRetryEnabled, boolean doExtensiveHealthChecks)
@@ -207,6 +212,7 @@ public final class StreamAllocation {
 
         // Do TCP + TLS handshakes. This is a blocking operation. 进行 TCP + Tls 连接，这是阻塞操作
         result.connect(connectTimeout, readTimeout, writeTimeout, connectionRetryEnabled);
+
         routeDatabase().connected(result.route());
 
         Socket socket = null;

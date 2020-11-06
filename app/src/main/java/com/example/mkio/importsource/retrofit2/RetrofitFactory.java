@@ -9,9 +9,11 @@ import com.example.mkio.importsource.retrofit2.coverters.CustomCall;
 import com.example.mkio.importsource.retrofit2.coverters.CustomCallAdapterFactory;
 import com.example.mkio.importsource.retrofit2.coverters.StringConverterFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -96,9 +98,18 @@ public class RetrofitFactory {
                         .connectTimeout(10, TimeUnit.SECONDS)
                         .readTimeout(15, TimeUnit.SECONDS)
                         .writeTimeout(15, TimeUnit.SECONDS)
-                        .retryOnConnectionFailure(true);
+                        .retryOnConnectionFailure(true)
+//                        .hostnameVerifier(new HostnameVerifier() {
+//                            @Override
+//                            public boolean verify(String hostname, SSLSession session) {
+//                                return true;
+//                            }
+//                        })
+//                        .sslSocketFactory(sslParams.sSLSocketFactory,sslParams.trustManager)
+                        ;
                 retrofit = new Retrofit.Builder()
-                        .baseUrl("http://test1-ordersite.sherpa.com.cn/")
+//                        .baseUrl("http://test1-ordersite.sherpa.com.cn/")
+                        .baseUrl("https://api.github.com/")
                         .client(builder.build())
 //                        .addConverterFactory(StringConverterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
@@ -119,8 +130,9 @@ public class RetrofitFactory {
     public CustomCall<CouponResp> loadThree(String customerId, String code, int totalValue) {
         return mServer.loadThree(customerId, code, totalValue);
     }
+
     private static class RetrofitFactoryHolder {
-        private static RetrofitFactory Instance = new RetrofitFactory();
+        public static RetrofitFactory Instance = new RetrofitFactory();
     }
 
     /**

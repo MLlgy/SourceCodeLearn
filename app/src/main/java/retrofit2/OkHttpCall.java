@@ -200,6 +200,8 @@ final class OkHttpCall<T> implements Call<T> {
     private okhttp3.Call createRawCall() throws IOException {
         //完成对 Request 的构建
         Request request = serviceMethod.toRequest(args);
+
+        // TODO: 2020/10/30 Call 此处为 RealCall，实现真正的网络请求位置
         okhttp3.Call call = serviceMethod.callFactory.newCall(request);
         if (call == null) {
             throw new NullPointerException("Call.Factory returned null.");

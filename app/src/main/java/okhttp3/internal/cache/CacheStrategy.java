@@ -52,6 +52,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * <p>Selecting a cache strategy may add conditions to the request (like the "If-Modified-Since"
  * header for conditional GETs) or warnings to the cached response (if the cached data is
  * potentially stale).
+ *
+ * 选择一个缓存策略可能向 request 添加一些额外的 Header，比如 If-Modified-Since 或者关于缓存响应的一些警告信息
+ *
  */
 public final class CacheStrategy {
     /**
@@ -61,6 +64,7 @@ public final class CacheStrategy {
     Request networkRequest;
 
     /**
+     * 返回缓存的响应，如果此 request 不能使用缓存，那么返回为 null
      * The cached response to return or validate; or null if this call doesn't use a cache.
      */
     public final @Nullable
@@ -111,6 +115,7 @@ public final class CacheStrategy {
         }
 
         // A 'no-store' directive on request or response prevents the response from being cached.
+
         return !response.cacheControl().noStore() && !request.cacheControl().noStore();
     }
 
@@ -159,6 +164,12 @@ public final class CacheStrategy {
          */
         private int ageSeconds = -1;
 
+        /**
+         *
+         * @param nowMillis
+         * @param request 发起的请求
+         * @param cacheResponse  缓存的响应数据
+         */
         public Factory(long nowMillis, Request request, Response cacheResponse) {
             this.nowMillis = nowMillis;
             this.request = request;
@@ -167,7 +178,8 @@ public final class CacheStrategy {
             if (cacheResponse != null) {
                 this.sentRequestMillis = cacheResponse.sentRequestAtMillis();//获得请求的发起时间
                 this.receivedResponseMillis = cacheResponse.receivedResponseAtMillis();// 获取响应的返回时间
-                Headers headers = cacheResponse.headers();// 获取缓存响应的 Header
+                Headers headers = cacheResponse.headers();
+                // 获取缓存响应的有关缓存的 Header
                 for (int i = 0, size = headers.size(); i < size; i++) {
                     String fieldName = headers.name(i);
                     String value = headers.value(i);
@@ -222,6 +234,7 @@ public final class CacheStrategy {
             }
 
             // Drop the cached response if it's missing a required handshake.
+            // 如果是 HTTPS 请求，但是缓存响应中没有 TLS 相关的数据，那么说明缓存的响应不可用
             if (request.isHttps() && cacheResponse.handshake() == null) {
                 return new CacheStrategy(request, null);
             }
@@ -229,11 +242,16 @@ public final class CacheStrategy {
             // If this response shouldn't have been stored, it should never be used
             // as a response source. This check should be redundant as long as the
             // persistence store is well-behaved and the rules are constant.
+
+            /**
+             * 检测该 request 和缓存的响应是否被缓存
+             */
             if (!isCacheable(cacheResponse, request)) {
                 return new CacheStrategy(request, null);
             }
 
             CacheControl requestCaching = request.cacheControl();
+            // 发起的 request 不能被缓存
             if (requestCaching.noCache() || hasConditions(request)) {
                 return new CacheStrategy(request, null);
             }

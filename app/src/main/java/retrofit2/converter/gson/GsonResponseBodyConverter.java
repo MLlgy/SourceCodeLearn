@@ -35,6 +35,13 @@ final class GsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
 
     @Override
     public T convert(ResponseBody value) throws IOException {
+        /**
+         * 要转换的数据类型包装在 TypeAdapter
+         *
+         * 1. 将数据转化为流
+         * 2. 构建 JsonReader
+         * 3. 通过 TypeAdapter 解析数据
+         */
         JsonReader jsonReader = gson.newJsonReader(value.charStream());
         try {
             return adapter.read(jsonReader);
